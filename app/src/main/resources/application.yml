@@ -1,0 +1,32 @@
+server:
+  port: 2218
+application:
+  version: @project.version@
+spring:
+  datasource:
+    jndi-name: java:/jdbc/adDB
+  jpa:
+    database-platform: org.hibernate.dialect.Oracle10gDialect
+    properties:
+      hibernate:
+       cache:
+          use_second_level_cache: true
+          use_query_cache: true
+          region:
+            factory_class:  org.hibernate.cache.ehcache.EhCacheRegionFactory
+    hibernate:
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+      ddl-auto: none
+  profiles:
+    active: prod
+  batch:
+    job:
+      enabled: false
+    initialize-schema: always
+
+# HTTP proxy, see HttpConfig class.
+http:
+  proxy:
+    enabled: true
+    url: http://155.55.60.117:8088

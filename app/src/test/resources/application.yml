@@ -3,6 +3,9 @@ server:
 config:
   cors:
     allowCredentials: true
+pam:
+  elasticsearch:
+    url: ${https://pamsok-elasticsearch.nais.oera-q.local}
 spring:
   datasource:
     url: jdbc:h2:mem:testdb;Mode=Oracle

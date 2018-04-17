@@ -57,4 +57,5 @@ public class UnsafeSSLContextUtil {
                 .setSSLContext(sc)
                 .setSSLHostnameVerifier(new NoopHostnameVerifier());
     }
+
 }

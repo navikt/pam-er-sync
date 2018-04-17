@@ -1,4 +1,4 @@
-package no.nav.pam.ad.enhetsregister.batch.model;
+package no.nav.pam.ad.enhetsregister.model;
 
 /**
  * Represents both Hovedenhet(Org) and Underenhet(Virksomhet)
@@ -11,6 +11,7 @@ public class CsvEnhet {
     private String antallAnsatte;
     private String overordnetEnhet;
 
+    //TODO: Map this address also if necessary
     //Hovedenhet:forretningsadresse
     //Underenhet:beliggenhetsadresse
     private String adresse;
@@ -182,5 +183,61 @@ public class CsvEnhet {
 
     public void setNaeringskode3_beskrivelse(String naeringskode3_beskrivelse) {
         this.naeringskode3_beskrivelse = naeringskode3_beskrivelse;
+    }
+
+    public String getPostadresse_adresse() {
+        return postadresse_adresse;
+    }
+
+    public void setPostadresse_adresse(String postadresse_adresse) {
+        this.postadresse_adresse = postadresse_adresse;
+    }
+
+    public String getPostadresse_postnummer() {
+        return postadresse_postnummer;
+    }
+
+    public void setPostadresse_postnummer(String postadresse_postnummer) {
+        this.postadresse_postnummer = postadresse_postnummer;
+    }
+
+    public String getPostadresse_poststed() {
+        return postadresse_poststed;
+    }
+
+    public void setPostadresse_poststed(String postadresse_poststed) {
+        this.postadresse_poststed = postadresse_poststed;
+    }
+
+    public String getPostadresse_kommunenummer() {
+        return postadresse_kommunenummer;
+    }
+
+    public void setPostadresse_kommunenummer(String postadresse_kommunenummer) {
+        this.postadresse_kommunenummer = postadresse_kommunenummer;
+    }
+
+    public String getPostadresse_kommune() {
+        return postadresse_kommune;
+    }
+
+    public void setPostadresse_kommune(String postadresse_kommune) {
+        this.postadresse_kommune = postadresse_kommune;
+    }
+
+    public String getPostadresse_landkode() {
+        return postadresse_landkode;
+    }
+
+    public void setPostadresse_landkode(String postadresse_landkode) {
+        this.postadresse_landkode = postadresse_landkode;
+    }
+
+    public String getPostadresse_land() {
+        return postadresse_land;
+    }
+
+    public void setPostadresse_land(String postadresse_land) {
+        this.postadresse_land = postadresse_land;
     }
 }

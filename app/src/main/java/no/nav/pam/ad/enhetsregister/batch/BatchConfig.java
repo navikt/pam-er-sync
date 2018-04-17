@@ -1,8 +1,8 @@
 package no.nav.pam.ad.enhetsregister.batch;
 
 
-import no.nav.pam.ad.enhetsregister.batch.model.CsvEnhet;
-import no.nav.pam.ad.enhetsregister.batch.model.JsonEnhet;
+import no.nav.pam.ad.enhetsregister.model.CsvEnhet;
+import no.nav.pam.ad.enhetsregister.model.Enhet;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
@@ -63,8 +63,8 @@ public class BatchConfig {
     }
 
     @Bean
-    public JsonDummyWriter writer() {
-        return new JsonDummyWriter();
+    public EnhetJsonWriter writer() {
+        return new EnhetJsonWriter();
     }
 
     // end::readerwriterprocessor[]
@@ -83,7 +83,7 @@ public class BatchConfig {
     @Bean
     public Step step1() {
         return stepBuilderFactory.get("step1")
-                .<CsvEnhet, JsonEnhet>chunk(10000)
+                .<CsvEnhet, Enhet>chunk(10000)
                 .reader(reader(null, null))
                 .processor(processor())
                 .writer(writer())

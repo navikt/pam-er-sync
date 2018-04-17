@@ -2,6 +2,9 @@ server:
   port: 2218
 application:
   version: @project.version@
+pam:
+  elasticsearch:
+    url: ${STILLINGESBACKEND_URL:https://pamsok-elasticsearch.nais.oera-q.local}
 spring:
   datasource:
     jndi-name: java:/jdbc/adDB

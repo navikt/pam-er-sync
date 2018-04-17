@@ -1,6 +1,6 @@
-package no.nav.pam.ad.enhetsregister.batch.model;
+package no.nav.pam.ad.enhetsregister.model;
 
-public class JsonAdresse {
+public class Adresse {
 
     private String adresse;
     private String postnummer;
@@ -10,7 +10,7 @@ public class JsonAdresse {
     private String landkode;
     private String land;
 
-    public JsonAdresse(String adresse, String postnummer, String poststed, String kommunenummer, String kommune, String landkode, String land) {
+    public Adresse(String adresse, String postnummer, String poststed, String kommunenummer, String kommune, String landkode, String land) {
         this.adresse = adresse;
         this.postnummer = postnummer;
         this.poststed = poststed;
@@ -24,55 +24,27 @@ public class JsonAdresse {
         return adresse;
     }
 
-    public void setAdresse(String adresse) {
-        this.adresse = adresse;
-    }
-
     public String getPostnummer() {
         return postnummer;
-    }
-
-    public void setPostnummer(String postnummer) {
-        this.postnummer = postnummer;
     }
 
     public String getPoststed() {
         return poststed;
     }
 
-    public void setPoststed(String poststed) {
-        this.poststed = poststed;
-    }
-
     public String getKommunenummer() {
         return kommunenummer;
-    }
-
-    public void setKommunenummer(String kommunenummer) {
-        this.kommunenummer = kommunenummer;
     }
 
     public String getKommune() {
         return kommune;
     }
 
-    public void setKommune(String kommune) {
-        this.kommune = kommune;
-    }
-
     public String getLandkode() {
         return landkode;
     }
 
-    public void setLandkode(String landkode) {
-        this.landkode = landkode;
-    }
-
     public String getLand() {
         return land;
-    }
-
-    public void setLand(String land) {
-        this.land = land;
     }
 }

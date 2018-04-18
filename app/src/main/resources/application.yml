@@ -7,7 +7,9 @@ pam:
     url: ${STILLINGESBACKEND_URL:https://pamsok-elasticsearch.nais.oera-q.local}
 spring:
   datasource:
-    jndi-name: java:/jdbc/adDB
+    url: jdbc:h2:mem:testdb;Mode=Oracle
+    platform: h2
+    continue-on-error: true
   jpa:
     database-platform: org.hibernate.dialect.Oracle10gDialect
     properties:

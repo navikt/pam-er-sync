@@ -63,8 +63,12 @@ public class BatchConfig {
     }
 
     @Bean
-    public EnhetJsonWriter writer() {
-        return new EnhetJsonWriter();
+    @StepScope
+    public EnhetJsonWriter writer(@Value("#{jobParameters['datestamp']}") String datestamp) {
+        EnhetJsonWriter writer = new EnhetJsonWriter();
+        writer.setDatestamp(datestamp);
+
+        return writer;
     }
 
     // end::readerwriterprocessor[]
@@ -86,7 +90,7 @@ public class BatchConfig {
                 .<CsvEnhet, Enhet>chunk(1000)
                 .reader(reader(null, null))
                 .processor(processor())
-                .writer(writer())
+                .writer(writer(null))
                 .build();
     }
     // end::jobstep[]

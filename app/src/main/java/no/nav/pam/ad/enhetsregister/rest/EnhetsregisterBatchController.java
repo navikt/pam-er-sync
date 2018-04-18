@@ -1,9 +1,13 @@
 package no.nav.pam.ad.enhetsregister.rest;
 
 import no.nav.pam.ad.enhetsregister.batch.CsvProperties;
+import no.nav.pam.ad.enhetsregister.batch.JobParameterBuilderUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.batch.core.*;
+import org.springframework.batch.core.BatchStatus;
+import org.springframework.batch.core.Job;
+import org.springframework.batch.core.JobExecution;
+import org.springframework.batch.core.JobExecutionException;
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -57,10 +61,6 @@ public class EnhetsregisterBatchController {
     }
 
     private JobExecution syncFromFiles(CsvProperties.EnhetType type, String filename) throws JobExecutionException {
-        return jobLauncher.run(job, new JobParametersBuilder()
-                .addString("type", type.toString())
-                .addString("filename", filename)
-                .addLong("time", System.currentTimeMillis())
-                .toJobParameters());
+        return jobLauncher.run(job, JobParameterBuilderUtil.buildParameters(type, filename));
     }
 }

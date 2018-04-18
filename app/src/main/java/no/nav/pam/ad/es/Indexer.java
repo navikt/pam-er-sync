@@ -14,6 +14,7 @@ import java.util.List;
 public class Indexer {
 
     private static final Logger LOG = LoggerFactory.getLogger(Indexer.class);
+
     private static final String INDEX_PREFIX = "underenheter";
 
     private final ElasticSearchIndexClient elasticSearchIndexClient;
@@ -57,8 +58,8 @@ public class Indexer {
 //        }
 //    }
 
-    public void indexCompanies(List<Enhet> companyList) throws IOException {
-        String index = INDEX_PREFIX;
+    public void indexCompanies(List<Enhet> companyList, String indexDatestamp) throws IOException {
+        String index = INDEX_PREFIX + indexDatestamp;
 
         if (!companyList.isEmpty()) {
             BulkResponse bulkResponse = elasticSearchIndexClient.indexBulk(companyList, index);

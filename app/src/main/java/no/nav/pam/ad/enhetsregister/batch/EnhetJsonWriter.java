@@ -14,9 +14,14 @@ public class EnhetJsonWriter implements ItemWriter<Enhet> {
     @Autowired
     private Indexer indexer;
 
+    private String datestamp;
+
+    public void setDatestamp(String datestamp) {
+        this.datestamp = datestamp;
+    }
 
     @Override
     public void write(List<? extends Enhet> list) throws Exception {
-        indexer.indexCompanies(new ArrayList<>(list));
+        indexer.indexCompanies(new ArrayList<>(list), datestamp);
     }
 }

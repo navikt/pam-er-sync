@@ -3,6 +3,7 @@ package no.nav.pam.ad.es;
 import no.nav.pam.ad.enhetsregister.model.Enhet;
 import org.elasticsearch.action.bulk.BulkItemResponse;
 import org.elasticsearch.action.bulk.BulkResponse;
+import org.elasticsearch.client.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -16,6 +17,7 @@ public class Indexer {
     private static final Logger LOG = LoggerFactory.getLogger(Indexer.class);
 
     private static final String INDEX_PREFIX = "underenheter";
+    private static final String INDEX_ALIAS = "underenheter";
 
     private final ElasticSearchIndexClient elasticSearchIndexClient;
 
@@ -58,8 +60,19 @@ public class Indexer {
 //        }
 //    }
 
-    public void indexCompanies(List<Enhet> companyList, String indexDatestamp) throws IOException {
-        String index = INDEX_PREFIX + indexDatestamp;
+
+    public void replaceAlias(String indexSuffix) throws IOException {
+        if(elasticSearchIndexClient.isExistingIndex(INDEX_PREFIX+indexSuffix)){
+            Response response = elasticSearchIndexClient.replaceAlias(INDEX_ALIAS, INDEX_PREFIX, indexSuffix);
+
+            LOG.info("Successfully replaced aliases. Index {} is now aliased to {}", INDEX_PREFIX + indexSuffix, INDEX_ALIAS);
+        } else {
+            LOG.error("Failed to replace the alias. New index {} doesn't exist", INDEX_PREFIX + indexSuffix);
+        }
+    }
+
+    public void indexCompanies(List<Enhet> companyList, String indexSuffix) throws IOException {
+        String index = INDEX_PREFIX + indexSuffix;
 
         if (!companyList.isEmpty()) {
             BulkResponse bulkResponse = elasticSearchIndexClient.indexBulk(companyList, index);

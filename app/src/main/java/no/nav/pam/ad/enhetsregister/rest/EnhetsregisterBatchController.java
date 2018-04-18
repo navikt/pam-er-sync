@@ -24,18 +24,24 @@ public class EnhetsregisterBatchController {
     @Autowired
     private JobLauncherService jobLauncherService;
 
-    @PostMapping("/sync/hovedenheter")
-    public ResponseEntity syncHovedenheter() {
-        LOG.debug("Start Syncing hovedenheter");
-
-        try {
-            jobLauncherService.syncFromFiles(CsvProperties.EnhetType.HOVEDENHET, HOVEDENHETER_FILENAME);
-            return ResponseEntity.ok("Enhetene er importert");
-        } catch (Exception e) {
-            LOG.error(e.getMessage());
-            return ResponseEntity.notFound().build();
-        }
-    }
+    //TODO: ENABLE if hovedenheter are indexed.
+//    @PostMapping("/sync/hovedenheter")
+//    public ResponseEntity syncHovedenheter() {
+//        LOG.debug("Start Syncing hovedenheter");
+//
+//        try {
+//            JobExecution jobExecution = jobLauncherService.syncFromFiles(CsvProperties.EnhetType.HOVEDENHET, HOVEDENHETER_FILENAME);
+//
+//            if (jobExecution.getStatus().equals(BatchStatus.COMPLETED)) {
+//                return ResponseEntity.ok("Enhetene er importert");
+//            } else {
+//                return ResponseEntity.status(500).build();
+//            }
+//        } catch (Exception e) {
+//            LOG.error(e.getMessage());
+//            return ResponseEntity.notFound().build();
+//        }
+//    }
 
     @PostMapping("/sync/underenheter")
     public ResponseEntity syncUnderenheter() {
@@ -54,5 +60,4 @@ public class EnhetsregisterBatchController {
             return ResponseEntity.status(500).build();
         }
     }
-
 }

@@ -15,11 +15,8 @@ public class EnhetJsonWriter implements ItemWriter<Enhet> {
     private Indexer indexer;
 
 
-
     @Override
     public void write(List<? extends Enhet> list) throws Exception {
-
-
         indexer.indexCompanies(new ArrayList<>(list));
     }
 }

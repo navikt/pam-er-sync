@@ -83,7 +83,7 @@ public class BatchConfig {
     @Bean
     public Step step1() {
         return stepBuilderFactory.get("step1")
-                .<CsvEnhet, Enhet>chunk(10000)
+                .<CsvEnhet, Enhet>chunk(1000)
                 .reader(reader(null, null))
                 .processor(processor())
                 .writer(writer())

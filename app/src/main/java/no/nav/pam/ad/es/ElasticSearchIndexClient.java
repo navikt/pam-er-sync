@@ -31,7 +31,7 @@ import java.util.Map;
 public class ElasticSearchIndexClient extends RestHighLevelClient {
 
     private final static Logger LOG = LoggerFactory.getLogger(ElasticSearchIndexClient.class);
-    private final static String TYPE = "enhet";
+    private final static String TYPE = "underenhet";
 
     private final ObjectMapper objectMapper;
 
@@ -86,10 +86,8 @@ public class ElasticSearchIndexClient extends RestHighLevelClient {
         BulkRequest request = new BulkRequest();
 
         for (Enhet content : contents) {
-            Object doc = content;
-
             request.add(new IndexRequest(index, TYPE, content.getOrganisasjonsnummer())
-                    .source(objectMapper.writeValueAsString(doc), XContentType.JSON));
+                    .source(objectMapper.writeValueAsString(content), XContentType.JSON));
         }
         return bulk(request);
     }
@@ -97,9 +95,8 @@ public class ElasticSearchIndexClient extends RestHighLevelClient {
 
     public IndexResponse index(Enhet content, String index) throws IOException {
 
-        Object doc = content;
         IndexRequest request = new IndexRequest(index, TYPE, content.getOrganisasjonsnummer())
-                .source(objectMapper.writeValueAsString(doc), XContentType.JSON);
+                .source(objectMapper.writeValueAsString(content), XContentType.JSON);
         return index(request);
     }
 }

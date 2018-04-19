@@ -5,6 +5,7 @@ import no.nav.pam.ad.enhetsregister.model.Enhet;
 import org.apache.http.HttpEntity;
 import org.apache.http.entity.ContentType;
 import org.apache.http.nio.entity.NStringEntity;
+import org.apache.http.util.EntityUtils;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.index.IndexRequest;
@@ -30,8 +31,7 @@ import java.util.Map;
 public class ElasticSearchIndexClient extends RestHighLevelClient {
 
     private final static Logger LOG = LoggerFactory.getLogger(ElasticSearchIndexClient.class);
-
-    private final static String TYPE = "underenhet";
+    private final static String UNDERENHET_TYPE = "underenhet";
 
     private final ObjectMapper objectMapper;
 
@@ -46,47 +46,26 @@ public class ElasticSearchIndexClient extends RestHighLevelClient {
         close();
     }
 
-//    public Response createIndex(CreateIndexRequest request) throws IOException {
-//        StringEntity entity = null;
-//        String index = request.index();
-//        if (request.settings() != null) {
-//            Map<String, Object> settingsMap = request.settings().getAsStructuredMap();
-//            String settings = objectMapper.writeValueAsString(settingsMap);
-//            entity = new StringEntity(settings, ContentType.APPLICATION_JSON);
-//        }
-//        LOG.debug("creating index: " + index);
-//        return getLowLevelClient().performRequest("PUT", "/" + index, Collections.emptyMap(), entity);
-//    }
-//
-//    public void putFieldMapping(PutMappingRequest request) throws IOException {
-//        StringEntity entity = new StringEntity(request.source(), ContentType.APPLICATION_JSON);
-//        for (String index : request.indices()) {
-//            LOG.debug("updating mappings for index: " + index);
-//            getLowLevelClient().performRequest("PUT", "/" + index
-//                    + "/" + request.type() + "/_mapping", Collections.emptyMap(), entity);
-//        }
-//    }
-//
-//    public Response deleteIndex(String index) throws IOException {
-//        return getLowLevelClient().performRequest("DELETE", "/" + index);
-//    }
+    public Response deleteIndex(String index) throws IOException {
+        return getLowLevelClient().performRequest("DELETE", "/" + index);
+    }
 
-    public boolean isExistingIndex(String index) throws IOException {
+    public boolean indexExists(String index) throws IOException {
         try {
             Response restResponse = getLowLevelClient().performRequest("GET", "/" + index);
             return true;
         } catch (ResponseException e) {
-            LOG.debug("Exception while calling isExistingIndex" + e.getMessage());
+            LOG.debug("Exception while calling indexExists" + e.getMessage());
         }
         return false;
     }
 
-    public Response replaceAlias(String alias, String indexPrefix, String indexSuffix) throws IOException {
+    public Response replaceAlias(String alias, String indexDatestamp) throws IOException {
 
         String jsonString = "{\n" +
                 "    \"actions\" : [\n" +
-                "        { \"remove\" : { \"index\" : \"" + indexPrefix + "*\", \"alias\" : \"" + alias + "\" } },\n" +
-                "        { \"add\" : { \"index\" : \"" + indexPrefix + indexSuffix + "\", \"alias\" : \"" + alias + "\" } }\n" +
+                "        { \"remove\" : { \"index\" : \"" + alias + "*\", \"alias\" : \"" + alias + "\" } },\n" +
+                "        { \"add\" : { \"index\" : \"" + alias + indexDatestamp + "\", \"alias\" : \"" + alias + "\" } }\n" +
                 "    ]\n" +
                 "}";
 
@@ -101,7 +80,7 @@ public class ElasticSearchIndexClient extends RestHighLevelClient {
         BulkRequest request = new BulkRequest();
 
         for (Enhet content : contents) {
-            request.add(new IndexRequest(index, TYPE, content.getOrganisasjonsnummer())
+            request.add(new IndexRequest(index, UNDERENHET_TYPE, content.getOrganisasjonsnummer())
                     .source(objectMapper.writeValueAsString(content), XContentType.JSON));
         }
         return bulk(request);
@@ -109,8 +88,16 @@ public class ElasticSearchIndexClient extends RestHighLevelClient {
 
     public IndexResponse index(Enhet content, String index) throws IOException {
 
-        IndexRequest request = new IndexRequest(index, TYPE, content.getOrganisasjonsnummer())
+        IndexRequest request = new IndexRequest(index, UNDERENHET_TYPE, content.getOrganisasjonsnummer())
                 .source(objectMapper.writeValueAsString(content), XContentType.JSON);
         return index(request);
+    }
+
+    public int fetchIndexDocCount(String index) throws IOException {
+        Response response = getLowLevelClient().performRequest("GET", "/_cat/indices/" + index);
+        String line = EntityUtils.toString(response.getEntity());
+        String[] tokenized = line.split(" ");
+
+        return Integer.parseInt(tokenized[6]);
     }
 }

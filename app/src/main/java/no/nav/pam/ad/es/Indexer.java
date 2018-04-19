@@ -3,7 +3,6 @@ package no.nav.pam.ad.es;
 import no.nav.pam.ad.enhetsregister.model.Enhet;
 import org.elasticsearch.action.bulk.BulkItemResponse;
 import org.elasticsearch.action.bulk.BulkResponse;
-import org.elasticsearch.client.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -15,8 +14,6 @@ import java.util.List;
 public class Indexer {
 
     private static final Logger LOG = LoggerFactory.getLogger(Indexer.class);
-
-    private static final String INDEX_PREFIX = "underenheter";
     private static final String INDEX_ALIAS = "underenheter";
 
     private final ElasticSearchIndexClient elasticSearchIndexClient;
@@ -25,54 +22,21 @@ public class Indexer {
         this.elasticSearchIndexClient = elasticSearchIndexClient;
     }
 
-//    @PostConstruct
-//    public void initializeIndices() {
-//
-//        try {
-//            final String commonSettingsJson = loadJsonStringFromClasspath("/ESCommonSettings.json");
-//
-////            if (!elasticSearchIndexClient.isExistingIndex(AD)) {
-////                elasticSearchIndexClient.createIndex(new CreateIndexRequest(AD,
-////                        Settings.builder().loadFromSource(commonSettingsJson, XContentType.JSON).build()));
-////
-////                String mappings = loadJsonStringFromClasspath("/ESAdMapping.json");
-////                elasticSearchIndexClient.putFieldMapping(
-////                        new PutMappingRequest(AD).source(mappings, XContentType.JSON).type(AD));
-////            }
-////            if (!elasticSearchIndexClient.isExistingIndex(COMPANY)) {
-////                elasticSearchIndexClient.createIndex(new CreateIndexRequest(COMPANY,
-////                        Settings.builder().loadFromSource(commonSettingsJson, XContentType.JSON).build()));
-////
-////                String mappings = loadJsonStringFromClasspath("/ESCompanyMapping.json");
-////                elasticSearchIndexClient.putFieldMapping(
-////                        new PutMappingRequest(COMPANY).source(mappings, XContentType.JSON).type(COMPANY));
-////            }
-//        }
-//        catch (IOException e) {
-//            LOG.error("Could not initialize indices",e);
-//        }
-//    }
-//
-//    private String loadJsonStringFromClasspath(String path) throws IOException {
-//        try (InputStreamReader reader = new InputStreamReader(
-//                getClass().getResourceAsStream(path), StandardCharsets.UTF_8)) {
-//            return CharStreams.toString(reader);
-//        }
-//    }
-
-
-    public void replaceAlias(String indexSuffix) throws IOException {
-        if(elasticSearchIndexClient.isExistingIndex(INDEX_PREFIX+indexSuffix)){
-            Response response = elasticSearchIndexClient.replaceAlias(INDEX_ALIAS, INDEX_PREFIX, indexSuffix);
-
-            LOG.info("Successfully replaced aliases. Index {} is now aliased to {}", INDEX_PREFIX + indexSuffix, INDEX_ALIAS);
+    public void replaceAlias(String indexDatestamp) throws IOException {
+        if (elasticSearchIndexClient.indexExists(INDEX_ALIAS + indexDatestamp)) {
+            elasticSearchIndexClient.replaceAlias(INDEX_ALIAS, indexDatestamp);
+            LOG.info("Successfully replaced aliases. Index {} is now aliased to {}", INDEX_ALIAS + indexDatestamp, INDEX_ALIAS);
         } else {
-            LOG.error("Failed to replace the alias. New index {} doesn't exist", INDEX_PREFIX + indexSuffix);
+            LOG.error("Failed to replace the alias. New index {} doesn't exist", INDEX_ALIAS + indexDatestamp);
         }
     }
 
-    public void indexCompanies(List<Enhet> companyList, String indexSuffix) throws IOException {
-        String index = INDEX_PREFIX + indexSuffix;
+    public int fetchDocCount(String indexDatestamp) throws IOException {
+        return elasticSearchIndexClient.fetchIndexDocCount(INDEX_ALIAS + indexDatestamp);
+    }
+
+    public void indexCompanies(List<Enhet> companyList, String indexDatestamp) throws IOException {
+        String index = INDEX_ALIAS + indexDatestamp;
 
         if (!companyList.isEmpty()) {
             BulkResponse bulkResponse = elasticSearchIndexClient.indexBulk(companyList, index);

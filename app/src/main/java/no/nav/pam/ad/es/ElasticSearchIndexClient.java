@@ -69,6 +69,7 @@ public class ElasticSearchIndexClient extends RestHighLevelClient {
                 "    ]\n" +
                 "}";
 
+
         Map<String, String> params = Collections.emptyMap();
         HttpEntity entity = new NStringEntity(jsonString, ContentType.APPLICATION_JSON);
 

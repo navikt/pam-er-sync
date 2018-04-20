@@ -1,7 +1,7 @@
 package no.nav.pam.ad.enhetsregister.batch;
 
 
-import no.nav.pam.ad.es.Indexer;
+import no.nav.pam.ad.es.IndexerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.BatchStatus;
@@ -19,7 +19,7 @@ public class JobCompletionNotificationListener extends JobExecutionListenerSuppo
     private static final Logger LOG = LoggerFactory.getLogger(JobCompletionNotificationListener.class);
 
     @Autowired
-    Indexer indexer;
+    IndexerService indexer;
 
     @Override
     public void afterJob(JobExecution jobExecution) {

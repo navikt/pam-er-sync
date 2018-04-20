@@ -5,20 +5,20 @@ import org.elasticsearch.action.bulk.BulkItemResponse;
 import org.elasticsearch.action.bulk.BulkResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.List;
 
-@Component
-public class Indexer {
+@Service
+public class IndexerService {
 
-    private static final Logger LOG = LoggerFactory.getLogger(Indexer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(IndexerService.class);
     private static final String INDEX_ALIAS = "underenheter";
 
     private final ElasticSearchIndexClient elasticSearchIndexClient;
 
-    public Indexer(ElasticSearchIndexClient elasticSearchIndexClient) {
+    public IndexerService(ElasticSearchIndexClient elasticSearchIndexClient) {
         this.elasticSearchIndexClient = elasticSearchIndexClient;
     }
 

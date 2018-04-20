@@ -25,15 +25,18 @@ public class ElasticSearchController {
 
             return ResponseEntity.ok().build();
         } catch (IOException e) {
-            e.printStackTrace();
-
             return ResponseEntity.notFound().build();
         }
     }
 
-    @DeleteMapping("/index/{name}")
-    public ResponseEntity deleteIndex(@PathVariable("name") String name) {
+    @DeleteMapping("/index/{index}")
+    public ResponseEntity deleteIndex(@PathVariable("index") String index) {
+        try {
+            service.deleteIndex(index);
 
-        return null;
+            return ResponseEntity.ok().build();
+        } catch (IOException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 }

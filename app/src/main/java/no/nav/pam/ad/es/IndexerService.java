@@ -58,4 +58,8 @@ public class IndexerService {
         }
         LOG.info("Indexed {} successfully and {} failed, index: {}", success, failed, index);
     }
+
+    public void deleteIndex(String index) throws IOException {
+        elasticSearchIndexClient.deleteIndex(index);
+    }
 }

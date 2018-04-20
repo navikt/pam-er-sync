@@ -12,43 +12,23 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 @RequestMapping("/enhetsregister")
 public class EnhetsregisterBatchController {
 
     private static final Logger LOG = LoggerFactory.getLogger(EnhetsregisterBatchController.class);
-    private static final String HOVEDENHETER_FILENAME = "hovedenheter.csv";
-    private static final String UNDERENHETER_FILENAME = "underenheter.csv";
 
     @Autowired
     private JobLauncherService jobLauncherService;
 
-    //TODO: ENABLE if hovedenheter are indexed.
-//    @PostMapping("/sync/hovedenheter")
-//    public ResponseEntity syncHovedenheter() {
-//        LOG.debug("Start Syncing hovedenheter");
-//
-//        try {
-//            JobExecution jobExecution = jobLauncherService.syncFromFiles(CsvProperties.EnhetType.HOVEDENHET, HOVEDENHETER_FILENAME);
-//
-//            if (jobExecution.getStatus().equals(BatchStatus.COMPLETED)) {
-//                return ResponseEntity.ok("Enhetene er importert");
-//            } else {
-//                return ResponseEntity.status(500).build();
-//            }
-//        } catch (Exception e) {
-//            LOG.error(e.getMessage());
-//            return ResponseEntity.notFound().build();
-//        }
-//    }
-
     @PostMapping("/sync/underenheter")
-    public ResponseEntity syncUnderenheter() {
+    public ResponseEntity syncUnderenheter(@RequestParam(name = "filename") String filename) {
         LOG.debug("Start Syncing underenheter");
 
         try {
-            JobExecution jobExecution = jobLauncherService.syncFromFiles(CsvProperties.EnhetType.UNDERENHET, UNDERENHETER_FILENAME);
+            JobExecution jobExecution = jobLauncherService.syncFromFiles(CsvProperties.EnhetType.UNDERENHET, filename);
 
             if (jobExecution.getStatus().equals(BatchStatus.COMPLETED)) {
                 return ResponseEntity.ok("Enhetene er importert");

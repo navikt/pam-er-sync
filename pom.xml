@@ -49,20 +49,18 @@
                 <version>${guava.version}</version>
             </dependency>
 
-            <!--TODO: REMOVE-->
             <dependency>
-                <groupId>com.github.tomakehurst</groupId>
-                <artifactId>wiremock</artifactId>
-                <version>2.7.1</version>
-                <scope>test</scope>
+                <groupId>net.javacrumbs.shedlock</groupId>
+                <artifactId>shedlock-core</artifactId>
+                <version>0.14.0</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
 
     <!--<scm>-->
-        <!--<connection>scm:git:ssh://git@stash.devillo.no:7999/pam/pam-index.git</connection>-->
-        <!--<developerConnection>scm:git:ssh://git@stash.devillo.no:7999/pam/pam-index.git</developerConnection>-->
-        <!--<tag>HEAD</tag>-->
+    <!--<connection>scm:git:ssh://git@stash.devillo.no:7999/pam/pam-index.git</connection>-->
+    <!--<developerConnection>scm:git:ssh://git@stash.devillo.no:7999/pam/pam-index.git</developerConnection>-->
+    <!--<tag>HEAD</tag>-->
     <!--</scm>-->
 
 </project>

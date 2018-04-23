@@ -6,6 +6,7 @@ import org.apache.http.HttpEntity;
 import org.apache.http.entity.ContentType;
 import org.apache.http.nio.entity.NStringEntity;
 import org.apache.http.util.EntityUtils;
+import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.index.IndexRequest;
@@ -22,6 +23,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -46,8 +48,8 @@ public class ElasticSearchIndexClient extends RestHighLevelClient {
         close();
     }
 
-    public Response deleteIndex(String index) throws IOException {
-        return getLowLevelClient().performRequest("DELETE", "/" + index);
+    public boolean deleteIndex(String... indices) throws IOException {
+        return indices().delete(new DeleteIndexRequest(indices)).isAcknowledged();
     }
 
     public boolean indexExists(String index) throws IOException {
@@ -100,5 +102,20 @@ public class ElasticSearchIndexClient extends RestHighLevelClient {
         String[] tokenized = line.split(" ");
 
         return Integer.parseInt(tokenized[6]);
+    }
+
+    public List<String> fetchAllIndicesStartingWith(String name) throws IOException {
+        List<String> indices = new ArrayList<>();
+        Response response = getLowLevelClient().performRequest("GET", "/_cat/indices/" + name + "*");
+
+        String full = EntityUtils.toString(response.getEntity());
+        String[] lines = full.split("\\r?\\n");
+
+        for (int i = 0; i < lines.length; i++) {
+            String[] tokenized = lines[i].split("\\s");
+            indices.add(tokenized[2]);
+        }
+
+        return indices;
     }
 }

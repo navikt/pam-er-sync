@@ -8,13 +8,16 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class IndexerService {
 
     private static final Logger LOG = LoggerFactory.getLogger(IndexerService.class);
     private static final String INDEX_ALIAS = "underenheter";
+    private static final int INDEX_EXPIRATION_IN_DAYS = 10;
 
     private final ElasticSearchIndexClient elasticSearchIndexClient;
 
@@ -61,5 +64,18 @@ public class IndexerService {
 
     public void deleteIndex(String index) throws IOException {
         elasticSearchIndexClient.deleteIndex(index);
+    }
+
+    public void deleteOlderIndices() throws IOException {
+        LocalDate date = LocalDate.now().minusDays(INDEX_EXPIRATION_IN_DAYS);
+        List<String> indices = elasticSearchIndexClient.fetchAllIndicesStartingWith(INDEX_ALIAS);
+
+        List<String> oldIndices = indices.stream().filter(index -> {
+            String datestamp = index.replace(INDEX_ALIAS, "");
+            LocalDate indexDate = DatestampUtil.parseDatestamp(datestamp);
+            return indexDate.isBefore(date);
+        }).collect(Collectors.toList());
+
+        elasticSearchIndexClient.deleteIndex(oldIndices.toArray(new String[0]));
     }
 }

@@ -7,8 +7,9 @@
     </appender>
 
     <logger name="no.nav.pam" level="INFO"/>
-    <logger name="org.hibernate.SQL" level="INFO" />
-    
+    <logger name="org.hibernate.SQL" level="INFO"/>
+    <logger name="no.nav.pam.ad.enhetsregister.batch.Downloader" level="DEBUG"/>
+
     <root level="INFO">
         <appender-ref ref="CONSOLE"/>
     </root>

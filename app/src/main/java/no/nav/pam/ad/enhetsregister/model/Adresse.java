@@ -1,5 +1,8 @@
 package no.nav.pam.ad.enhetsregister.model;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Adresse {
 
     private String adresse;

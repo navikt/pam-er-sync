@@ -12,6 +12,10 @@ import java.time.LocalDate;
 @Service
 public class JobLauncherService {
 
+    public static final String PARAM_TYPE = "type";
+    public static final String PARAM_FILENAME = "filename";
+    public static final String PARAM_DATESTAMP = "datestamp";
+
     @Autowired
     private JobLauncher jobLauncher;
 
@@ -24,9 +28,9 @@ public class JobLauncherService {
 
     private JobParameters buildParameters(CsvProperties.EnhetType type, String filename) {
         return new JobParametersBuilder()
-                .addString("type", type.toString())
-                .addString("filename", filename)
-                .addString("datestamp", DatestampUtil.getDatestamp(LocalDate.now()))
+                .addString(PARAM_TYPE, type.toString())
+                .addString(PARAM_FILENAME, filename)
+                .addString(PARAM_DATESTAMP, DatestampUtil.getDatestamp(LocalDate.now()))
                 .addLong("time", System.currentTimeMillis())
                 .toJobParameters();
     }

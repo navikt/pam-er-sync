@@ -22,7 +22,7 @@ public class EnhetItemProcessor implements ItemProcessor<CsvEnhet, Enhet> {
         Adresse adresse = null;
         Adresse post = null;
 
-        if (StringUtils.isNotBlank(csv.getAdresse())) {
+        if (StringUtils.isNotBlank(csv.getPostnummer())) {
             adresse = new Adresse(
                     csv.getAdresse(),
                     csv.getPostnummer(),
@@ -33,7 +33,7 @@ public class EnhetItemProcessor implements ItemProcessor<CsvEnhet, Enhet> {
                     csv.getLand());
         }
 
-        if (StringUtils.isNotBlank(csv.getAdresse())) {
+        if (StringUtils.isNotBlank(csv.getPostadresse_postnummer())) {
             post = new Adresse(
                     csv.getPostadresse_adresse(),
                     csv.getPostadresse_postnummer(),

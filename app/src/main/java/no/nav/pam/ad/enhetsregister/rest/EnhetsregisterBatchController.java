@@ -1,6 +1,6 @@
 package no.nav.pam.ad.enhetsregister.rest;
 
-import no.nav.pam.ad.enhetsregister.batch.CsvProperties;
+import no.nav.pam.ad.enhetsregister.batch.DataSet;
 import no.nav.pam.ad.enhetsregister.batch.JobLauncherService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,7 +28,7 @@ public class EnhetsregisterBatchController {
         LOG.debug("Start Syncing underenheter");
 
         try {
-            JobExecution jobExecution = jobLauncherService.syncFromFiles(CsvProperties.EnhetType.UNDERENHET, filename);
+            JobExecution jobExecution = jobLauncherService.syncFromFiles(DataSet.UNDERENHET, filename);
 
             if (jobExecution.getStatus().equals(BatchStatus.COMPLETED)) {
                 return ResponseEntity.ok("Enhetene er importert");

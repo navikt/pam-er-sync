@@ -48,7 +48,7 @@ public class BatchJobTest {
     @Test
     public void syncUnderenheterTest() throws Exception {
         Map<String, JobParameter> params = new HashMap<>();
-        params.put("type", new JobParameter(CsvProperties.EnhetType.UNDERENHET.toString()));
+        params.put("type", new JobParameter(DataSet.UNDERENHET.toString()));
         params.put("filename", new JobParameter(FILEPATH + "underenheter.csv"));
 
         //testing a job

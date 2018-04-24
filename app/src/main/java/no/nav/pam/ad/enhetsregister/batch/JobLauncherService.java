@@ -18,11 +18,11 @@ public class JobLauncherService {
     @Autowired
     private Job job;
 
-    public JobExecution syncFromFiles(CsvProperties.EnhetType type, String filename) throws JobExecutionException {
+    public JobExecution syncFromFiles(DataSet type, String filename) throws JobExecutionException {
         return jobLauncher.run(job, buildParameters(type, filename));
     }
 
-    private JobParameters buildParameters(CsvProperties.EnhetType type, String filename) {
+    private JobParameters buildParameters(DataSet type, String filename) {
         return new JobParametersBuilder()
                 .addString("type", type.toString())
                 .addString("filename", filename)

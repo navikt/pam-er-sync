@@ -38,7 +38,7 @@ public class BatchConfig {
     public FlatFileItemReader<CsvEnhet> reader(@Value("#{jobParameters['type']}") String type,
                                                @Value("#{jobParameters['filename']}") String filename) {
 
-        final CsvProperties csvProperties = CsvProperties.buildCsvProperties(CsvProperties.EnhetType.valueOf(type));
+        final DataSet enhet = DataSet.valueOf(type);
 
         FlatFileItemReader<CsvEnhet> reader = new FlatFileItemReader<>();
         reader.setEncoding(StandardCharsets.UTF_8.displayName());
@@ -47,8 +47,8 @@ public class BatchConfig {
             setLineTokenizer(new DelimitedLineTokenizer() {{
                 reader.setLinesToSkip(1);
                 setDelimiter(";");
-                setIncludedFields(csvProperties.getIncludedFields());
-                setNames(csvProperties.getFieldNames());
+                setIncludedFields(enhet.getIncludedFields());
+                setNames(enhet.getFieldNames());
             }});
             setFieldSetMapper(new BeanWrapperFieldSetMapper<CsvEnhet>() {{
                 setTargetType(CsvEnhet.class);

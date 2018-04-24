@@ -12,6 +12,7 @@ import java.nio.channels.ReadableByteChannel;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.zip.GZIPInputStream;
 
 public class Downloader implements AutoCloseable {
 
@@ -19,26 +20,33 @@ public class Downloader implements AutoCloseable {
 
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
     private final URL url;
-    private final File temporary;
+    private final File file;
 
-    Downloader(String x)
+    Downloader(String url)
+            throws IOException {
+        this(url, true);
+    }
+
+    Downloader(String url, boolean deleteOnExit)
             throws IOException {
 
-        this.url = new URL(x);
+        this.url = new URL(url);
 
-        temporary = File.createTempFile(Downloader.class.getSimpleName(), null);
-        temporary.deleteOnExit();
-        LOG.debug("Using temporary file {}", temporary.getAbsolutePath());
+        file = File.createTempFile(Downloader.class.getSimpleName(), null);
+        if (deleteOnExit) {
+            file.deleteOnExit();
+        }
+        LOG.debug("Using temporary file {}, delete on exit {}", file.getAbsolutePath(), deleteOnExit);
 
     }
 
     @Override
     public void close() {
 
-        if (temporary.delete()) {
-            LOG.debug("Deleted temporary file {}", temporary.getAbsolutePath());
+        if (file.delete()) {
+            LOG.debug("Deleted temporary file {}", file.getAbsolutePath());
         } else {
-            LOG.error("Failed to delete temporary file {}", temporary.getAbsolutePath());
+            LOG.error("Failed to delete temporary file {}", file.getAbsolutePath());
         }
 
     }
@@ -46,18 +54,22 @@ public class Downloader implements AutoCloseable {
     Future<File> download()
             throws IllegalStateException {
 
-        if (!temporary.exists()) {
-            throw new IllegalStateException("Temporary file " + temporary.getAbsoluteFile() + " no longer exist; use download only once per class instance");
+        if (!file.exists()) {
+            throw new IllegalStateException("Temporary file " + file.getAbsoluteFile() + " no longer exist; use download only once per class instance");
         }
         return executor.submit(() -> {
 
             try {
 
-                try (ReadableByteChannel channel = Channels.newChannel(url.openStream());
-                     FileOutputStream out = new FileOutputStream(temporary)) {
+                try (ReadableByteChannel channel = Channels.newChannel(new GZIPInputStream(url.openStream()));
+                     FileOutputStream out = new FileOutputStream(file)) {
+
+                    long started = System.currentTimeMillis();
                     out.getChannel().transferFrom(channel, 0, Long.MAX_VALUE);
+                    LOG.debug("{} bytes written to file {} in {}ms", out.getChannel().size(), file.getAbsoluteFile(), System.currentTimeMillis() - started);
+
                 }
-                return temporary;
+                return file;
 
             } catch (IOException e) {
                 LOG.error("Failed to download file from {}", url, e);

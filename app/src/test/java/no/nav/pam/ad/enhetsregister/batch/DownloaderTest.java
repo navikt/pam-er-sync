@@ -14,11 +14,13 @@ import static org.junit.Assert.assertThat;
 @Ignore
 public class DownloaderTest {
 
+    private static final String UNDERENHETER_URL = "http://data.brreg.no/enhetsregisteret/download/underenheter";
+
     @Test
     public void downloadUnderenheter()
             throws Exception {
 
-        try (Downloader downloader = new Downloader("http://data.brreg.no/enhetsregisteret/download/underenheter")) {
+        try (Downloader downloader = new Downloader(UNDERENHETER_URL)) {
             assertThat(downloader.download().get(), instanceOf(File.class));
         }
 
@@ -49,10 +51,10 @@ public class DownloaderTest {
     public void correctlyDownloadAfterAutoClosure()
             throws Exception {
 
-        try (Downloader downloader = new Downloader("http://data.brreg.no/enhetsregisteret/download/underenheter")) {
+        try (Downloader downloader = new Downloader(UNDERENHETER_URL)) {
             assertThat(downloader.download().get(), instanceOf(File.class));
         }
-        try (Downloader downloader = new Downloader("http://data.brreg.no/enhetsregisteret/download/underenheter")) {
+        try (Downloader downloader = new Downloader(UNDERENHETER_URL)) {
             assertThat(downloader.download().get(), instanceOf(File.class));
         }
 
@@ -62,9 +64,17 @@ public class DownloaderTest {
     public void provokeTimeout()
             throws Exception {
 
-        try (Downloader downloader = new Downloader("http://data.brreg.no/enhetsregisteret/download/underenheter")) {
+        try (Downloader downloader = new Downloader(UNDERENHETER_URL)) {
             downloader.download().get(1, TimeUnit.MILLISECONDS);
         }
+
+    }
+
+    @Test
+    public void downloadAndKeepFileForManualTesting()
+            throws Exception {
+
+        new Downloader(UNDERENHETER_URL, false).download().get();
 
     }
 

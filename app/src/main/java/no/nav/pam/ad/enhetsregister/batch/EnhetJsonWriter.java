@@ -16,7 +16,7 @@ public class EnhetJsonWriter implements ItemWriter<Enhet> {
 
     private String datestamp;
 
-    public void setDatestamp(String datestamp) {
+    void setDatestamp(String datestamp) {
         this.datestamp = datestamp;
     }
 

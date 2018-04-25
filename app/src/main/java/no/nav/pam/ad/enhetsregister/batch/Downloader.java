@@ -24,19 +24,12 @@ public class Downloader implements AutoCloseable {
 
     Downloader(String url)
             throws IOException {
-        this(url, true);
-    }
-
-    Downloader(String url, boolean deleteOnExit)
-            throws IOException {
 
         this.url = new URL(url);
 
         file = File.createTempFile(Downloader.class.getSimpleName(), null);
-        if (deleteOnExit) {
-            file.deleteOnExit();
-        }
-        LOG.debug("Using temporary file {}, delete on exit {}", file.getAbsolutePath(), deleteOnExit);
+        file.deleteOnExit();
+        LOG.debug("Using temporary file {}", file.getAbsolutePath());
 
     }
 

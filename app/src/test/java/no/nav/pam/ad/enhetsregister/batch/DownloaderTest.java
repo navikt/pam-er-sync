@@ -2,8 +2,13 @@ package no.nav.pam.ad.enhetsregister.batch;
 
 import org.junit.Ignore;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.nio.channels.FileChannel;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
@@ -14,6 +19,7 @@ import static org.junit.Assert.assertThat;
 @Ignore
 public class DownloaderTest {
 
+    private static final Logger LOG = LoggerFactory.getLogger(DownloaderTest.class);
     private static final String UNDERENHETER_URL = "http://data.brreg.no/enhetsregisteret/download/underenheter";
 
     @Test
@@ -74,7 +80,15 @@ public class DownloaderTest {
     public void downloadAndKeepFileForManualTesting()
             throws Exception {
 
-        new Downloader(UNDERENHETER_URL, false).download().get();
+        try (Downloader downloader = new Downloader(UNDERENHETER_URL)) {
+            File copy = File.createTempFile(DownloaderTest.class.getSimpleName(), null);
+            try (FileChannel source = new FileInputStream(downloader.download().get()).getChannel();
+                 FileChannel target = new FileOutputStream(copy).getChannel()
+            ) {
+                target.transferFrom(source, 0, source.size());
+            }
+            LOG.info("Downloaded content kept in file {}", copy.getAbsolutePath());
+        }
 
     }
 

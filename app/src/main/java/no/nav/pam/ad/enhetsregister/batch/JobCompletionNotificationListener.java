@@ -18,8 +18,12 @@ public class JobCompletionNotificationListener extends JobExecutionListenerSuppo
 
     private static final Logger LOG = LoggerFactory.getLogger(JobCompletionNotificationListener.class);
 
+    private final IndexerService indexer;
+
     @Autowired
-    IndexerService indexer;
+    private JobCompletionNotificationListener(IndexerService indexer) {
+        this.indexer = indexer;
+    }
 
     @Override
     public void afterJob(JobExecution jobExecution) {
@@ -42,7 +46,7 @@ public class JobCompletionNotificationListener extends JobExecutionListenerSuppo
                 try {
                     int docCount = indexer.fetchDocCount(datestamp);
 
-                    if(docCount >= writeCount) {
+                    if (docCount >= writeCount) {
                         LOG.info("Index doc count: {}", docCount);
                         LOG.info("Verifying the new index and replacing the alias.");
                         indexer.replaceAlias(datestamp);

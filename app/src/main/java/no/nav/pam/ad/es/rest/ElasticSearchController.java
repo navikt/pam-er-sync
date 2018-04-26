@@ -15,8 +15,12 @@ import java.io.IOException;
 @RequestMapping("/enhetsregister/es")
 public class ElasticSearchController {
 
+    private final IndexerService service;
+
     @Autowired
-    private IndexerService service;
+    private ElasticSearchController(IndexerService service) {
+        this.service = service;
+    }
 
     @PutMapping("/alias/{datestamp}")
     public ResponseEntity changeAlias(@PathVariable("datestamp") String datestamp) {

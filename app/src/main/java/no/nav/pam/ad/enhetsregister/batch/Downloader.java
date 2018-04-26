@@ -14,7 +14,10 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.zip.GZIPInputStream;
 
-public class Downloader implements AutoCloseable {
+/**
+ * A generic one-off downloader, intended to be used as an {@code AutoCloseable}.
+ */
+class Downloader implements AutoCloseable {
 
     private static final Logger LOG = LoggerFactory.getLogger(Downloader.class);
 
@@ -22,10 +25,10 @@ public class Downloader implements AutoCloseable {
     private final URL url;
     private final File file;
 
-    Downloader(String url)
+    Downloader(URL url)
             throws IOException {
 
-        this.url = new URL(url);
+        this.url = url;
 
         file = File.createTempFile(Downloader.class.getSimpleName(), null);
         file.deleteOnExit();

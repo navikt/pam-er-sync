@@ -31,3 +31,11 @@ http:
   proxy:
     enabled: true
     url: http://155.55.60.117:8088
+
+enhetsregister:
+  timeout:
+    millis: ${PAM_ER_SYNC.ENHETSREGISTER.TIMEOUT:1000}
+  hovedenhet:
+    url:  ${PAM_ER_SYNC.ENHETSREGISTER.HOVEDENHET.URL:"http://localhost/this/configuration/is/intended/to/fail"}
+  underenhet:
+    url: ${PAM_ER_SYNC.ENHETSREGISTER.UNDERENHET.URL:"http://localhost/this/configuration/is/intended/to/fail"}

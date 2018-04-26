@@ -4,30 +4,45 @@ package no.nav.pam.ad.enhetsregister.batch;
 import no.nav.pam.ad.es.DatestampUtil;
 import org.springframework.batch.core.*;
 import org.springframework.batch.core.launch.JobLauncher;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
+import java.net.URL;
 import java.time.LocalDate;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class JobLauncherService {
 
-    @Autowired
-    private JobLauncher jobLauncher;
+    private final JobLauncher launcher;
+    private final Job job;
 
-    @Autowired
-    private Job job;
-
-    public JobExecution syncFromFiles(DataSet type, String filename) throws JobExecutionException {
-        return jobLauncher.run(job, buildParameters(type, filename));
+    JobLauncherService(JobLauncher launcher, Job job) {
+        this.launcher = launcher;
+        this.job = job;
     }
 
-    private JobParameters buildParameters(DataSet type, String filename) {
-        return new JobParametersBuilder()
-                .addString("type", type.toString())
-                .addString("filename", filename)
-                .addString("datestamp", DatestampUtil.getDatestamp(LocalDate.now()))
-                .addLong("time", System.currentTimeMillis())
-                .toJobParameters();
+    public void synchronize(DataSet dataSet, URL url, int timeoutMillis)
+            throws Exception {
+
+        try (Downloader downloader = new Downloader(url)) {
+
+            File file = downloader.download().get(timeoutMillis, TimeUnit.MILLISECONDS);
+            JobParameters parameters = new JobParametersBuilder()
+                    .addString("type", dataSet.toString())
+                    .addString("filename", file.getAbsolutePath())
+                    .addString("datestamp", DatestampUtil.getDatestamp(LocalDate.now()))
+                    .addLong("time", System.currentTimeMillis())
+                    .toJobParameters();
+            BatchStatus status = launcher
+                    .run(job, parameters)
+                    .getStatus();
+            if (status.isUnsuccessful()) {
+                throw new JobExecutionException("Synchronization failed with status " + status);
+            }
+
+        }
+
     }
+
 }

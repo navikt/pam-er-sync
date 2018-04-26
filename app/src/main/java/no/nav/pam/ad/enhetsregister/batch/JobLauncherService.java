@@ -4,6 +4,7 @@ package no.nav.pam.ad.enhetsregister.batch;
 import no.nav.pam.ad.es.DatestampUtil;
 import org.springframework.batch.core.*;
 import org.springframework.batch.core.launch.JobLauncher;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -14,6 +15,9 @@ import java.util.concurrent.TimeUnit;
 @Service
 public class JobLauncherService {
 
+    @Value("${enhetsregister.timeout.millis:5000}")
+    private int timeoutMillis;
+
     private final JobLauncher launcher;
     private final Job job;
 
@@ -22,7 +26,7 @@ public class JobLauncherService {
         this.job = job;
     }
 
-    public void synchronize(DataSet dataSet, URL url, int timeoutMillis)
+    public void synchronize(DataSet dataSet, URL url)
             throws Exception {
 
         try (Downloader downloader = new Downloader(url)) {

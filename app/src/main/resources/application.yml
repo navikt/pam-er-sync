@@ -37,6 +37,7 @@ http:
     url: http://155.55.60.117:8088
 
 enhetsregister:
+  cron: ${PAM_ER_SYNC.ENHETSREGISTER.CRON:0 0 0 * * *}
   timeout:
     millis: ${PAM_ER_SYNC.ENHETSREGISTER.TIMEOUT:10000}
   hovedenhet:

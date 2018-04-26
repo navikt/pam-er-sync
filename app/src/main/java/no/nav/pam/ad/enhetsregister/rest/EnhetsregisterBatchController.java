@@ -23,9 +23,6 @@ public class EnhetsregisterBatchController {
 
     private static final Logger LOG = LoggerFactory.getLogger(EnhetsregisterBatchController.class);
 
-    @Value("${enhetsregister.timeout.millis:5000}")
-    private int timeoutMillis;
-
     private final JobLauncherService service;
     private final URL enhetsregisterHovedenhetUrl;
     private final URL enhetsregisterUnderenhetUrl;
@@ -47,20 +44,20 @@ public class EnhetsregisterBatchController {
 
     @PostMapping("/sync/hovedenheter")
     public ResponseEntity syncHovedenheter() {
-        return synchronize(DataSet.HOVEDENHET, enhetsregisterHovedenhetUrl, timeoutMillis);
+        return synchronize(DataSet.HOVEDENHET, enhetsregisterHovedenhetUrl);
     }
 
     @PostMapping("/sync/underenheter")
     public ResponseEntity syncUnderenheter() {
-        return synchronize(DataSet.UNDERENHET, enhetsregisterUnderenhetUrl, timeoutMillis);
+        return synchronize(DataSet.UNDERENHET, enhetsregisterUnderenhetUrl);
     }
 
-    private ResponseEntity synchronize(DataSet set, URL url, int timeoutMillis) {
+    private ResponseEntity synchronize(DataSet set, URL url) {
 
-        LOG.info("Synchronizing data set {} from source {} with timeout {}ms", set, url, timeoutMillis);
+        LOG.info("Synchronizing data set {} from source {}", set, url);
         try {
 
-            service.synchronize(set, url, timeoutMillis);
+            service.synchronize(set, url);
             return ResponseEntity.ok().build();
 
         } catch (Exception e) {

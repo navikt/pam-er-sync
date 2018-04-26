@@ -36,6 +36,40 @@ public class EnhetsregisterBatchControllerTest {
     }
 
     @Test
+    public void triggetDownloadOfHovedenheterAndProcessBatchJob() {
+
+        given().port(port)
+                .post("/enhetsregister/sync/hovedenheter")
+                .then()
+                .assertThat()
+                .statusCode(200);
+
+        Map<String, List<Enhet>> index = ((TestConfig.IndexerService) service).getIndex();
+        assertThat(index.keySet(), hasSize(1));
+
+        List<Enhet> entry = index.entrySet().iterator().next().getValue();
+        assertThat(entry, hasSize(6));
+        assertThat(entry.get(0).getOrganisasjonsnummer(), equalTo("976993888"));
+        assertThat(entry.get(0).getNavn(), equalTo("FINNØY KYRKJELEGE FELLESRÅD"));
+        assertThat(entry.get(0).getOrganisasjonsform(), equalTo("KIRK"));
+        assertThat(entry.get(0).getAntallAnsatte(), equalTo(68));
+        assertThat(entry.get(0).getOverordnetEnhet(), nullValue());
+        assertThat(entry.get(0).getAdresse(), notNullValue());
+        assertThat(entry.get(0).getAdresse().getAdresse(), equalTo("Hagatunet 4"));
+        assertThat(entry.get(0).getAdresse().getPostnummer(), equalTo("4160"));
+        assertThat(entry.get(0).getAdresse().getPoststed(), equalTo("FINNØY"));
+        assertThat(entry.get(0).getAdresse().getKommunenummer(), equalTo("1141"));
+        assertThat(entry.get(0).getAdresse().getKommune(), equalTo("FINNØY"));
+        assertThat(entry.get(0).getAdresse().getLandkode(), equalTo("NO"));
+        assertThat(entry.get(0).getAdresse().getLand(), equalTo("Norge"));
+        assertThat(entry.get(0).getPostAdresse(), nullValue());
+        assertThat(entry.get(0).getNaringskoder(), hasSize(1));
+        assertThat(entry.get(0).getNaringskoder().get(0).getKode(), equalTo("94.910"));
+        assertThat(entry.get(0).getNaringskoder().get(0).getBeskrivelse(), equalTo("Religiøse organisasjoner"));
+
+    }
+
+    @Test
     public void triggerDownloadOfUnderenheterAndProcessBatchJob() {
 
         given().port(port)

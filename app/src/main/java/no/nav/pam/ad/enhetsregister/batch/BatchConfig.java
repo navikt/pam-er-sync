@@ -20,11 +20,19 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.FileSystemResource;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 
 @Configuration
 @EnableBatchProcessing
 public class BatchConfig {
+
+    @Value("${enhetsregister.hovedenhet.url:http://data.brreg.no/enhetsregisteret/download/enheter}")
+    private String enhetsregisterHovedenhetUrl;
+
+    @Value("${enhetsregister.underenhet.url:http://data.brreg.no/enhetsregisteret/download/underenheter}")
+    private String enhetsregisterUnderenhetUrl;
 
     private final JobBuilderFactory jobBuilderFactory;
     private final StepBuilderFactory stepBuilderFactory;
@@ -97,4 +105,29 @@ public class BatchConfig {
                 .build();
     }
     // end::jobstep[]
+
+    /**
+     * Gives the URL to the location of Hovedenhet data. Override in custom config for testing if needed.
+     *
+     * @return A valid URL.
+     * @throws MalformedURLException If the configured URL is invalid.
+     */
+    @Bean(name = "enhetsregister.hovedenhet.url")
+    public URL getEnhetsregisterHovedenhetUrl()
+            throws MalformedURLException {
+        return new URL(enhetsregisterHovedenhetUrl);
+    }
+
+    /**
+     * Gives the URL to the location of Underenhet data. Override in custom config for testing if needed.
+     *
+     * @return A valid URL.
+     * @throws MalformedURLException If the configured URL is invalid.
+     */
+    @Bean(name = "enhetsregister.underenhet.url")
+    public URL getEnhetsregisterUnderenhetUrl()
+            throws MalformedURLException {
+        return new URL(enhetsregisterUnderenhetUrl);
+    }
+
 }

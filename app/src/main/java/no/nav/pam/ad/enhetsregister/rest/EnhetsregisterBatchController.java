@@ -54,12 +54,9 @@ public class EnhetsregisterBatchController {
 
     private ResponseEntity synchronize(DataSet set, URL url) {
 
-        LOG.info("Synchronizing data set {} from source {}", set, url);
         try {
-
             service.synchronize(set, url);
             return ResponseEntity.ok().build();
-
         } catch (Exception e) {
             LOG.error("Unable to synchronize data set {}", set, e);
             throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "Unable to synchronize", e);

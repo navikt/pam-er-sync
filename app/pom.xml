@@ -76,9 +76,8 @@
             <artifactId>guava</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.github.tomakehurst</groupId>
-            <artifactId>wiremock</artifactId>
-            <scope>test</scope>
+            <groupId>net.javacrumbs.shedlock</groupId>
+            <artifactId>shedlock-core</artifactId>
         </dependency>
         <dependency>
             <groupId>io.rest-assured</groupId>

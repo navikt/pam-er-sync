@@ -6,6 +6,8 @@ import org.apache.http.HttpEntity;
 import org.apache.http.entity.ContentType;
 import org.apache.http.nio.entity.NStringEntity;
 import org.apache.http.util.EntityUtils;
+import org.elasticsearch.action.admin.indices.create.CreateIndexRequest;
+import org.elasticsearch.action.admin.indices.create.CreateIndexResponse;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.bulk.BulkResponse;
@@ -46,6 +48,13 @@ public class ElasticSearchIndexClient extends RestHighLevelClient {
 
     public void shutdown() throws IOException {
         close();
+    }
+
+    public CreateIndexResponse createIndex(String index, String settings) throws IOException {
+        CreateIndexRequest request = new CreateIndexRequest(index);
+        request.source(settings, XContentType.JSON);
+
+        return indices().create(request);
     }
 
     public boolean deleteIndex(String... indices) throws IOException {

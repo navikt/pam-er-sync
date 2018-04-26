@@ -1,0 +1,43 @@
+{
+  "settings": {
+    "analysis": {
+      "analyzer": {
+        "enhetsnavn_analyzer": {
+          "type": "custom",
+          "tokenizer": "standard",
+          "filter": [
+            "lowercase",
+            "enhetsnavn_stop"
+          ]
+        }
+      },
+      "filter": {
+        "enhetsnavn_stop": {
+          "type": "stop",
+          "stopwords": [
+            "as",
+            "asa",
+            "sa",
+            "da",
+            "an",
+            "avd"
+          ],
+          "ignore_case": true
+        }
+      }
+    }
+  },
+  "mappings": {
+    "underenhet": {
+      "properties": {
+        "navn": {
+          "type": "text",
+          "analyzer": "enhetsnavn_analyzer"
+        },
+        "adresse.postnummer": {
+          "type": "keyword"
+        }
+      }
+    }
+  }
+}

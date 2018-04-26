@@ -1,5 +1,6 @@
 package no.nav.pam.ad.es;
 
+import com.google.common.io.CharStreams;
 import no.nav.pam.ad.enhetsregister.model.Enhet;
 import org.elasticsearch.action.bulk.BulkItemResponse;
 import org.elasticsearch.action.bulk.BulkResponse;
@@ -8,6 +9,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -23,6 +26,24 @@ public class IndexerService {
 
     public IndexerService(ElasticSearchIndexClient elasticSearchIndexClient) {
         this.elasticSearchIndexClient = elasticSearchIndexClient;
+    }
+
+    public void createAndConfigure(String indexDatestamp) throws IOException {
+        String index = INDEX_ALIAS + indexDatestamp;
+        LOG.info("Creating and configuring index {}", index);
+
+        String settings = loadJsonStringFromClasspath("/ESUnderenheterSetting.json");
+        if (!elasticSearchIndexClient.indexExists(index)) {
+            elasticSearchIndexClient.createIndex(index, settings);
+            LOG.info("Index {} was successfully created with settings and mappings", index);
+        }
+    }
+
+    private String loadJsonStringFromClasspath(String path) throws IOException {
+        try (InputStreamReader reader = new InputStreamReader(
+                getClass().getResourceAsStream(path), StandardCharsets.UTF_8)) {
+            return CharStreams.toString(reader);
+        }
     }
 
     public void replaceAlias(String indexDatestamp) throws IOException {

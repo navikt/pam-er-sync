@@ -63,12 +63,10 @@
                 <scope>test</scope>
             </dependency>
 
-            <!--TODO: REMOVE-->
             <dependency>
-                <groupId>com.github.tomakehurst</groupId>
-                <artifactId>wiremock</artifactId>
-                <version>2.7.1</version>
-                <scope>test</scope>
+                <groupId>net.javacrumbs.shedlock</groupId>
+                <artifactId>shedlock-core</artifactId>
+                <version>0.14.0</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

@@ -11,8 +11,6 @@ import org.springframework.batch.core.listener.JobExecutionListenerSupport;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
-
 @Component
 public class JobCompletionNotificationListener extends JobExecutionListenerSupport {
 
@@ -39,11 +37,12 @@ public class JobCompletionNotificationListener extends JobExecutionListenerSuppo
             }
             LOG.info("Total write count: {}, skip count {}", writeCount, skipCount);
 
-
-            if (jobExecution.getJobParameters().getParameters().containsKey("datestamp")) {
-                String datestamp = jobExecution.getJobParameters().getParameters().get("datestamp").toString();
+            if (jobExecution.getJobParameters().getParameters().containsKey(JobLauncherService.PARAM_DATESTAMP)) {
+                String datestamp = jobExecution.getJobParameters().getParameters().get(JobLauncherService.PARAM_DATESTAMP).toString();
 
                 try {
+                    Thread.sleep(10000);
+
                     int docCount = indexer.fetchDocCount(datestamp);
 
                     if (docCount >= writeCount) {
@@ -54,7 +53,7 @@ public class JobCompletionNotificationListener extends JobExecutionListenerSuppo
                         LOG.error("Write count {} is greater than index doc count {}. Skipping verification and aliasing.", writeCount, docCount);
                         // TODO: delete new index?
                     }
-                } catch (IOException e) {
+                } catch (Exception e) {
                     LOG.error("Failed to verify job", e);
                 }
             }

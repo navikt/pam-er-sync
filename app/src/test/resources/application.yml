@@ -5,7 +5,7 @@ config:
     allowCredentials: true
 pam:
   elasticsearch:
-    url: http://localhost:2219
+    url: https://pamsok-elasticsearch.nais.oera-q.local
     usemock: false
 spring:
   datasource:

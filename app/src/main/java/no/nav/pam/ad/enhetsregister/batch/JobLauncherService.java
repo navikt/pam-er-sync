@@ -15,6 +15,12 @@ import java.util.concurrent.TimeUnit;
 @Service
 public class JobLauncherService {
 
+    public static final String PARAM_TYPE = "type";
+    public static final String PARAM_FILENAME = "filename";
+    public static final String PARAM_DATESTAMP = "datestamp";
+
+    @Autowired
+    private JobLauncher jobLauncher;
     @Value("${enhetsregister.timeout.millis:5000}")
     private int timeoutMillis;
 
@@ -33,9 +39,9 @@ public class JobLauncherService {
 
             File file = downloader.download().get(timeoutMillis, TimeUnit.MILLISECONDS);
             JobParameters parameters = new JobParametersBuilder()
-                    .addString("type", dataSet.toString())
-                    .addString("filename", file.getAbsolutePath())
-                    .addString("datestamp", DatestampUtil.getDatestamp(LocalDate.now()))
+                    .addString(PARAM_TYPE, dataSet.toString())
+                    .addString(PARAM_FILENAME, file.getAbsolutePath())
+                    .addString(PARAM_DATESTAMP, DatestampUtil.getDatestamp(LocalDate.now()))
                     .addLong("time", System.currentTimeMillis())
                     .toJobParameters();
             BatchStatus status = launcher

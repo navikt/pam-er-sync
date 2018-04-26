@@ -2,7 +2,7 @@ package no.nav.pam.ad.enhetsregister.es;
 
 import no.nav.pam.ad.es.DatestampUtil;
 import no.nav.pam.ad.es.ElasticSearchIndexClient;
-import no.nav.pam.ad.es.IndexerService;
+import no.nav.pam.ad.es.ElasticSearchIndexerService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -24,13 +24,13 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class IndexerServiceTest {
+public class ElasticSearchIndexerServiceTest {
 
     @Mock
     ElasticSearchIndexClient client;
 
     @InjectMocks
-    IndexerService service;
+    ElasticSearchIndexerService service;
 
     @Captor
     ArgumentCaptor<String[]> captor;

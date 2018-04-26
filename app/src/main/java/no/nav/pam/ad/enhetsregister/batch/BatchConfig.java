@@ -97,7 +97,9 @@ public class BatchConfig {
     @Bean
     public Job importUserJob(
             JobCompletionNotificationListener completionNotificationListener,
-            JobExecutionListenerImpl executionListener) {
+            JobExecutionListenerImpl executionListener)
+            throws IOException {
+
         return jobBuilderFactory.get("importUserJob")
                 .incrementer(new RunIdIncrementer())
                 .listener(executionListener)

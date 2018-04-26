@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.Primary;
 
 import java.net.URL;
 import java.util.HashMap;
@@ -33,6 +34,7 @@ public class TestConfig {
         return EnhetsregisterBatchControllerTest.class.getResource("/enhetsregisteret.samples/underenheter.csv.gz");
     }
 
+    @Primary
     @Bean
     public no.nav.pam.ad.es.IndexerService indexerService() {
         return new IndexerService();
@@ -44,15 +46,19 @@ public class TestConfig {
      * <br/><br/>
      * Might need some more work if more advanced tests are to be written, for example, {@link #replaceAlias(String)} doesn't do anything.
      */
-    public static class IndexerService extends no.nav.pam.ad.es.IndexerService {
+    public static class IndexerService implements no.nav.pam.ad.es.IndexerService {
 
         private static final Logger LOG = LoggerFactory.getLogger(IndexerService.class);
         private static final String INDEX_ALIAS = "ALIAS";
 
         private final Map<String, List<Enhet>> index = new HashMap<>();
 
-        IndexerService() {
-            super(null); // Super is not to be used!
+        private IndexerService() {
+        }
+
+        @Override
+        public void createAndConfigure(String indexDatestamp) {
+            LOG.debug("createAndConfigure({}) = false", indexDatestamp);
         }
 
         @Override

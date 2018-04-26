@@ -1,6 +1,5 @@
 package no.nav.pam.ad.enhetsregister.batch;
 
-
 import no.nav.pam.ad.es.DatestampUtil;
 import org.springframework.batch.core.*;
 import org.springframework.batch.core.launch.JobLauncher;
@@ -19,8 +18,6 @@ public class JobLauncherService {
     public static final String PARAM_FILENAME = "filename";
     public static final String PARAM_DATESTAMP = "datestamp";
 
-    @Autowired
-    private JobLauncher jobLauncher;
     @Value("${enhetsregister.timeout.millis:5000}")
     private int timeoutMillis;
 

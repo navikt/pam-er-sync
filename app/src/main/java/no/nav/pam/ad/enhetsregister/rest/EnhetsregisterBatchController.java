@@ -39,9 +39,9 @@ public class EnhetsregisterBatchController {
 
         this.service = service;
         this.enhetsregisterHovedenhetUrl = enhetsregisterHovedenhetUrl;
-        LOG.info("Reading Hovedenhet from URL {}", enhetsregisterHovedenhetUrl);
+        LOG.info("Will read data set {} from URL {}", DataSet.HOVEDENHET, enhetsregisterHovedenhetUrl);
         this.enhetsregisterUnderenhetUrl = enhetsregisterUnderenhetUrl;
-        LOG.info("Reading Underenhet from URL {}", enhetsregisterUnderenhetUrl);
+        LOG.info("Will read data set {} from URL {}", DataSet.UNDERENHET, enhetsregisterUnderenhetUrl);
 
     }
 

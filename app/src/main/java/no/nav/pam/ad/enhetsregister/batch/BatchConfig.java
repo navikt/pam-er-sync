@@ -19,10 +19,14 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.InputStreamResource;
 
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.zip.GZIPInputStream;
 
 @Configuration
 @EnableBatchProcessing
@@ -47,13 +51,15 @@ public class BatchConfig {
     @Bean
     @StepScope
     public FlatFileItemReader<CsvEnhet> reader(@Value("#{jobParameters['type']}") String type,
-                                               @Value("#{jobParameters['filename']}") String filename) {
+                                               @Value("#{jobParameters['filename']}") String filename)
+            throws IOException {
 
         final DataSet enhet = DataSet.valueOf(type);
 
         FlatFileItemReader<CsvEnhet> reader = new FlatFileItemReader<>();
         reader.setEncoding(StandardCharsets.UTF_8.displayName());
         reader.setResource(new FileSystemResource(filename));
+        reader.setResource(new InputStreamResource(new GZIPInputStream(new FileInputStream(filename))));
         reader.setLineMapper(new DefaultLineMapper<CsvEnhet>() {{
             setLineTokenizer(new DelimitedLineTokenizer() {{
                 reader.setLinesToSkip(1);
@@ -66,6 +72,7 @@ public class BatchConfig {
             }});
         }});
         return reader;
+
     }
 
     @Bean
@@ -86,23 +93,29 @@ public class BatchConfig {
 
     // tag::jobstep[]
     @Bean
-    public Job importUserJob(JobCompletionNotificationListener listener) {
+    public Job importUserJob(JobCompletionNotificationListener listener)
+            throws IOException {
+
         return jobBuilderFactory.get("importUserJob")
                 .incrementer(new RunIdIncrementer())
                 .listener(listener)
                 .flow(step1())
                 .end()
                 .build();
+
     }
 
     @Bean
-    public Step step1() {
+    public Step step1()
+            throws IOException {
+
         return stepBuilderFactory.get("step1")
                 .<CsvEnhet, Enhet>chunk(1000)
                 .reader(reader(null, null))
                 .processor(processor())
                 .writer(writer(null))
                 .build();
+
     }
     // end::jobstep[]
 

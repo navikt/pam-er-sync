@@ -12,7 +12,6 @@ import java.nio.channels.ReadableByteChannel;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.zip.GZIPInputStream;
 
 /**
  * A generic one-off downloader, intended to be used as an {@code AutoCloseable}.
@@ -57,7 +56,7 @@ class Downloader implements AutoCloseable {
 
             try {
 
-                try (ReadableByteChannel channel = Channels.newChannel(new GZIPInputStream(url.openStream()));
+                try (ReadableByteChannel channel = Channels.newChannel(url.openStream());
                      FileOutputStream out = new FileOutputStream(file)) {
 
                     long started = System.currentTimeMillis();

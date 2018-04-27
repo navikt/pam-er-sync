@@ -20,7 +20,7 @@ public class JobLauncherService {
 
     private static final String PARAM_TYPE = "type";
     private static final String PARAM_FILENAME = "filename";
-    private static final String PARAM_DATESTAMP = "datestamp";
+    static final String PARAM_DATESTAMP = "datestamp";
 
     @Value("${enhetsregister.timeout.millis:5000}")
     private int timeoutMillis;

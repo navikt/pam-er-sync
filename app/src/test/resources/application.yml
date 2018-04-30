@@ -5,7 +5,7 @@ config:
     allowCredentials: true
 pam:
   elasticsearch:
-    url: http://localhost:2218/
+    url: http://localhost:2218
     usemock: false
 spring:
   datasource:

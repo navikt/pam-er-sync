@@ -10,7 +10,6 @@ import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.index.IndexRequest;
-import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.client.Response;
 import org.elasticsearch.client.ResponseException;
 import org.elasticsearch.client.RestClientBuilder;
@@ -118,19 +117,12 @@ public class ElasticsearchIndexClient extends RestHighLevelClient implements Ind
 
     }
 
-    public IndexResponse index(Enhet content, String index) throws IOException {
-
-        IndexRequest request = new IndexRequest(index, UNDERENHET_TYPE, content.getOrganisasjonsnummer())
-                .source(objectMapper.writeValueAsString(content), XContentType.JSON);
-        return index(request);
-    }
-
     @Override
     public int fetchIndexDocCount(String index)
             throws IOException {
 
         String lowerCaseIndex = index.toLowerCase();
-        getLowLevelClient().performRequest("POST", "/"+lowerCaseIndex+"/_refresh");
+        getLowLevelClient().performRequest("POST", "/" + lowerCaseIndex + "/_refresh");
         Response response = getLowLevelClient().performRequest("GET", "/_cat/indices/" + lowerCaseIndex);
         String line = EntityUtils.toString(response.getEntity());
         return Integer.parseInt(line.split(" ")[6]);

@@ -60,7 +60,7 @@ public class JobCompletionNotificationListener extends JobExecutionListenerSuppo
                 service.replaceAlias(prefix, datestamp);
             } else {
                 LOG.error("Write count {} is greater than index doc count {}. Skipping verification, aliasing and deleting the new index.", writeCount, docCount);
-                service.deleteIndexWithDatestamp(datestamp);
+                service.deleteIndexWithDatestamp(prefix, datestamp);
             }
 
         } catch (Exception e) {

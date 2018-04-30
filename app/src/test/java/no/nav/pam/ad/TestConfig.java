@@ -53,7 +53,7 @@ public class TestConfig {
         @Override
         public void createIndex(String index, String settings) {
 
-            LOG.debug("createIndex({}, {})", index, settings);
+            LOG.debug("createIndex({}, settings)", index);
             storage.put(index, new ArrayList<>());
 
         }
@@ -61,10 +61,7 @@ public class TestConfig {
         @Override
         public void deleteIndex(String... indices) {
 
-            LOG.debug("deleteIndex({})", (Object[]) indices);
-            for (String index : indices) {
-                storage.remove(index);
-            }
+            LOG.debug("deleteIndex({}) = false", (Object[]) indices); // We're keeping the indices for inspection.
 
         }
 

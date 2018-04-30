@@ -95,11 +95,10 @@ public class IndexService {
 
     }
 
-/*
-    public void deleteIndex(String index) throws IOException {
-        client.deleteIndex(index);
+    public void deleteIndexWithDatestamp(String prefix, String datestamp)
+            throws IOException {
+        client.deleteIndex(prefix + datestamp);
     }
-*/
 
     public void deleteOlderIndices(String prefix)
             throws IOException {

@@ -9,7 +9,7 @@
     <logger name="no.nav.pam" level="INFO"/>
     <logger name="org.hibernate.SQL" level="INFO"/>
     <logger name="no.nav.pam.ad.enhetsregister.batch.Downloader" level="DEBUG"/>
-    <logger name="no.nav.pam.ad.TestConfig$IndexerService" level="DEBUG"/>
+    <logger name="no.nav.pam.ad.TestConfig$IndexClient" level="DEBUG"/>
 
     <root level="INFO">
         <appender-ref ref="CONSOLE"/>

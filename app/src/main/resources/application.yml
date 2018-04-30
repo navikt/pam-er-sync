@@ -35,3 +35,34 @@ http:
   proxy:
     enabled: true
     url: http://155.55.60.117:8088
+
+# Management endpoints for NAIS.
+management:
+  endpoints:
+    enabled-by-default: false
+    web:
+      base-path: /actuator
+      exposure:
+        include: health, info, prometheus
+  endpoint:
+      prometheus:
+        enabled: true
+      health:
+        enabled: true
+      info:
+        enabled: true
+  metrics:
+    enable:
+      jvm:
+        classes:
+          loaded: false
+          unloaded: false
+        threads:
+          daemon: false
+          peak: false
+      process:
+        start:
+          time: false
+    export:
+      prometheus:
+        enabled: true

@@ -20,6 +20,9 @@
     <properties>
         <elasticsearch.version>6.2.4</elasticsearch.version>
         <guava.version>20.0</guava.version>
+        <micrometer-registry-prometheus.version>1.0.1</micrometer-registry-prometheus.version>
+        <prometheus.version>0.3.0</prometheus.version>
+        <logstash-logback-encoder.version>5.1</logstash-logback-encoder.version>
     </properties>
 
     <distributionManagement>
@@ -53,6 +56,25 @@
                 <groupId>net.javacrumbs.shedlock</groupId>
                 <artifactId>shedlock-core</artifactId>
                 <version>0.14.0</version>
+            </dependency>
+
+            <!-- Micrometer/Prometheus -->
+            <dependency>
+                <groupId>io.micrometer</groupId>
+                <artifactId>micrometer-registry-prometheus</artifactId>
+                <version>${micrometer-registry-prometheus.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.prometheus</groupId>
+                <artifactId>simpleclient_hotspot</artifactId>
+                <version>${prometheus.version}</version>
+            </dependency>
+
+            <!-- Logstash -->
+            <dependency>
+                <groupId>net.logstash.logback</groupId>
+                <artifactId>logstash-logback-encoder</artifactId>
+                <version>${logstash-logback-encoder.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

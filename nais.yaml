@@ -1,0 +1,28 @@
+name: pam-er-sync
+image: repo.adeo.no:5443/pam-er-sync
+replicas:
+    min: 2
+    max: 2
+    cpuThresholdPercentage: 50
+prometheus:
+    enabled: true
+    path: /actuator/prometheus
+port: 9011
+healthcheck:
+    liveness:
+      initialDelay: 120
+      path: /actuator/health
+    readiness:
+      initialDelay: 120
+      path: /actuator/info
+resources:
+    limits:
+      cpu: 1000m
+      memory: 1000Mi
+    requests:
+      cpu: 500m
+      memory: 500Mi
+fasitResources:
+  used:
+  - alias: "pam-er-sync-config"
+    resourceType: ApplicationProperties

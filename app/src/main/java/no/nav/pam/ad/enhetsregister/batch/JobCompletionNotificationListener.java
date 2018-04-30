@@ -59,14 +59,14 @@ public class JobCompletionNotificationListener extends JobExecutionListenerSuppo
                 LOG.info("Verifying the new index and replacing the alias.");
                 service.replaceAlias(prefix, datestamp);
             } else {
-                LOG.error("Write count {} is greater than index doc count {}. Skipping verification and aliasing.", writeCount, docCount);
-                // TODO: delete new index?
+                LOG.error("Write count {} is greater than index doc count {}. Skipping verification, aliasing and deleting the new index.", writeCount, docCount);
+                service.deleteIndexWithDatestamp(datestamp);
             }
 
         } catch (Exception e) {
             LOG.error("Failed to verify job", e);
         }
 
-
     }
+
 }

@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
-@RequestMapping("/enhetsregister")
+@RequestMapping("/api/enhetsregister")
 public class EnhetsregisterBatchController {
 
     private static final Logger LOG = LoggerFactory.getLogger(EnhetsregisterBatchController.class);
@@ -23,7 +23,7 @@ public class EnhetsregisterBatchController {
     @Autowired
     private JobLauncherService jobLauncherService;
 
-    @PostMapping("/sync/underenheter")
+    @PostMapping("/sync")
     public ResponseEntity syncUnderenheter(@RequestParam(name = "filename") String filename) {
         LOG.debug("Start Syncing underenheter");
 

@@ -5,13 +5,13 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Adresse {
 
-    private String adresse;
-    private String postnummer;
-    private String poststed;
-    private String kommunenummer;
-    private String kommune;
-    private String landkode;
-    private String land;
+    private final String adresse;
+    private final String postnummer;
+    private final String poststed;
+    private final String kommunenummer;
+    private final String kommune;
+    private final String landkode;
+    private final String land;
 
     public Adresse(String adresse, String postnummer, String poststed, String kommunenummer, String kommune, String landkode, String land) {
         this.adresse = adresse;

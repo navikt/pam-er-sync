@@ -2,8 +2,8 @@ package no.nav.pam.ad.enhetsregister.model;
 
 public class Naringskode {
 
-    private String kode;
-    private String beskrivelse;
+    private final String kode;
+    private final String beskrivelse;
 
     public Naringskode(String kode, String beskrivelse) {
         this.kode = kode;

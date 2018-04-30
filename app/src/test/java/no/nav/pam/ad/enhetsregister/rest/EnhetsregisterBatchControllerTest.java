@@ -2,7 +2,8 @@ package no.nav.pam.ad.enhetsregister.rest;
 
 import no.nav.pam.ad.TestConfig;
 import no.nav.pam.ad.enhetsregister.model.Enhet;
-import no.nav.pam.ad.es.IndexerService;
+import no.nav.pam.ad.es.IndexClient;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -28,11 +29,16 @@ public class EnhetsregisterBatchControllerTest {
     private int port;
 
     @Autowired
-    private IndexerService service;
+    private IndexClient client;
 
     @Before
     public void before() {
-        assertThat(service, instanceOf(TestConfig.IndexerService.class));
+        assertThat(client, instanceOf(TestConfig.IndexClient.class));
+    }
+
+    @After
+    public void after() {
+        ((TestConfig.IndexClient) client).getStorage().clear();
     }
 
     @Test
@@ -44,8 +50,9 @@ public class EnhetsregisterBatchControllerTest {
                 .assertThat()
                 .statusCode(200);
 
-        Map<String, List<Enhet>> index = ((TestConfig.IndexerService) service).getIndex();
+        Map<String, List<Enhet>> index = ((TestConfig.IndexClient) client).getStorage();
         assertThat(index.keySet(), hasSize(1));
+        assertThat(index.keySet().iterator().next(), startsWith("HOVED"));
 
         List<Enhet> entry = index.entrySet().iterator().next().getValue();
         assertThat(entry, hasSize(6));
@@ -78,10 +85,11 @@ public class EnhetsregisterBatchControllerTest {
                 .assertThat()
                 .statusCode(200);
 
-        Map<String, List<Enhet>> index = ((TestConfig.IndexerService) service).getIndex();
+        Map<String, List<Enhet>> index = ((TestConfig.IndexClient) client).getStorage();
         assertThat(index.keySet(), hasSize(1));
 
         List<Enhet> entry = index.entrySet().iterator().next().getValue();
+        assertThat(index.keySet().iterator().next(), startsWith("UNDER"));
         assertThat(entry, hasSize(5));
         assertThat(entry.get(0).getOrganisasjonsnummer(), equalTo("917297193"));
         assertThat(entry.get(0).getNavn(), equalTo("NG KIWI NORD AS AVD 169 HESSENG"));

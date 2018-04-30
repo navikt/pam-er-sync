@@ -2,7 +2,7 @@ package no.nav.pam.ad.enhetsregister.batch;
 
 
 import no.nav.pam.ad.enhetsregister.model.Enhet;
-import no.nav.pam.ad.es.IndexerService;
+import no.nav.pam.ad.es.IndexService;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -12,16 +12,18 @@ import java.util.List;
 public class EnhetJsonWriter implements ItemWriter<Enhet> {
 
     @Autowired
-    private IndexerService indexer;
+    private IndexService service;
 
-    private String datestamp;
+    private final String prefix;
+    private final String datestamp;
 
-    void setDatestamp(String datestamp) {
+    EnhetJsonWriter(String prefix, String datestamp) {
+        this.prefix = prefix;
         this.datestamp = datestamp;
     }
 
     @Override
     public void write(List<? extends Enhet> list) throws Exception {
-        indexer.indexCompanies(new ArrayList<>(list), datestamp);
+        service.indexCompanies(prefix, datestamp, new ArrayList<>(list));
     }
 }

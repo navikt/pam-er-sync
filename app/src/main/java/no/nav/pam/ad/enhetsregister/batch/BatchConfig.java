@@ -29,6 +29,8 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.zip.GZIPInputStream;
 
+import static no.nav.pam.ad.enhetsregister.batch.JobLauncherService.*;
+
 @Configuration
 @EnableBatchProcessing
 @EnableScheduling
@@ -52,11 +54,11 @@ public class BatchConfig {
     // tag::readerwriterprocessor[]
     @Bean
     @StepScope
-    public FlatFileItemReader<CsvEnhet> reader(@Value("#{jobParameters['type']}") String type,
-                                               @Value("#{jobParameters['filename']}") String filename)
+    public FlatFileItemReader<CsvEnhet> reader(@Value("#{jobParameters['" + PARAM_PREFIX + "']}") String prefix,
+                                               @Value("#{jobParameters['" + PARAM_FILENAME + "']}") String filename)
             throws IOException {
 
-        final DataSet enhet = DataSet.valueOf(type);
+        final DataSet enhet = DataSet.valueOf(prefix);
 
         FlatFileItemReader<CsvEnhet> reader = new FlatFileItemReader<>();
         reader.setEncoding(StandardCharsets.UTF_8.displayName());
@@ -84,11 +86,11 @@ public class BatchConfig {
 
     @Bean
     @StepScope
-    public EnhetJsonWriter writer(@Value("#{jobParameters['datestamp']}") String datestamp) {
-        EnhetJsonWriter writer = new EnhetJsonWriter();
-        writer.setDatestamp(datestamp);
-
-        return writer;
+    public EnhetJsonWriter writer(
+            @Value("#{jobParameters['" + PARAM_PREFIX + "']}") String prefix,
+            @Value("#{jobParameters['" + PARAM_DATESTAMP + "']}") String datestamp
+    ) {
+        return new EnhetJsonWriter(prefix, datestamp);
     }
 
     // end::readerwriterprocessor[]
@@ -118,7 +120,7 @@ public class BatchConfig {
                 .<CsvEnhet, Enhet>chunk(1000)
                 .reader(reader(null, null))
                 .processor(processor())
-                .writer(writer(null))
+                .writer(writer(null, null))
                 .build();
 
     }

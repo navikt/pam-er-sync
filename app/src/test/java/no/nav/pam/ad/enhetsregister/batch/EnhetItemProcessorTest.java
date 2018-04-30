@@ -10,7 +10,7 @@ import org.junit.Test;
 public class EnhetItemProcessorTest {
 
     @Test
-    public void should_map_underenhet_properly() throws Exception {
+    public void should_map_underenhet_properly() {
 
         EnhetItemProcessor processor = new EnhetItemProcessor();
 

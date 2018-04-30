@@ -1,6 +1,6 @@
 package no.nav.pam.ad.enhetsregister.batch;
 
-import no.nav.pam.ad.es.DatestampUtil;
+import no.nav.pam.ad.es.Datestamp;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.*;
@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.net.URL;
-import java.time.LocalDate;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -18,8 +17,8 @@ public class JobLauncherService {
 
     private static final Logger LOG = LoggerFactory.getLogger(JobLauncherService.class);
 
-    private static final String PARAM_TYPE = "type";
-    private static final String PARAM_FILENAME = "filename";
+    static final String PARAM_PREFIX = "type";
+    static final String PARAM_FILENAME = "filename";
     static final String PARAM_DATESTAMP = "datestamp";
 
     @Value("${enhetsregister.timeout.millis:5000}")
@@ -36,14 +35,16 @@ public class JobLauncherService {
     public void synchronize(DataSet dataSet, URL url)
             throws Exception {
 
-        LOG.info("Synchronizing data set {} from source {} using timeout {}ms", dataSet, url, timeoutMillis);
+        LOG.info("Synchronizing data set {} from source {} using timeout {} ms", dataSet, url, timeoutMillis);
+        long start = System.currentTimeMillis();
         try (Downloader downloader = new Downloader(url)) {
 
             File file = downloader.download().get(timeoutMillis, TimeUnit.MILLISECONDS);
+            LOG.info("Downloaded {} bytes to temporary file {} in {} ms", file.length(), file.getAbsolutePath(), System.currentTimeMillis() - start);
             JobParameters parameters = new JobParametersBuilder()
-                    .addString(PARAM_TYPE, dataSet.toString())
+                    .addString(PARAM_PREFIX, dataSet.toString())
                     .addString(PARAM_FILENAME, file.getAbsolutePath())
-                    .addString(PARAM_DATESTAMP, DatestampUtil.getDatestamp(LocalDate.now()))
+                    .addString(PARAM_DATESTAMP, Datestamp.getCurrent())
                     .addLong("time", System.currentTimeMillis())
                     .toJobParameters();
             BatchStatus status = launcher

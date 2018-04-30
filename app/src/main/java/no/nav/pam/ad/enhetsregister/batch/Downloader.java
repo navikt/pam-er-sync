@@ -61,7 +61,7 @@ class Downloader implements AutoCloseable {
 
                     long started = System.currentTimeMillis();
                     out.getChannel().transferFrom(channel, 0, Long.MAX_VALUE);
-                    LOG.debug("{} bytes written to file {} in {}ms", out.getChannel().size(), file.getAbsoluteFile(), System.currentTimeMillis() - started);
+                    LOG.debug("{} bytes written to file {} in {} ms", out.getChannel().size(), file.getAbsoluteFile(), System.currentTimeMillis() - started);
 
                 }
                 return file;

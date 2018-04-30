@@ -4,6 +4,9 @@ import no.nav.pam.ad.config.AppConfig;
 import no.nav.pam.ad.enhetsregister.batch.BatchConfig;
 import no.nav.pam.ad.enhetsregister.model.Enhet;
 import no.nav.pam.ad.enhetsregister.rest.EnhetsregisterBatchControllerTest;
+import org.elasticsearch.action.DocWriteRequest;
+import org.elasticsearch.action.bulk.BulkItemResponse;
+import org.elasticsearch.action.bulk.BulkResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -12,6 +15,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Primary;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,78 +40,83 @@ public class TestConfig {
 
     @Primary
     @Bean
-    public no.nav.pam.ad.es.IndexerService indexerService() {
-        return new IndexerService();
+    public IndexClient indexClient() {
+        return new IndexClient();
     }
 
-    /**
-     * A simple extension of {@link IndexerService} for convenient access to the resulting "index". Run your test with a custom
-     * {@link IndexerService} bean configuration to use, see {@link no.nav.pam.ad.enhetsregister.rest.EnhetsregisterBatchControllerTest}.
-     * <br/><br/>
-     * Might need some more work if more advanced tests are to be written, for example, {@link #replaceAlias(String)} doesn't do anything.
-     */
-    public static class IndexerService implements no.nav.pam.ad.es.IndexerService {
+    public static class IndexClient implements no.nav.pam.ad.es.IndexClient {
 
-        private static final Logger LOG = LoggerFactory.getLogger(IndexerService.class);
-        private static final String INDEX_ALIAS = "ALIAS";
+        private static final Logger LOG = LoggerFactory.getLogger(IndexClient.class);
 
-        private final Map<String, List<Enhet>> index = new HashMap<>();
-
-        private IndexerService() {
-        }
+        private final Map<String, List<Enhet>> storage = new HashMap<>();
 
         @Override
-        public void createAndConfigure(String indexDatestamp) {
-            LOG.debug("createAndConfigure({}) = false", indexDatestamp);
-        }
+        public void createIndex(String index, String settings) {
 
-        @Override
-        public void replaceAlias(String indexDatestamp) {
-            LOG.debug("replaceAlias({}) = false", indexDatestamp);
-        }
-
-        @Override
-        public int fetchDocCount(String indexDatestamp) {
-
-            List<Enhet> list = index.get(INDEX_ALIAS + indexDatestamp);
-            int docCount = list == null ? 0 : list.size();
-            LOG.debug("fetchDocCount({}) = {}", indexDatestamp, docCount);
-            return docCount;
+            LOG.debug("createIndex({}, {})", index, settings);
+            storage.put(index, new ArrayList<>());
 
         }
 
         @Override
-        public void indexCompanies(List<Enhet> companyList, String indexDatestamp) {
+        public void deleteIndex(String... indices) {
 
-            index.put(INDEX_ALIAS + indexDatestamp, companyList);
-            LOG.debug("indexCompanies({}, {}) = true", companyList.size(), indexDatestamp);
-
-        }
-
-        @Override
-        public void deleteIndex(String index) {
-
-            List<Enhet> removed = this.index.remove(index);
-            LOG.debug("deleteIndex({}) = {}", index, removed != null);
+            LOG.debug("deleteIndex({})", (Object[]) indices);
+            for (String index : indices) {
+                storage.remove(index);
+            }
 
         }
 
         @Override
-        public void deleteOlderIndices() {
+        public boolean indexExists(String index) {
 
-            LOG.debug("deleteOlderIndices() = false");
+            boolean exists = storage.containsKey(index);
+            LOG.debug("indexExists({}) = {}", index, exists);
+            return exists;
 
         }
 
-        /**
-         * Get the contents of the "index".
-         *
-         * @return The "index", with alias + timestamp as key(s).
-         */
-        public Map<String, List<Enhet>> getIndex() {
-            return index;
+        @Override
+        public void replaceAlias(String alias, String indexDatestamp) {
+
+            LOG.debug("replaceAlias({}, {})", alias, indexDatestamp);
+
+        }
+
+        @Override
+        public BulkResponse indexBulk(List<Enhet> contents, String index) {
+
+            LOG.debug("indexBulk({}, {}) = {}", contents.size(), index, DocWriteRequest.OpType.CREATE);
+            storage.put(index, contents);
+            BulkItemResponse[] responses = new BulkItemResponse[]{
+                    new BulkItemResponse(1337, DocWriteRequest.OpType.CREATE, (BulkItemResponse.Failure) null)
+            };
+            return new BulkResponse(responses, 0);
+        }
+
+        @Override
+        public int fetchIndexDocCount(String index) {
+
+            List<Enhet> content = storage.get(index);
+            int count = content == null ? 0 : content.size();
+            LOG.info("fetchIndexDocCount({}) = {}", index, count);
+            return 0;
+        }
+
+        @Override
+        public List<String> fetchAllIndicesStartingWith(String name) {
+
+            LOG.info("fetchAllIndicesStartingWith({}) = null", name);
+            return null;
+
+        }
+
+        public Map<String, List<Enhet>> getStorage() {
+            return storage;
         }
 
     }
+
 
 }

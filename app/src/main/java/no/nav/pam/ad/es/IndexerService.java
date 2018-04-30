@@ -80,11 +80,15 @@ public class IndexerService {
                 success++;
             }
         }
-        LOG.info("Indexed {} successfully and {} failed, index: {}", success, failed, index);
+        LOG.debug("Indexed {} successfully and {} failed, index: {}", success, failed, index);
     }
 
     public void deleteIndex(String index) throws IOException {
         elasticSearchIndexClient.deleteIndex(index);
+    }
+
+    public void deleteIndexWithDatestamp(String datestamp) throws IOException {
+        elasticSearchIndexClient.deleteIndex(INDEX_ALIAS+datestamp);
     }
 
     public void deleteOlderIndices() throws IOException {

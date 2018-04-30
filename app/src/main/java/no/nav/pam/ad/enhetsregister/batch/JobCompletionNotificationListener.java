@@ -21,6 +21,9 @@ public class JobCompletionNotificationListener extends JobExecutionListenerSuppo
 
     @Override
     public void afterJob(JobExecution jobExecution) {
+
+        String datestamp = null;
+
         if (jobExecution.getStatus() == BatchStatus.COMPLETED) {
 
             LOG.info("!!! JOB FINISHED! Time to verify the results");
@@ -34,11 +37,9 @@ public class JobCompletionNotificationListener extends JobExecutionListenerSuppo
             LOG.info("Total write count: {}, skip count {}", writeCount, skipCount);
 
             if (jobExecution.getJobParameters().getParameters().containsKey(JobLauncherService.PARAM_DATESTAMP)) {
-                String datestamp = jobExecution.getJobParameters().getParameters().get(JobLauncherService.PARAM_DATESTAMP).toString();
+                datestamp = jobExecution.getJobParameters().getParameters().get(JobLauncherService.PARAM_DATESTAMP).toString();
 
                 try {
-                    Thread.sleep(10000);
-
                     int docCount = indexer.fetchDocCount(datestamp);
 
                     if (docCount >= writeCount) {
@@ -46,13 +47,16 @@ public class JobCompletionNotificationListener extends JobExecutionListenerSuppo
                         LOG.info("Verifying the new index and replacing the alias.");
                         indexer.replaceAlias(datestamp);
                     } else {
-                        LOG.error("Write count {} is greater than index doc count {}. Skipping verification and aliasing.", writeCount, docCount);
-                        // TODO: delete new index?
+                        LOG.error("Write count {} is greater than index doc count {}. Skipping verification, aliasing and deleting the new index.", writeCount, docCount);
+                        indexer.deleteIndexWithDatestamp(datestamp);
                     }
                 } catch (Exception e) {
                     LOG.error("Failed to verify job", e);
                 }
             }
+        } else {
+            LOG.error("Batch job for indexing didn't complete.");
         }
     }
+
 }

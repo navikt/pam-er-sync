@@ -106,6 +106,7 @@ public class ElasticSearchIndexClient extends RestHighLevelClient {
     }
 
     public int fetchIndexDocCount(String index) throws IOException {
+        getLowLevelClient().performRequest("POST", "/"+index+"/_refresh");
         Response response = getLowLevelClient().performRequest("GET", "/_cat/indices/" + index);
         String line = EntityUtils.toString(response.getEntity());
         String[] tokenized = line.split(" ");

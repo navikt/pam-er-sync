@@ -19,7 +19,6 @@ import javax.net.ssl.X509TrustManager;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
-import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 
 @Configuration
@@ -57,11 +56,11 @@ public class AppConfig {
     private X509TrustManager mockX509TrustManager() {
         return new X509TrustManager() {
             @Override
-            public void checkClientTrusted(X509Certificate[] x509Certificates, String s) throws CertificateException {
+            public void checkClientTrusted(X509Certificate[] x509Certificates, String s) {
             }
 
             @Override
-            public void checkServerTrusted(X509Certificate[] x509Certificates, String s) throws CertificateException {
+            public void checkServerTrusted(X509Certificate[] x509Certificates, String s) {
             }
 
             @Override

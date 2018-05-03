@@ -8,15 +8,15 @@ import java.util.List;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Enhet {
 
-    private String organisasjonsnummer;
-    private String navn;
-    private String organisasjonsform;
-    private Integer antallAnsatte;
-    private String overordnetEnhet;
+    private final String organisasjonsnummer;
+    private final String navn;
+    private final String organisasjonsform;
+    private final Integer antallAnsatte;
+    private final String overordnetEnhet;
 
-    private Adresse adresse;
-    private Adresse postAdresse;
-    private List<Naringskode> naringskoder = new ArrayList<>();
+    private final Adresse adresse;
+    private final Adresse postAdresse;
+    private final List<Naringskode> naringskoder = new ArrayList<>();
 
 
     public Enhet(String organisasjonsnummer, String navn, String organisasjonsform, Integer antallAnsatte, String overordnetEnhet, Adresse adresse, Adresse postAdresse) {
@@ -26,6 +26,7 @@ public class Enhet {
         this.antallAnsatte = antallAnsatte;
         this.overordnetEnhet = overordnetEnhet;
         this.adresse = adresse;
+        this.postAdresse = postAdresse;
     }
 
     public String getOrganisasjonsnummer() {

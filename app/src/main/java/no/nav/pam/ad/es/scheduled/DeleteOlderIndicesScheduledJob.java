@@ -1,7 +1,8 @@
 package no.nav.pam.ad.es.scheduled;
 
 import net.javacrumbs.shedlock.core.SchedulerLock;
-import no.nav.pam.ad.es.IndexerService;
+import no.nav.pam.ad.enhetsregister.batch.DataSet;
+import no.nav.pam.ad.es.IndexService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,10 +18,10 @@ public class DeleteOlderIndicesScheduledJob {
 
     private static final Logger LOG = LoggerFactory.getLogger(DeleteOlderIndicesScheduledJob.class);
 
-    private IndexerService indexerService;
+    private final IndexService indexerService;
 
     @Autowired
-    public DeleteOlderIndicesScheduledJob(IndexerService indexerService) {
+    public DeleteOlderIndicesScheduledJob(IndexService indexerService) {
         this.indexerService = indexerService;
     }
 
@@ -29,7 +30,9 @@ public class DeleteOlderIndicesScheduledJob {
     public void deleteOlderIndices() {
 
         try {
-            indexerService.deleteOlderIndices();
+            for (DataSet set : DataSet.values()) {
+                indexerService.deleteOlderIndices(set.toString());
+            }
             LOG.info("Older indices are deleted.");
         } catch (IOException e) {
             LOG.error("Failed to execute job deleteOlderIndices.", e);

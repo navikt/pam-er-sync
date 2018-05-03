@@ -35,3 +35,12 @@ http:
   proxy:
     enabled: true
     url: http://155.55.60.117:8088
+
+enhetsregister:
+  cron: ${PAM_ER_SYNC.ENHETSREGISTER.CRON:0 0 0 * * *}
+  timeout:
+    millis: ${PAM_ER_SYNC.ENHETSREGISTER.TIMEOUT:10000}
+  hovedenhet:
+    url:  ${PAM_ER_SYNC.ENHETSREGISTER.HOVEDENHET.URL:"http://data.brreg.no/enhetsregisteret/download/enheter"}
+  underenhet:
+    url: ${PAM_ER_SYNC.ENHETSREGISTER.UNDERENHET.URL:"http://data.brreg.no/enhetsregisteret/download/underenheter"}

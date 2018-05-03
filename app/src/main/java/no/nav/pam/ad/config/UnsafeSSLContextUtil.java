@@ -9,18 +9,17 @@ import javax.net.ssl.X509TrustManager;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
-import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 
 /**
  * Only use the provided objects in dev/test environments.
  */
-public class UnsafeSSLContextUtil {
+class UnsafeSSLContextUtil {
 
     /**
      * @return a new SSLContext using the provided trust manager instance, and otherwise defaults
      */
-    public static SSLContext newSSLContext(X509TrustManager manager)
+    private static SSLContext newSSLContext(X509TrustManager manager)
             throws NoSuchAlgorithmException, KeyManagementException {
         SSLContext sc = SSLContext.getInstance("SSL");
         sc.init(null, new TrustManager[]{manager}, new SecureRandom());
@@ -30,14 +29,14 @@ public class UnsafeSSLContextUtil {
     /**
      * @return an X509TrustManager which trusts all clients and servers unconditionally.
      */
-    public static X509TrustManager newUnsafeTrustManager() {
+    private static X509TrustManager newUnsafeTrustManager() {
         return new X509TrustManager() {
             @Override
-            public void checkClientTrusted(X509Certificate[] x509Certificates, String s) throws CertificateException {
+            public void checkClientTrusted(X509Certificate[] x509Certificates, String s) {
             }
 
             @Override
-            public void checkServerTrusted(X509Certificate[] x509Certificates, String s) throws CertificateException {
+            public void checkServerTrusted(X509Certificate[] x509Certificates, String s) {
             }
 
             @Override
@@ -51,7 +50,7 @@ public class UnsafeSSLContextUtil {
      * @return an <code>HttpClientBuilder</code> preconfigured to accept all SSL certificates and hostnames
      * without verification.
      */
-    public static HttpClientBuilder unsafeHttpClientBuilder() throws NoSuchAlgorithmException, KeyManagementException {
+    static HttpClientBuilder unsafeHttpClientBuilder() throws NoSuchAlgorithmException, KeyManagementException {
         SSLContext sc = newSSLContext(newUnsafeTrustManager());
         return HttpClientBuilder.create()
                 .setSSLContext(sc)

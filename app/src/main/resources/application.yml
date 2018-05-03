@@ -1,10 +1,10 @@
 server:
-  port: 9012
+  port: ${server.port:9012}
 application:
   version: @project.version@
 pam:
   elasticsearch:
-    url: ${STILLINGESBACKEND_URL:https://pamsok-elasticsearch.nais.oera-q.local}
+    url: ${pam.elasticsearch.url:https://pamsok-elasticsearch.nais.oera-q.local}
 spring:
   datasource:
     url: jdbc:h2:mem:testdb;Mode=Oracle
@@ -34,7 +34,18 @@ spring:
 http:
   proxy:
     enabled: true
-    url: http://155.55.60.117:8088
+    url: ${http.proxy.enabled:http://155.55.60.117:8088}
+
+enhetsregister:
+  #cron: "* * * * * *"
+  timeout:
+    millis: 25000
+  hovedenhet:
+    enabled: false
+    url:  ${enhetsregister.hovedenhet.url:http://data.brreg.no/enhetsregisteret/download/enheter}
+  underenhet:
+    enabled: true
+    url: ${enhetsregister.underenhet.url:http://data.brreg.no/enhetsregisteret/download/underenheter}
 
 # Management endpoints for NAIS.
 management:

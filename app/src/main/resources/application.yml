@@ -41,10 +41,10 @@ enhetsregister:
   timeout:
     millis: 25000
   hovedenhet:
-    enabled: false
+    enabled: ${enhetsregister.hovedenhet.enabled:false}
     url:  ${enhetsregister.hovedenhet.url:http://data.brreg.no/enhetsregisteret/download/enheter}
   underenhet:
-    enabled: true
+    enabled: ${enhetsregister.underenhet.enabled:true}
     url: ${enhetsregister.underenhet.url:http://data.brreg.no/enhetsregisteret/download/underenheter}
 
 # Management endpoints for NAIS.

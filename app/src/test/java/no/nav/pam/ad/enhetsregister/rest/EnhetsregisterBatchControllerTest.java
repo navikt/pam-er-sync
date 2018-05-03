@@ -45,7 +45,7 @@ public class EnhetsregisterBatchControllerTest {
     public void triggetDownloadOfHovedenheterAndProcessBatchJob() {
 
         given().port(port)
-                .post("/enhetsregister/sync/hovedenheter")
+                .post("/api/enhetsregister/sync/hovedenheter")
                 .then()
                 .assertThat()
                 .statusCode(200);
@@ -80,7 +80,7 @@ public class EnhetsregisterBatchControllerTest {
     public void triggerDownloadOfUnderenheterAndProcessBatchJob() {
 
         given().port(port)
-                .post("/enhetsregister/sync/underenheter")
+                .post("/api/enhetsregister/sync/underenheter")
                 .then()
                 .assertThat()
                 .statusCode(200);

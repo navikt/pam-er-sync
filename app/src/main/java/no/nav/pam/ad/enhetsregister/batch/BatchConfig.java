@@ -19,42 +19,64 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.zip.GZIPInputStream;
+
+import static no.nav.pam.ad.enhetsregister.batch.JobLauncherService.*;
 
 @Configuration
 @EnableBatchProcessing
+@EnableScheduling
 public class BatchConfig {
 
-    @Autowired
-    public JobBuilderFactory jobBuilderFactory;
+    @Value("${enhetsregister.hovedenhet.url:http://data.brreg.no/enhetsregisteret/download/enheter}")
+    private String enhetsregisterHovedenhetUrl;
+
+    @Value("${enhetsregister.underenhet.url:http://data.brreg.no/enhetsregisteret/download/underenheter}")
+    private String enhetsregisterUnderenhetUrl;
+
+    private final JobBuilderFactory jobBuilderFactory;
+    private final StepBuilderFactory stepBuilderFactory;
 
     @Autowired
-    public StepBuilderFactory stepBuilderFactory;
+    public BatchConfig(JobBuilderFactory jobBuilderFactory, StepBuilderFactory stepBuilderFactory) {
+        this.jobBuilderFactory = jobBuilderFactory;
+        this.stepBuilderFactory = stepBuilderFactory;
+    }
 
     // tag::readerwriterprocessor[]
     @Bean
     @StepScope
-    public FlatFileItemReader<CsvEnhet> reader(@Value("#{jobParameters['type']}") String type,
-                                               @Value("#{jobParameters['filename']}") String filename) {
+    public FlatFileItemReader<CsvEnhet> reader(@Value("#{jobParameters['" + PARAM_PREFIX + "']}") String prefix,
+                                               @Value("#{jobParameters['" + PARAM_FILENAME + "']}") String filename)
+            throws IOException {
 
-        final CsvProperties csvProperties = CsvProperties.buildCsvProperties(CsvProperties.EnhetType.valueOf(type));
+        final DataSet enhet = DataSet.valueOf(prefix);
 
         FlatFileItemReader<CsvEnhet> reader = new FlatFileItemReader<>();
         reader.setEncoding(StandardCharsets.UTF_8.displayName());
         reader.setResource(new FileSystemResource(filename));
+        reader.setResource(new InputStreamResource(new GZIPInputStream(new FileInputStream(filename))));
         reader.setLineMapper(new DefaultLineMapper<CsvEnhet>() {{
             setLineTokenizer(new DelimitedLineTokenizer() {{
                 reader.setLinesToSkip(1);
                 setDelimiter(";");
-                setIncludedFields(csvProperties.getIncludedFields());
-                setNames(csvProperties.getFieldNames());
+                setIncludedFields(enhet.getIncludedFields());
+                setNames(enhet.getFieldNames());
             }});
             setFieldSetMapper(new BeanWrapperFieldSetMapper<CsvEnhet>() {{
                 setTargetType(CsvEnhet.class);
             }});
         }});
         return reader;
+
     }
 
     @Bean
@@ -64,11 +86,11 @@ public class BatchConfig {
 
     @Bean
     @StepScope
-    public EnhetJsonWriter writer(@Value("#{jobParameters['datestamp']}") String datestamp) {
-        EnhetJsonWriter writer = new EnhetJsonWriter();
-        writer.setDatestamp(datestamp);
-
-        return writer;
+    public EnhetJsonWriter writer(
+            @Value("#{jobParameters['" + PARAM_PREFIX + "']}") String prefix,
+            @Value("#{jobParameters['" + PARAM_DATESTAMP + "']}") String datestamp
+    ) {
+        return new EnhetJsonWriter(prefix, datestamp);
     }
 
     // end::readerwriterprocessor[]
@@ -77,7 +99,9 @@ public class BatchConfig {
     @Bean
     public Job importUserJob(
             JobCompletionNotificationListener completionNotificationListener,
-            JobExecutionListenerImpl executionListener) {
+            JobExecutionListenerImpl executionListener)
+            throws IOException {
+
         return jobBuilderFactory.get("importUserJob")
                 .incrementer(new RunIdIncrementer())
                 .listener(executionListener)
@@ -85,16 +109,45 @@ public class BatchConfig {
                 .flow(step1())
                 .end()
                 .build();
+
     }
 
     @Bean
-    public Step step1() {
+    public Step step1()
+            throws IOException {
+
         return stepBuilderFactory.get("step1")
                 .<CsvEnhet, Enhet>chunk(1000)
                 .reader(reader(null, null))
                 .processor(processor())
-                .writer(writer(null))
+                .writer(writer(null, null))
                 .build();
+
     }
     // end::jobstep[]
+
+    /**
+     * Gives the URL to the location of Hovedenhet data. Override in custom config for testing if needed.
+     *
+     * @return A valid URL.
+     * @throws MalformedURLException If the configured URL is invalid.
+     */
+    @Bean(name = "enhetsregister.hovedenhet.url")
+    public URL getEnhetsregisterHovedenhetUrl()
+            throws MalformedURLException {
+        return new URL(enhetsregisterHovedenhetUrl);
+    }
+
+    /**
+     * Gives the URL to the location of Underenhet data. Override in custom config for testing if needed.
+     *
+     * @return A valid URL.
+     * @throws MalformedURLException If the configured URL is invalid.
+     */
+    @Bean(name = "enhetsregister.underenhet.url")
+    public URL getEnhetsregisterUnderenhetUrl()
+            throws MalformedURLException {
+        return new URL(enhetsregisterUnderenhetUrl);
+    }
+
 }

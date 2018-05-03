@@ -37,7 +37,9 @@ http:
     url: ${http.proxy.enabled:http://155.55.60.117:8088}
 
 enhetsregister:
-  #cron: "* * * * * *"
+  cron: ${enhetsregister.cron:0 0 0 * * *}
+  timeout:
+    millis: ${enhetsregister.timeout.millis:25000}
   timeout:
     millis: 25000
   hovedenhet:

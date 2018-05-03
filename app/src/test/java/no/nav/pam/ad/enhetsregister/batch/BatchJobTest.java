@@ -37,6 +37,7 @@ public class BatchJobTest {
         JobLauncherTestUtils jobLauncherTestUtils() {
             return new JobLauncherTestUtils();
         }
+
     }
 
     private static final String FILEPATH = "src/test/resources/enhetsregisteret.samples/";
@@ -47,10 +48,8 @@ public class BatchJobTest {
     @Test
     public void syncUnderenheterTest() throws Exception {
         Map<String, JobParameter> params = new HashMap<>();
-        params.put(JobLauncherService.PARAM_TYPE, new JobParameter(CsvProperties.EnhetType.UNDERENHET.toString()));
-        params.put(JobLauncherService.PARAM_FILENAME, new JobParameter(FILEPATH + "underenheter.csv"));
-        params.put(JobLauncherService.PARAM_DATESTAMP, new JobParameter("20180430"));
-
+        params.put("type", new JobParameter(DataSet.UNDERENHET.toString()));
+        params.put("filename", new JobParameter(FILEPATH + "underenheter.csv"));
 
         //testing a job
         JobExecution jobExecution = jobLauncherTestUtils.launchJob(new JobParameters(params));

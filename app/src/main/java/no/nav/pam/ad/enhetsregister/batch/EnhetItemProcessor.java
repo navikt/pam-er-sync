@@ -12,8 +12,7 @@ import org.springframework.batch.item.ItemProcessor;
 public class EnhetItemProcessor implements ItemProcessor<CsvEnhet, Enhet> {
 
     @Override
-    public Enhet process(CsvEnhet enhet) throws Exception {
-
+    public Enhet process(CsvEnhet enhet) {
         return mapToJsonEnhet(enhet);
     }
 
@@ -44,18 +43,11 @@ public class EnhetItemProcessor implements ItemProcessor<CsvEnhet, Enhet> {
                     csv.getPostadresse_land());
         }
 
-        Integer antallAnsatte = null;
-        try {
-            antallAnsatte = Integer.parseInt(csv.getAntallAnsatte());
-        } catch (NumberFormatException e) {
-            antallAnsatte = 0;
-        }
-
         Enhet json = new Enhet(
                 csv.getOrganisasjonsnummer(),
                 csv.getNavn(),
                 csv.getOrganisasjonsform(),
-                antallAnsatte,
+                parse(csv.getAntallAnsatte()),
                 csv.getOverordnetEnhet(),
                 adresse,
                 post);
@@ -72,4 +64,13 @@ public class EnhetItemProcessor implements ItemProcessor<CsvEnhet, Enhet> {
 
         return json;
     }
+
+    private static int parse(String value) {
+        try {
+            return Integer.parseInt(value);
+        } catch (NumberFormatException e) {
+            return 0;
+        }
+    }
+
 }

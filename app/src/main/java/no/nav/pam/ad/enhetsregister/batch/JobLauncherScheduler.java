@@ -26,16 +26,21 @@ class JobLauncherScheduler implements InitializingBean {
     private final JobLauncherService service;
     private final URL enhetsregisterHovedenhetUrl;
     private final URL enhetsregisterUnderenhetUrl;
-    
+
     public JobLauncherScheduler(
             JobLauncherService service,
+            @Qualifier("enhetsregister.hovedenhet.enabled") boolean enhetsregisterHovedenhetEnabled,
             @Qualifier("enhetsregister.hovedenhet.url") URL enhetsregisterHovedenhetUrl,
+            @Qualifier("enhetsregister.underenhet.enabled") boolean enhetsregisterUnderenhetEnabled,
             @Qualifier("enhetsregister.underenhet.url") URL enhetsregisterUnderenhetUrl
     ) {
 
         this.service = service;
-        this.enhetsregisterHovedenhetUrl = enhetsregisterHovedenhetUrl;
-        this.enhetsregisterUnderenhetUrl = enhetsregisterUnderenhetUrl;
+        this.enhetsregisterHovedenhetUrl = enhetsregisterHovedenhetEnabled ? enhetsregisterHovedenhetUrl : null;
+        this.enhetsregisterUnderenhetUrl = enhetsregisterUnderenhetEnabled ? enhetsregisterUnderenhetUrl : null;
+        if (enhetsregisterHovedenhetUrl == null && enhetsregisterUnderenhetUrl == null) {
+            LOG.warn("No data sets are configured to be synchronized");
+        }
 
     }
 
@@ -48,8 +53,12 @@ class JobLauncherScheduler implements InitializingBean {
     private void run() {
 
         try {
-            service.synchronize(DataSet.HOVEDENHET, enhetsregisterHovedenhetUrl);
-            service.synchronize(DataSet.UNDERENHET, enhetsregisterUnderenhetUrl);
+            if (enhetsregisterHovedenhetUrl != null) {
+                service.synchronize(DataSet.HOVEDENHET, enhetsregisterHovedenhetUrl);
+            }
+            if (enhetsregisterUnderenhetUrl != null) {
+                service.synchronize(DataSet.UNDERENHET, enhetsregisterUnderenhetUrl);
+            }
         } catch (Exception e) {
             LOG.error("Failed to run scheduled job, will retry with cron {}", cron, e);
         }

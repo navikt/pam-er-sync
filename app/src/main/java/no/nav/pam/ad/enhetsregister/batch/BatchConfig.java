@@ -36,8 +36,14 @@ import static no.nav.pam.ad.enhetsregister.batch.JobLauncherService.*;
 @EnableScheduling
 public class BatchConfig {
 
+    @Value("${enhetsregister.hovedenhet.enabled:false}")
+    private boolean enhetsregisterHovedenhetEnabled;
+
     @Value("${enhetsregister.hovedenhet.url:http://data.brreg.no/enhetsregisteret/download/enheter}")
     private String enhetsregisterHovedenhetUrl;
+
+    @Value("${enhetsregister.underenhet.enabled:true}")
+    private boolean enhetsregisterUnderenhetEnabled;
 
     @Value("${enhetsregister.underenhet.url:http://data.brreg.no/enhetsregisteret/download/underenheter}")
     private String enhetsregisterUnderenhetUrl;
@@ -127,9 +133,19 @@ public class BatchConfig {
     // end::jobstep[]
 
     /**
+     * Should Hovedenhet be synchronized?
+     *
+     * @return {@code true} if so.
+     */
+    @Bean(name = "enhetsregister.hovedenhet.enabled")
+    public boolean getEnhetsregisterHovedenhetEnabled() {
+        return enhetsregisterHovedenhetEnabled;
+    }
+
+    /**
      * Gives the URL to the location of Hovedenhet data. Override in custom config for testing if needed.
      *
-     * @return A valid URL.
+     * @return A valid URL, or {@code null} if synchronization of Hovedenhet is disabled.
      * @throws MalformedURLException If the configured URL is invalid.
      */
     @Bean(name = "enhetsregister.hovedenhet.url")
@@ -139,15 +155,35 @@ public class BatchConfig {
     }
 
     /**
+     * Should Underenhet be synchronized?
+     *
+     * @return {@code true} if so.
+     */
+    @Bean(name = "enhetsregister.underenhet.enabled")
+    public boolean getEnhetsregisterUnderenhetEnabled() {
+        return enhetsregisterUnderenhetEnabled;
+    }
+
+    /**
      * Gives the URL to the location of Underenhet data. Override in custom config for testing if needed.
      *
-     * @return A valid URL.
+     * @return A valid URL, or {@code null} if synchronization of Underenhet is disabled.
      * @throws MalformedURLException If the configured URL is invalid.
      */
     @Bean(name = "enhetsregister.underenhet.url")
     public URL getEnhetsregisterUnderenhetUrl()
             throws MalformedURLException {
-        return new URL(enhetsregisterUnderenhetUrl);
+        return enhetsregisterUnderenhetEnabled ? new URL(enhetsregisterUnderenhetUrl) : null;
+    }
+
+    /**
+     * Replacement for hardcoded sleep value in {@link JobCompletionNotificationListener}, to reduce time spent in tests.
+     *
+     * @return 10000
+     */
+    @Bean(name = "jobCompletionNotificationListenerDelay")
+    public long jobCompletionNotificationListenerDelay() {
+        return 10000;
     }
 
 }

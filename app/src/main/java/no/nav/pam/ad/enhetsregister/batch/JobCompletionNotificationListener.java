@@ -10,6 +10,7 @@ import org.springframework.batch.core.JobParameter;
 import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.core.listener.JobExecutionListenerSupport;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
@@ -20,10 +21,15 @@ public class JobCompletionNotificationListener extends JobExecutionListenerSuppo
     private static final Logger LOG = LoggerFactory.getLogger(JobCompletionNotificationListener.class);
 
     private final IndexService service;
+    private final long delay;
 
     @Autowired
-    private JobCompletionNotificationListener(IndexService service) {
+    private JobCompletionNotificationListener(
+            IndexService service,
+            @Qualifier("jobCompletionNotificationListenerDelay") long delay
+    ) {
         this.service = service;
+        this.delay = delay;
     }
 
     @Override
@@ -51,7 +57,7 @@ public class JobCompletionNotificationListener extends JobExecutionListenerSuppo
         String datestamp = parameters.get(JobLauncherService.PARAM_DATESTAMP).toString();
         try {
 
-            Thread.sleep(10000);
+            Thread.sleep(delay);
             int docCount = service.fetchDocCount(prefix, datestamp);
 
             if (docCount >= writeCount) {

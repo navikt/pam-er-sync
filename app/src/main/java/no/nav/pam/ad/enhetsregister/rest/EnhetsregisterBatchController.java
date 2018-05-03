@@ -15,6 +15,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.net.URL;
 
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @Controller
 @RequestMapping("/api/enhetsregister")
@@ -29,15 +30,15 @@ public class EnhetsregisterBatchController {
     @Autowired
     EnhetsregisterBatchController(
             JobLauncherService service,
+            @Qualifier("enhetsregister.hovedenhet.enabled") boolean enhetsregisterHovedenhetEnabled,
             @Qualifier("enhetsregister.hovedenhet.url") URL enhetsregisterHovedenhetUrl,
+            @Qualifier("enhetsregister.underenhet.enabled") boolean enhetsregisterUnderenhetEnabled,
             @Qualifier("enhetsregister.underenhet.url") URL enhetsregisterUnderenhetUrl
     ) {
 
         this.service = service;
-        this.enhetsregisterHovedenhetUrl = enhetsregisterHovedenhetUrl;
-        LOG.info("Will read data set {} from URL {}", DataSet.HOVEDENHET, enhetsregisterHovedenhetUrl);
-        this.enhetsregisterUnderenhetUrl = enhetsregisterUnderenhetUrl;
-        LOG.info("Will read data set {} from URL {}", DataSet.UNDERENHET, enhetsregisterUnderenhetUrl);
+        this.enhetsregisterHovedenhetUrl = enhetsregisterHovedenhetEnabled ? enhetsregisterHovedenhetUrl : null;
+        this.enhetsregisterUnderenhetUrl = enhetsregisterUnderenhetEnabled ? enhetsregisterUnderenhetUrl : null;
 
     }
 
@@ -51,11 +52,18 @@ public class EnhetsregisterBatchController {
         return synchronize(DataSet.UNDERENHET, enhetsregisterUnderenhetUrl);
     }
 
-    private ResponseEntity synchronize(DataSet set, URL url) {
+    private ResponseEntity synchronize(DataSet set, URL url)
+            throws ResponseStatusException {
 
+        if (url == null) {
+            LOG.warn("Synchronization of data set {} is configured to be disabled", set);
+            throw new ResponseStatusException(NOT_FOUND, "Synchronization of this data set is disabled");
+        }
         try {
             service.synchronize(set, url);
             return ResponseEntity.ok().build();
+        } catch (UnsupportedOperationException e) {
+            throw new ResponseStatusException(NOT_FOUND, "Resource currently configured as unavailable", e);
         } catch (Exception e) {
             LOG.error("Unable to synchronize data set {}", set, e);
             throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "Unable to synchronize", e);

@@ -38,6 +38,11 @@ public class TestConfig {
         return EnhetsregisterBatchControllerTest.class.getResource("/enhetsregisteret.samples/underenheter.csv.gz");
     }
 
+    @Bean(name = "jobCompletionNotificationListenerDelay")
+    public long jobCompletionNotificationListenerDelay() {
+        return 1000;
+    }
+
     @Primary
     @Bean
     public IndexClient indexClient() {

@@ -34,9 +34,10 @@ http:
 
 enhetsregister:
   hovedenhet:
-    url: "http://localhost/this/configuration/is/intended/to/fail"
+    enabled: false
   underenhet:
-    url: "http://localhost/this/configuration/is/intended/to/fail"
+    enabled: true
+    url: "http://localhost/this/configuration/is/intended/to/fail/if/actually/used"
 
 # Management endpoints for NAIS.
 management:

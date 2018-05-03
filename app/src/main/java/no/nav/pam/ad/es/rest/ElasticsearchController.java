@@ -15,8 +15,8 @@ import java.io.IOException;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @Controller
-@RequestMapping("/enhetsregister/es")
-public class ElasticsearchController {
+@RequestMapping("/api/enhetsregister/es")
+public class ElasticSearchController {
 
     private final IndexClient service;
 

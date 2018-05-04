@@ -43,7 +43,7 @@ public class BatchConfig {
     private static final String PROPERTY_ENHETSREGISTER_SCHEDULER_ENABLED = "enhetsregister.scheduler.enabled";
     static final String PROPERTY_ENHETSREGISTER_SCHEDULER_CRON = "enhetsregister.scheduler.cron";
 
-    @Value("${" + PROPERTY_ENHETSREGISTER_SCHEDULER_ENABLED + "}")
+    @Value("${" + PROPERTY_ENHETSREGISTER_SCHEDULER_ENABLED + ":false}")
     private boolean enhetsregisterSchedulerEnabled;
 
     @Value("${enhetsregister.sources.hovedenhet.enabled:false}")

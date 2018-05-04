@@ -2,7 +2,8 @@ package no.nav.pam.ad.enhetsregister.batch;
 
 
 import no.nav.pam.ad.enhetsregister.model.CsvEnhet;
-import no.nav.pam.ad.enhetsregister.model.Enhet;
+import no.nav.pam.ad.enhetsregister.rest.EnhetsregisterBatchController;
+import no.nav.pam.ad.es.IndexService;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
@@ -16,8 +17,10 @@ import org.springframework.batch.item.file.mapping.DefaultLineMapper;
 import org.springframework.batch.item.file.transform.DelimitedLineTokenizer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -27,6 +30,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.Optional;
 import java.util.zip.GZIPInputStream;
 
 import static no.nav.pam.ad.enhetsregister.batch.JobLauncherService.*;
@@ -36,10 +40,22 @@ import static no.nav.pam.ad.enhetsregister.batch.JobLauncherService.*;
 @EnableScheduling
 public class BatchConfig {
 
-    @Value("${enhetsregister.hovedenhet.url:http://data.brreg.no/enhetsregisteret/download/enheter}")
+    private static final String PROPERTY_ENHETSREGISTER_SCHEDULER_ENABLED = "enhetsregister.scheduler.enabled";
+    static final String PROPERTY_ENHETSREGISTER_SCHEDULER_CRON = "enhetsregister.scheduler.cron";
+
+    @Value("${" + PROPERTY_ENHETSREGISTER_SCHEDULER_ENABLED + "}")
+    private boolean enhetsregisterSchedulerEnabled;
+
+    @Value("${enhetsregister.sources.hovedenhet.enabled:false}")
+    private boolean enhetsregisterHovedenhetEnabled;
+
+    @Value("${enhetsregister.sources.hovedenhet.url:http://data.brreg.no/enhetsregisteret/download/enheter}")
     private String enhetsregisterHovedenhetUrl;
 
-    @Value("${enhetsregister.underenhet.url:http://data.brreg.no/enhetsregisteret/download/underenheter}")
+    @Value("${enhetsregister.sources.underenhet.enabled:true}")
+    private boolean enhetsregisterUnderenhetEnabled;
+
+    @Value("${enhetsregister.sources.underenhet.url:http://data.brreg.no/enhetsregisteret/download/underenheter}")
     private String enhetsregisterUnderenhetUrl;
 
     private final JobBuilderFactory jobBuilderFactory;
@@ -117,7 +133,7 @@ public class BatchConfig {
             throws IOException {
 
         return stepBuilderFactory.get("step1")
-                .<CsvEnhet, Enhet>chunk(1000)
+                .<CsvEnhet, no.nav.pam.ad.enhetsregister.model.Enhet>chunk(1000)
                 .reader(reader(null, null))
                 .processor(processor())
                 .writer(writer(null, null))
@@ -127,27 +143,67 @@ public class BatchConfig {
     // end::jobstep[]
 
     /**
-     * Gives the URL to the location of Hovedenhet data. Override in custom config for testing if needed.
+     * Replacement for hardcoded sleep value in {@link JobCompletionNotificationListener}, to reduce time spent in tests.
      *
-     * @return A valid URL.
-     * @throws MalformedURLException If the configured URL is invalid.
+     * @return 10000
      */
-    @Bean(name = "enhetsregister.hovedenhet.url")
-    public URL getEnhetsregisterHovedenhetUrl()
-            throws MalformedURLException {
-        return new URL(enhetsregisterHovedenhetUrl);
+    @Bean(name = "jobCompletionNotificationListenerDelay")
+    public long jobCompletionNotificationListenerDelay() {
+        return 10000;
     }
 
-    /**
-     * Gives the URL to the location of Underenhet data. Override in custom config for testing if needed.
-     *
-     * @return A valid URL.
-     * @throws MalformedURLException If the configured URL is invalid.
-     */
-    @Bean(name = "enhetsregister.underenhet.url")
-    public URL getEnhetsregisterUnderenhetUrl()
+    @Bean
+    @ConditionalOnProperty({PROPERTY_ENHETSREGISTER_SCHEDULER_ENABLED, PROPERTY_ENHETSREGISTER_SCHEDULER_CRON})
+    @Profile("!test")
+    public BatchScheduler batchScheduler(JobLauncherService jobService, IndexService indexService, Hovedenhet hovedenhet, Underenhet underenhet) {
+        return new BatchScheduler(jobService, indexService, hovedenhet, underenhet);
+    }
+
+    @Bean
+    public Hovedenhet hovedenhet()
             throws MalformedURLException {
-        return new URL(enhetsregisterUnderenhetUrl);
+        return new Hovedenhet(enhetsregisterHovedenhetEnabled, new URL(enhetsregisterHovedenhetUrl));
+    }
+
+    @Bean
+    public Underenhet underenhet()
+            throws MalformedURLException {
+        return new Underenhet(enhetsregisterUnderenhetEnabled, new URL(enhetsregisterUnderenhetUrl));
+    }
+
+    @Bean
+    public EnhetsregisterBatchController enhetsregisterBatchController(JobLauncherService service, Hovedenhet hovedenhet, Underenhet underenhet) {
+        return new EnhetsregisterBatchController(service, hovedenhet, underenhet);
+    }
+
+    public abstract static class SourceConfiguration {
+
+        private final URL url;
+
+        private SourceConfiguration(boolean enabled, URL url) {
+            this.url = enabled ? url : null;
+        }
+
+        public Optional<URL> getUrl() {
+            return Optional.ofNullable(url);
+        }
+
+    }
+
+    public static class Hovedenhet extends SourceConfiguration {
+
+        Hovedenhet(boolean enabled, URL url) {
+            super(enabled, url);
+        }
+
+    }
+
+    public static class Underenhet extends SourceConfiguration {
+
+        Underenhet(boolean enabled, URL url) {
+            super(enabled, url);
+        }
+
     }
 
 }

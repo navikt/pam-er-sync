@@ -9,8 +9,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 @Service
 public class JobLauncherService {
@@ -21,7 +24,7 @@ public class JobLauncherService {
     static final String PARAM_FILENAME = "filename";
     static final String PARAM_DATESTAMP = "datestamp";
 
-    @Value("${enhetsregister.timeout.millis:5000}")
+    @Value("${enhetsregister.sources.timeout.millis:5000}")
     private int timeoutMillis;
 
     private final JobLauncher launcher;
@@ -33,7 +36,7 @@ public class JobLauncherService {
     }
 
     public void synchronize(DataSet dataSet, URL url)
-            throws Exception {
+            throws IOException, TimeoutException, InterruptedException, ExecutionException, JobExecutionException {
 
         LOG.info("Synchronizing data set {} from source {} using timeout {} ms", dataSet, url, timeoutMillis);
         long start = System.currentTimeMillis();

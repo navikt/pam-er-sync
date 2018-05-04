@@ -1,10 +1,10 @@
 server:
-  port: 9012
+  port: ${server.port:9012}
 application:
   version: @project.version@
 pam:
   elasticsearch:
-    url: ${STILLINGESBACKEND_URL:https://pamsok-elasticsearch.nais.oera-q.local}
+    url: ${pam.elasticsearch.url:https://pamsok-elasticsearch.nais.oera-q.local}
 spring:
   datasource:
     url: jdbc:h2:mem:testdb;Mode=Oracle
@@ -34,13 +34,49 @@ spring:
 http:
   proxy:
     enabled: true
-    url: http://155.55.60.117:8088
+    url: ${http.proxy.enabled:http://155.55.60.117:8088}
 
 enhetsregister:
-  cron: ${PAM_ER_SYNC.ENHETSREGISTER.CRON:0 0 0 * * *}
-  timeout:
-    millis: ${PAM_ER_SYNC.ENHETSREGISTER.TIMEOUT:10000}
-  hovedenhet:
-    url:  ${PAM_ER_SYNC.ENHETSREGISTER.HOVEDENHET.URL:"http://data.brreg.no/enhetsregisteret/download/enheter"}
-  underenhet:
-    url: ${PAM_ER_SYNC.ENHETSREGISTER.UNDERENHET.URL:"http://data.brreg.no/enhetsregisteret/download/underenheter"}
+  scheduler:
+    enabled: ${enhetsregister.scheduler.enabled:true}
+    cron: ${enhetsregister.scheduler.cron:0 0 0 * * *}
+  sources:
+    timeout:
+      millis: ${enhetsregister.sources.timeout.millis:25000}
+    hovedenhet:
+      enabled: ${enhetsregister.sources.hovedenhet.enabled:false}
+      url:  ${enhetsregister.sources.hovedenhet.url:http://data.brreg.no/enhetsregisteret/download/enheter}
+    underenhet:
+      enabled: ${enhetsregister.sources.underenhet.enabled:true}
+      url: ${enhetsregister.sources.underenhet.url:http://data.brreg.no/enhetsregisteret/download/underenheter}
+
+# Management endpoints for NAIS.
+management:
+  endpoints:
+    enabled-by-default: false
+    web:
+      base-path: /actuator
+      exposure:
+        include: health, info, prometheus
+  endpoint:
+      prometheus:
+        enabled: true
+      health:
+        enabled: true
+      info:
+        enabled: true
+  metrics:
+    enable:
+      jvm:
+        classes:
+          loaded: false
+          unloaded: false
+        threads:
+          daemon: false
+          peak: false
+      process:
+        start:
+          time: false
+    export:
+      prometheus:
+        enabled: true

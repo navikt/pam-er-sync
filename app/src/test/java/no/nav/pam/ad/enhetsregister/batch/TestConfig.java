@@ -1,7 +1,6 @@
-package no.nav.pam.ad;
+package no.nav.pam.ad.enhetsregister.batch;
 
 import no.nav.pam.ad.config.AppConfig;
-import no.nav.pam.ad.enhetsregister.batch.BatchConfig;
 import no.nav.pam.ad.enhetsregister.model.Enhet;
 import no.nav.pam.ad.enhetsregister.rest.EnhetsregisterBatchControllerTest;
 import org.elasticsearch.action.DocWriteRequest;
@@ -9,12 +8,14 @@ import org.elasticsearch.action.bulk.BulkItemResponse;
 import org.elasticsearch.action.bulk.BulkResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
+import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Primary;
 
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -26,16 +27,28 @@ import java.util.Map;
  */
 @TestConfiguration
 @Import({BatchConfig.class, AppConfig.class})
-public class TestConfig {
+public class TestConfig extends BatchConfig {
 
-    @Bean(name = "enhetsregister.hovedenhet.url")
-    public URL enhetsregisterHovedenhetUrl() {
-        return EnhetsregisterBatchControllerTest.class.getResource("/enhetsregisteret.samples/hovedenheter.csv.gz");
+    @Autowired
+    public TestConfig(JobBuilderFactory jobBuilderFactory, StepBuilderFactory stepBuilderFactory) {
+        super(jobBuilderFactory, stepBuilderFactory);
     }
 
-    @Bean(name = "enhetsregister.underenhet.url")
-    public URL enhetsregisterUnderenhetUrl() {
-        return EnhetsregisterBatchControllerTest.class.getResource("/enhetsregisteret.samples/underenheter.csv.gz");
+    @Override
+    @Bean
+    public Hovedenhet hovedenhet() {
+        return new Hovedenhet(false, EnhetsregisterBatchControllerTest.class.getResource("/enhetsregisteret.samples/hovedenheter.csv.gz"));
+    }
+
+    @Override
+    @Bean
+    public Underenhet underenhet() {
+        return new Underenhet(true, EnhetsregisterBatchControllerTest.class.getResource("/enhetsregisteret.samples/underenheter.csv.gz"));
+    }
+
+    @Bean(name = "jobCompletionNotificationListenerDelay")
+    public long jobCompletionNotificationListenerDelay() {
+        return 1000;
     }
 
     @Primary
@@ -107,6 +120,11 @@ public class TestConfig {
             LOG.info("fetchAllIndicesStartingWith({}) = null", name);
             return null;
 
+        }
+
+        @Override
+        public boolean isHealthy() {
+            return true;
         }
 
         public Map<String, List<Enhet>> getStorage() {

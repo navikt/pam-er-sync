@@ -1,2 +1,4 @@
 # Manually synchronize UNDERENHET:
-POST http://localhost:2218/enhetsregister/sync/underenheter
+POST http://localhost:9012/api/enhetsregister/sync/underenheter
+
+###

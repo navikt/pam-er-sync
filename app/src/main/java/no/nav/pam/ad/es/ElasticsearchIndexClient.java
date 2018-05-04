@@ -149,4 +149,10 @@ public class ElasticsearchIndexClient extends RestHighLevelClient implements Ind
 
     }
 
+    @Override
+    public boolean isHealthy()
+            throws IOException {
+        return super.ping();
+    }
+
 }

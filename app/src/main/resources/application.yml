@@ -37,17 +37,18 @@ http:
     url: ${http.proxy.enabled:http://155.55.60.117:8088}
 
 enhetsregister:
-  cron: ${enhetsregister.cron:0 0 0 * * *}
-  timeout:
-    millis: ${enhetsregister.timeout.millis:25000}
-  timeout:
-    millis: 25000
-  hovedenhet:
-    enabled: ${enhetsregister.hovedenhet.enabled:false}
-    url:  ${enhetsregister.hovedenhet.url:http://data.brreg.no/enhetsregisteret/download/enheter}
-  underenhet:
-    enabled: ${enhetsregister.underenhet.enabled:true}
-    url: ${enhetsregister.underenhet.url:http://data.brreg.no/enhetsregisteret/download/underenheter}
+  scheduler:
+    enabled: ${enhetsregister.scheduler.enabled:true}
+    cron: ${enhetsregister.scheduler.cron:0 0 0 * * *}
+  sources:
+    timeout:
+      millis: ${enhetsregister.sources.timeout.millis:25000}
+    hovedenhet:
+      enabled: ${enhetsregister.sources.hovedenhet.enabled:false}
+      url:  ${enhetsregister.sources.hovedenhet.url:http://data.brreg.no/enhetsregisteret/download/enheter}
+    underenhet:
+      enabled: ${enhetsregister.sources.underenhet.enabled:true}
+      url: ${enhetsregister.sources.underenhet.url:http://data.brreg.no/enhetsregisteret/download/underenheter}
 
 # Management endpoints for NAIS.
 management:

@@ -25,4 +25,6 @@ public interface IndexClient {
 
     List<String> fetchAllIndicesStartingWith(String name) throws IOException;
 
+    boolean isHealthy() throws IOException;
+
 }

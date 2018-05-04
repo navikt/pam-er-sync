@@ -33,8 +33,8 @@ public class EnhetsregisterBatchController {
     ) {
 
         this.service = service;
-        this.enhetsregisterHovedenhetUrl = hovedenhet.getUrl();
-        this.enhetsregisterUnderenhetUrl = underenhet.getUrl();
+        this.enhetsregisterHovedenhetUrl = hovedenhet.getUrl().orElse(null);
+        this.enhetsregisterUnderenhetUrl = underenhet.getUrl().orElse(null);
 
     }
 

@@ -3,6 +3,7 @@ package no.nav.pam.ad.enhetsregister.batch;
 
 import no.nav.pam.ad.enhetsregister.model.CsvEnhet;
 import no.nav.pam.ad.enhetsregister.rest.EnhetsregisterBatchController;
+import no.nav.pam.ad.es.IndexService;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
@@ -29,6 +30,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.Optional;
 import java.util.zip.GZIPInputStream;
 
 import static no.nav.pam.ad.enhetsregister.batch.JobLauncherService.*;
@@ -38,16 +40,18 @@ import static no.nav.pam.ad.enhetsregister.batch.JobLauncherService.*;
 @EnableScheduling
 public class BatchConfig {
 
-    @Value("${enhetsregister.hovedenhet.enabled:false}")
+    static final String PROPERTY_CRON = "enhetsregister.scheduler.cron";
+
+    @Value("${enhetsregister.sources.hovedenhet.enabled:false}")
     private boolean enhetsregisterHovedenhetEnabled;
 
-    @Value("${enhetsregister.hovedenhet.url:http://data.brreg.no/enhetsregisteret/download/enheter}")
+    @Value("${enhetsregister.sources.hovedenhet.url:http://data.brreg.no/enhetsregisteret/download/enheter}")
     private String enhetsregisterHovedenhetUrl;
 
-    @Value("${enhetsregister.underenhet.enabled:true}")
+    @Value("${enhetsregister.sources.underenhet.enabled:true}")
     private boolean enhetsregisterUnderenhetEnabled;
 
-    @Value("${enhetsregister.underenhet.url:http://data.brreg.no/enhetsregisteret/download/underenheter}")
+    @Value("${enhetsregister.sources.underenhet.url:http://data.brreg.no/enhetsregisteret/download/underenheter}")
     private String enhetsregisterUnderenhetUrl;
 
     private final JobBuilderFactory jobBuilderFactory;
@@ -145,10 +149,10 @@ public class BatchConfig {
     }
 
     @Bean
-    @ConditionalOnProperty("enhetsregister.cron")
+    @ConditionalOnProperty({"enhetsregister.scheduler.enabled", PROPERTY_CRON})
     @Profile("!test")
-    public JobLauncherScheduler jobLauncherScheduler(JobLauncherService service, Hovedenhet hovedenhet, Underenhet underenhet) {
-        return new JobLauncherScheduler(service, hovedenhet, underenhet);
+    public BatchScheduler jobLauncherScheduler(JobLauncherService jobService, IndexService indexService, Hovedenhet hovedenhet, Underenhet underenhet) {
+        return new BatchScheduler(jobService, indexService, hovedenhet, underenhet);
     }
 
     @Bean
@@ -170,20 +174,14 @@ public class BatchConfig {
 
     public abstract static class SourceConfiguration {
 
-        private final boolean enabled;
         private final URL url;
 
         private SourceConfiguration(boolean enabled, URL url) {
-            this.enabled = enabled;
-            this.url = url;
+            this.url = enabled ? url : null;
         }
 
-        boolean isEnabled() {
-            return enabled;
-        }
-
-        public URL getUrl() {
-            return enabled ? url : null;
+        public Optional<URL> getUrl() {
+            return Optional.ofNullable(url);
         }
 
     }

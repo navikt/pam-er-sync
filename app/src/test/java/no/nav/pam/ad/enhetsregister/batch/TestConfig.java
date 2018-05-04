@@ -122,6 +122,11 @@ public class TestConfig extends BatchConfig {
 
         }
 
+        @Override
+        public boolean isHealthy() {
+            return true;
+        }
+
         public Map<String, List<Enhet>> getStorage() {
             return storage;
         }

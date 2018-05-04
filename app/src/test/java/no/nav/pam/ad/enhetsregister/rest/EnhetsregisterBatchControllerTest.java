@@ -1,6 +1,6 @@
 package no.nav.pam.ad.enhetsregister.rest;
 
-import no.nav.pam.ad.TestConfig;
+import no.nav.pam.ad.enhetsregister.batch.TestConfig;
 import no.nav.pam.ad.enhetsregister.model.Enhet;
 import no.nav.pam.ad.es.IndexClient;
 import org.junit.After;

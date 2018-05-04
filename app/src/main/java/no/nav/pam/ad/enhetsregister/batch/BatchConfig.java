@@ -2,7 +2,7 @@ package no.nav.pam.ad.enhetsregister.batch;
 
 
 import no.nav.pam.ad.enhetsregister.model.CsvEnhet;
-import no.nav.pam.ad.enhetsregister.model.Enhet;
+import no.nav.pam.ad.enhetsregister.rest.EnhetsregisterBatchController;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
@@ -16,8 +16,10 @@ import org.springframework.batch.item.file.mapping.DefaultLineMapper;
 import org.springframework.batch.item.file.transform.DelimitedLineTokenizer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -123,7 +125,7 @@ public class BatchConfig {
             throws IOException {
 
         return stepBuilderFactory.get("step1")
-                .<CsvEnhet, Enhet>chunk(1000)
+                .<CsvEnhet, no.nav.pam.ad.enhetsregister.model.Enhet>chunk(1000)
                 .reader(reader(null, null))
                 .processor(processor())
                 .writer(writer(null, null))
@@ -133,50 +135,6 @@ public class BatchConfig {
     // end::jobstep[]
 
     /**
-     * Should Hovedenhet be synchronized?
-     *
-     * @return {@code true} if so.
-     */
-    @Bean(name = "enhetsregister.hovedenhet.enabled")
-    public boolean getEnhetsregisterHovedenhetEnabled() {
-        return enhetsregisterHovedenhetEnabled;
-    }
-
-    /**
-     * Gives the URL to the location of Hovedenhet data. Override in custom config for testing if needed.
-     *
-     * @return A valid URL, or {@code null} if synchronization of Hovedenhet is disabled.
-     * @throws MalformedURLException If the configured URL is invalid.
-     */
-    @Bean(name = "enhetsregister.hovedenhet.url")
-    public URL getEnhetsregisterHovedenhetUrl()
-            throws MalformedURLException {
-        return new URL(enhetsregisterHovedenhetUrl);
-    }
-
-    /**
-     * Should Underenhet be synchronized?
-     *
-     * @return {@code true} if so.
-     */
-    @Bean(name = "enhetsregister.underenhet.enabled")
-    public boolean getEnhetsregisterUnderenhetEnabled() {
-        return enhetsregisterUnderenhetEnabled;
-    }
-
-    /**
-     * Gives the URL to the location of Underenhet data. Override in custom config for testing if needed.
-     *
-     * @return A valid URL, or {@code null} if synchronization of Underenhet is disabled.
-     * @throws MalformedURLException If the configured URL is invalid.
-     */
-    @Bean(name = "enhetsregister.underenhet.url")
-    public URL getEnhetsregisterUnderenhetUrl()
-            throws MalformedURLException {
-        return enhetsregisterUnderenhetEnabled ? new URL(enhetsregisterUnderenhetUrl) : null;
-    }
-
-    /**
      * Replacement for hardcoded sleep value in {@link JobCompletionNotificationListener}, to reduce time spent in tests.
      *
      * @return 10000
@@ -184,6 +142,66 @@ public class BatchConfig {
     @Bean(name = "jobCompletionNotificationListenerDelay")
     public long jobCompletionNotificationListenerDelay() {
         return 10000;
+    }
+
+    @Bean
+    @ConditionalOnProperty("enhetsregister.cron")
+    @Profile("!test")
+    public JobLauncherScheduler jobLauncherScheduler(JobLauncherService service, Hovedenhet hovedenhet, Underenhet underenhet) {
+        return new JobLauncherScheduler(service, hovedenhet, underenhet);
+    }
+
+    @Bean
+    public Hovedenhet hovedenhet()
+            throws MalformedURLException {
+        return new Hovedenhet(enhetsregisterHovedenhetEnabled, new URL(enhetsregisterHovedenhetUrl));
+    }
+
+    @Bean
+    public Underenhet underenhet()
+            throws MalformedURLException {
+        return new Underenhet(enhetsregisterUnderenhetEnabled, new URL(enhetsregisterUnderenhetUrl));
+    }
+
+    @Bean
+    public EnhetsregisterBatchController enhetsregisterBatchController(JobLauncherService service, Hovedenhet hovedenhet, Underenhet underenhet) {
+        return new EnhetsregisterBatchController(service, hovedenhet, underenhet);
+    }
+
+    public abstract static class SourceConfiguration {
+
+        private final boolean enabled;
+        private final URL url;
+
+        private SourceConfiguration(boolean enabled, URL url) {
+            this.enabled = enabled;
+            this.url = url;
+        }
+
+        boolean isEnabled() {
+            return enabled;
+        }
+
+        public URL getUrl() {
+            return enabled ? url : null;
+        }
+
+    }
+
+    public static class Hovedenhet extends SourceConfiguration {
+
+        Hovedenhet(boolean enabled, URL url) {
+            super(enabled, url);
+        }
+
+    }
+
+    public static class Underenhet extends SourceConfiguration {
+
+        Underenhet(boolean enabled, URL url) {
+            super(enabled, url);
+        }
+
     }
 
 }

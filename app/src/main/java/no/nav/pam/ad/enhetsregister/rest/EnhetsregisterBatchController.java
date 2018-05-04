@@ -1,11 +1,10 @@
 package no.nav.pam.ad.enhetsregister.rest;
 
+import no.nav.pam.ad.enhetsregister.batch.BatchConfig;
 import no.nav.pam.ad.enhetsregister.batch.DataSet;
 import no.nav.pam.ad.enhetsregister.batch.JobLauncherService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -27,18 +26,15 @@ public class EnhetsregisterBatchController {
     private final URL enhetsregisterHovedenhetUrl;
     private final URL enhetsregisterUnderenhetUrl;
 
-    @Autowired
-    EnhetsregisterBatchController(
+    public EnhetsregisterBatchController(
             JobLauncherService service,
-            @Qualifier("enhetsregister.hovedenhet.enabled") boolean enhetsregisterHovedenhetEnabled,
-            @Qualifier("enhetsregister.hovedenhet.url") URL enhetsregisterHovedenhetUrl,
-            @Qualifier("enhetsregister.underenhet.enabled") boolean enhetsregisterUnderenhetEnabled,
-            @Qualifier("enhetsregister.underenhet.url") URL enhetsregisterUnderenhetUrl
+            BatchConfig.SourceConfiguration hovedenhet,
+            BatchConfig.SourceConfiguration underenhet
     ) {
 
         this.service = service;
-        this.enhetsregisterHovedenhetUrl = enhetsregisterHovedenhetEnabled ? enhetsregisterHovedenhetUrl : null;
-        this.enhetsregisterUnderenhetUrl = enhetsregisterUnderenhetEnabled ? enhetsregisterUnderenhetUrl : null;
+        this.enhetsregisterHovedenhetUrl = hovedenhet.getUrl();
+        this.enhetsregisterUnderenhetUrl = underenhet.getUrl();
 
     }
 

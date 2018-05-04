@@ -32,13 +32,6 @@ http:
     enabled: true
     url: http://155.55.60.117:8088
 
-enhetsregister:
-  hovedenhet:
-    enabled: false
-  underenhet:
-    enabled: true
-    url: "http://localhost/this/configuration/is/intended/to/fail/if/actually/used"
-
 # Management endpoints for NAIS.
 management:
   endpoints:

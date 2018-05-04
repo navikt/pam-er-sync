@@ -68,7 +68,7 @@ class Downloader implements AutoCloseable {
 
             } catch (IOException e) {
                 LOG.error("Failed to download file from {}", url, e);
-                return null;
+                throw e;
             }
 
         });

@@ -40,7 +40,11 @@ import static no.nav.pam.ad.enhetsregister.batch.JobLauncherService.*;
 @EnableScheduling
 public class BatchConfig {
 
-    static final String PROPERTY_CRON = "enhetsregister.scheduler.cron";
+    private static final String PROPERTY_ENHETSREGISTER_SCHEDULER_ENABLED = "enhetsregister.scheduler.enabled";
+    static final String PROPERTY_ENHETSREGISTER_SCHEDULER_CRON = "enhetsregister.scheduler.cron";
+
+    @Value("${" + PROPERTY_ENHETSREGISTER_SCHEDULER_ENABLED + "}")
+    private boolean enhetsregisterSchedulerEnabled;
 
     @Value("${enhetsregister.sources.hovedenhet.enabled:false}")
     private boolean enhetsregisterHovedenhetEnabled;
@@ -149,9 +153,9 @@ public class BatchConfig {
     }
 
     @Bean
-    @ConditionalOnProperty({"enhetsregister.scheduler.enabled", PROPERTY_CRON})
+    @ConditionalOnProperty({PROPERTY_ENHETSREGISTER_SCHEDULER_ENABLED, PROPERTY_ENHETSREGISTER_SCHEDULER_CRON})
     @Profile("!test")
-    public BatchScheduler jobLauncherScheduler(JobLauncherService jobService, IndexService indexService, Hovedenhet hovedenhet, Underenhet underenhet) {
+    public BatchScheduler batchScheduler(JobLauncherService jobService, IndexService indexService, Hovedenhet hovedenhet, Underenhet underenhet) {
         return new BatchScheduler(jobService, indexService, hovedenhet, underenhet);
     }
 

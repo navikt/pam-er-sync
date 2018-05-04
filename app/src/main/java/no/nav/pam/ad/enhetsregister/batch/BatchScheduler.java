@@ -13,12 +13,12 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
-import static no.nav.pam.ad.enhetsregister.batch.BatchConfig.PROPERTY_CRON;
+import static no.nav.pam.ad.enhetsregister.batch.BatchConfig.PROPERTY_ENHETSREGISTER_SCHEDULER_CRON;
 
 class BatchScheduler implements InitializingBean {
 
     private static final Logger LOG = LoggerFactory.getLogger(BatchScheduler.class);
-    private static final String VALUE_CRON = "${" + PROPERTY_CRON + "}";
+    private static final String VALUE_CRON = "${" + PROPERTY_ENHETSREGISTER_SCHEDULER_CRON + "}";
 
     @Value(VALUE_CRON)
     private String cron;

@@ -1,5 +1,6 @@
 package no.nav.pam.ad.enhetsregister.batch;
 
+import net.javacrumbs.shedlock.core.SchedulerLock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -11,6 +12,8 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 
 @Component
 @ConditionalOnProperty("enhetsregister.cron")
@@ -24,8 +27,7 @@ class JobLauncherScheduler implements InitializingBean {
     private String cron;
 
     private final JobLauncherService service;
-    private final URL enhetsregisterHovedenhetUrl;
-    private final URL enhetsregisterUnderenhetUrl;
+    private final Map<DataSet, URL> sync = new HashMap<>(DataSet.values().length);
 
     public JobLauncherScheduler(
             JobLauncherService service,
@@ -36,9 +38,13 @@ class JobLauncherScheduler implements InitializingBean {
     ) {
 
         this.service = service;
-        this.enhetsregisterHovedenhetUrl = enhetsregisterHovedenhetEnabled ? enhetsregisterHovedenhetUrl : null;
-        this.enhetsregisterUnderenhetUrl = enhetsregisterUnderenhetEnabled ? enhetsregisterUnderenhetUrl : null;
-        if (enhetsregisterHovedenhetUrl == null && enhetsregisterUnderenhetUrl == null) {
+        if (enhetsregisterHovedenhetEnabled) {
+            sync.put(DataSet.HOVEDENHET, enhetsregisterHovedenhetUrl);
+        }
+        if (enhetsregisterUnderenhetEnabled) {
+            sync.put(DataSet.UNDERENHET, enhetsregisterUnderenhetUrl);
+        }
+        if (sync.size() == 0) {
             LOG.warn("No data sets are configured to be synchronized");
         }
 
@@ -50,18 +56,18 @@ class JobLauncherScheduler implements InitializingBean {
     }
 
     @Scheduled(cron = VALUE_CRON)
+    @SchedulerLock(name = "JobLauncherScheduler.run")
     private void run() {
 
-        try {
-            if (enhetsregisterHovedenhetUrl != null) {
-                service.synchronize(DataSet.HOVEDENHET, enhetsregisterHovedenhetUrl);
+        LOG.info("Starting scheduled synchronization of data set(s) {}", sync.keySet());
+        sync.forEach((dataSet, url) -> {
+            try {
+                service.synchronize(dataSet, url);
+            } catch (Exception e) {
+                LOG.error("Failed to run scheduled job, will retry with cron {}", cron, e);
             }
-            if (enhetsregisterUnderenhetUrl != null) {
-                service.synchronize(DataSet.UNDERENHET, enhetsregisterUnderenhetUrl);
-            }
-        } catch (Exception e) {
-            LOG.error("Failed to run scheduled job, will retry with cron {}", cron, e);
-        }
+        });
+        LOG.info("Finished scheduled synchronization of data set(s) {}", sync.keySet());
 
     }
 

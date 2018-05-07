@@ -26,12 +26,11 @@ spring:
     job:
       enabled: false
     initialize-schema: always
-http:
-  proxy:
-    url: ${http.proxy.url:http://155.55.60.117:8088}
 
-# PAM specific.
 pam:
+  http:
+      proxy:
+        url: http://155.55.60.117:8088
   elasticsearch:
     url: ${pam.elasticsearch.url:https://pamsok-elasticsearch.nais.oera-q.local}
   enhetsregister:

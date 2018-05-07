@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.Proxy;
 import java.net.URL;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -27,10 +28,12 @@ public class JobLauncherService {
     @Value("${pam.enhetsregister.sources.timeout.millis:5000}")
     private int timeoutMillis;
 
+    private final Proxy proxy;
     private final JobLauncher launcher;
     private final Job job;
 
-    JobLauncherService(JobLauncher launcher, Job job) {
+    JobLauncherService(Proxy proxy, JobLauncher launcher, Job job) {
+        this.proxy = proxy;
         this.launcher = launcher;
         this.job = job;
     }
@@ -40,7 +43,7 @@ public class JobLauncherService {
 
         LOG.info("Synchronizing data set {} from source {} using timeout {} ms", dataSet, url, timeoutMillis);
         long start = System.currentTimeMillis();
-        try (Downloader downloader = new Downloader(url)) {
+        try (Downloader downloader = new Downloader(proxy, url)) {
 
             File file = downloader.download().get(timeoutMillis, TimeUnit.MILLISECONDS);
             LOG.info("Downloaded {} bytes to temporary file {} in {} ms", file.length(), file.getAbsolutePath(), System.currentTimeMillis() - start);

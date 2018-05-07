@@ -21,12 +21,11 @@ spring:
     job:
       enabled: false
     initialize-schema: always
-http:
-  proxy:
-    url: http://155.55.60.117:8088
 
-# PAM specific.
 pam:
+  http:
+      proxy:
+        url: http://155.55.60.117:8088
   elasticsearch:
     url: http://localhost:2218
     usemock: false

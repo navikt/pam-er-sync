@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.Proxy;
 import java.net.URL;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
@@ -21,12 +22,14 @@ class Downloader implements AutoCloseable {
     private static final Logger LOG = LoggerFactory.getLogger(Downloader.class);
 
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
+    private final Proxy proxy;
     private final URL url;
     private final File file;
 
-    Downloader(URL url)
+    Downloader(Proxy proxy, URL url)
             throws IOException {
 
+        this.proxy = proxy;
         this.url = url;
 
         file = File.createTempFile(Downloader.class.getSimpleName(), null);
@@ -54,22 +57,16 @@ class Downloader implements AutoCloseable {
         }
         return executor.submit(() -> {
 
-            try {
+            try (ReadableByteChannel channel = Channels.newChannel(url.openConnection(proxy).getInputStream());
+                 FileOutputStream out = new FileOutputStream(file)) {
 
-                try (ReadableByteChannel channel = Channels.newChannel(url.openStream());
-                     FileOutputStream out = new FileOutputStream(file)) {
+                long started = System.currentTimeMillis();
+                out.getChannel().transferFrom(channel, 0, Long.MAX_VALUE);
+                LOG.debug("{} bytes written to file {} in {} ms", out.getChannel().size(), file.getAbsoluteFile(), System.currentTimeMillis() - started);
 
-                    long started = System.currentTimeMillis();
-                    out.getChannel().transferFrom(channel, 0, Long.MAX_VALUE);
-                    LOG.debug("{} bytes written to file {} in {} ms", out.getChannel().size(), file.getAbsoluteFile(), System.currentTimeMillis() - started);
-
-                }
-                return file;
-
-            } catch (IOException e) {
-                LOG.error("Failed to download file from {}", url, e);
-                throw e;
             }
+            return file;
+
 
         });
 

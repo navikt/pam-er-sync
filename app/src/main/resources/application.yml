@@ -35,17 +35,17 @@ pam:
     url: ${pam.elasticsearch.url:https://pamsok-elasticsearch.nais.oera-q.local}
   enhetsregister:
     scheduler:
-      enabled: ${enhetsregister.scheduler.enabled:true}
-      cron: ${enhetsregister.scheduler.cron:0 0 0 * * *}
+      enabled: ${pam.enhetsregister.scheduler.enabled:false}
+      cron: ${pam.enhetsregister.scheduler.cron:0 0 0 * * *}
     sources:
       timeout:
-        millis: ${enhetsregister.sources.timeout.millis:25000}
+        millis: ${pam.enhetsregister.sources.timeout.millis:25000}
       hovedenhet:
-        enabled: ${enhetsregister.sources.hovedenhet.enabled:false}
-        url:  ${enhetsregister.sources.hovedenhet.url:http://data.brreg.no/enhetsregisteret/download/enheter}
+        enabled: ${pam.enhetsregister.sources.hovedenhet.enabled:false}
+        url:  ${pam.enhetsregister.sources.hovedenhet.url:http://data.brreg.no/enhetsregisteret/download/enheter}
       underenhet:
-        enabled: ${enhetsregister.sources.underenhet.enabled:true}
-        url: ${enhetsregister.sources.underenhet.url:http://data.brreg.no/enhetsregisteret/download/underenheter}
+        enabled: ${pam.enhetsregister.sources.underenhet.enabled:true}
+        url: ${pam.enhetsregister.sources.underenhet.url:http://data.brreg.no/enhetsregisteret/download/underenheter}
 
 # Management endpoints for NAIS.
 management:

@@ -40,22 +40,22 @@ import static no.nav.pam.ad.enhetsregister.batch.JobLauncherService.*;
 @EnableScheduling
 public class BatchConfig {
 
-    private static final String PROPERTY_ENHETSREGISTER_SCHEDULER_ENABLED = "enhetsregister.scheduler.enabled";
-    static final String PROPERTY_ENHETSREGISTER_SCHEDULER_CRON = "enhetsregister.scheduler.cron";
+    private static final String PROPERTY_ENHETSREGISTER_SCHEDULER_ENABLED = "pam.enhetsregister.scheduler.enabled";
+    static final String PROPERTY_ENHETSREGISTER_SCHEDULER_CRON = "pam.enhetsregister.scheduler.cron";
 
     @Value("${" + PROPERTY_ENHETSREGISTER_SCHEDULER_ENABLED + ":false}")
     private boolean enhetsregisterSchedulerEnabled;
 
-    @Value("${enhetsregister.sources.hovedenhet.enabled:false}")
+    @Value("${pam.enhetsregister.sources.hovedenhet.enabled:false}")
     private boolean enhetsregisterHovedenhetEnabled;
 
-    @Value("${enhetsregister.sources.hovedenhet.url:http://data.brreg.no/enhetsregisteret/download/enheter}")
+    @Value("${pam.enhetsregister.sources.hovedenhet.url:http://data.brreg.no/enhetsregisteret/download/enheter}")
     private String enhetsregisterHovedenhetUrl;
 
-    @Value("${enhetsregister.sources.underenhet.enabled:true}")
+    @Value("${pam.enhetsregister.sources.underenhet.enabled:true}")
     private boolean enhetsregisterUnderenhetEnabled;
 
-    @Value("${enhetsregister.sources.underenhet.url:http://data.brreg.no/enhetsregisteret/download/underenheter}")
+    @Value("${pam.enhetsregister.sources.underenhet.url:http://data.brreg.no/enhetsregisteret/download/underenheter}")
     private String enhetsregisterUnderenhetUrl;
 
     private final JobBuilderFactory jobBuilderFactory;

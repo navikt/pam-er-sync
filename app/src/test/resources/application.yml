@@ -3,10 +3,6 @@ server:
 config:
   cors:
     allowCredentials: true
-pam:
-  elasticsearch:
-    url: http://localhost:2218
-    usemock: false
 spring:
   datasource:
     url: jdbc:h2:mem:testdb;Mode=Oracle
@@ -25,12 +21,15 @@ spring:
     job:
       enabled: false
     initialize-schema: always
-
-# HTTP proxy, see HttpConfig class.
 http:
   proxy:
-    enabled: true
     url: http://155.55.60.117:8088
+
+# PAM specific.
+pam:
+  elasticsearch:
+    url: http://localhost:2218
+    usemock: false
 
 # Management endpoints for NAIS.
 management:

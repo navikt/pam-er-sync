@@ -11,10 +11,10 @@ port: 9012
 healthcheck:
     liveness:
       initialDelay: 120
-      path: /actuator/health
+      path: /actuator/info
     readiness:
       initialDelay: 120
-      path: /actuator/info
+      path: /actuator/health
 resources:
     limits:
       cpu: 1000m

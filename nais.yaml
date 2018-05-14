@@ -24,5 +24,9 @@ resources:
       memory: 500Mi
 fasitResources:
   used:
+  - alias: "pamd-nais-driftproxy"
+    resourceType: baseurl
+  - alias: "StillingESBackend"
+    resourceType: baseurl
   - alias: "application.properties"
     resourceType: ApplicationProperties

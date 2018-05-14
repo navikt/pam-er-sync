@@ -30,9 +30,9 @@ spring:
 pam:
   http:
       proxy:
-        url: http://155.55.60.117:8088
+        url: ${PAM_NAIS_DRIFTPROXY_URL:http://webproxy-nais.nav.no:8088}
   elasticsearch:
-    url: ${pam.elasticsearch.url:https://pamsok-elasticsearch.nais.oera-q.local}
+    url: ${STILLINGESBACKEND_URL:https://pamsok-elasticsearch.nais.oera-q.local}
   enhetsregister:
     scheduler:
       enabled: ${pam.enhetsregister.scheduler.enabled:false}

@@ -1,5 +1,5 @@
 server:
-  port: 2218
+  port: 9012
 config:
   cors:
     allowCredentials: true

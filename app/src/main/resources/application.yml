@@ -24,7 +24,7 @@ spring:
     active: prod
   batch:
     job:
-      enabled: false
+      enabled: false # disabled batch startup, we are using scheduler
     initialize-schema: always
 
 pam:

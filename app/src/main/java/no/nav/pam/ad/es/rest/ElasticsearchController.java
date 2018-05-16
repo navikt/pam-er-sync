@@ -1,6 +1,8 @@
 package no.nav.pam.ad.es.rest;
 
 import no.nav.pam.ad.es.IndexClient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -10,14 +12,13 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.io.IOException;
-
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @Controller
-@RequestMapping("/api/enhetsregister/es")
+@RequestMapping("/internal/enhetsregister/es")
 public class ElasticsearchController {
 
+    private final Logger LOG = LoggerFactory.getLogger(ElasticsearchController.class);
     private final IndexClient service;
 
     @Autowired
@@ -34,7 +35,8 @@ public class ElasticsearchController {
         try {
             service.replaceAlias(prefix, datestamp);
             return ResponseEntity.ok().build();
-        } catch (IOException e) {
+        } catch (Exception e) {
+            LOG.error("Got exception while trying to replace alias", e);
             throw new ResponseStatusException(NOT_FOUND);
         }
 
@@ -44,9 +46,9 @@ public class ElasticsearchController {
     public ResponseEntity deleteIndex(@PathVariable("index") String index) {
         try {
             service.deleteIndex(index);
-
             return ResponseEntity.ok().build();
-        } catch (IOException e) {
+        } catch (Exception e) {
+            LOG.error("Got exceptioni while trying to delete index",e);
             return ResponseEntity.notFound().build();
         }
     }

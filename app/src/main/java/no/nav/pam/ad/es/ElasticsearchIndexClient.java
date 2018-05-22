@@ -2,6 +2,7 @@ package no.nav.pam.ad.es;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import no.nav.pam.ad.enhetsregister.model.Enhet;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.entity.ContentType;
 import org.apache.http.nio.entity.NStringEntity;
 import org.apache.http.util.EntityUtils;
@@ -62,9 +63,10 @@ public class ElasticsearchIndexClient extends RestHighLevelClient implements Ind
             throws IOException {
 
         String[] lowerCaseIndices = Arrays.stream(indices).map(String::toLowerCase).toArray(String[]::new);
-        indices().delete(new DeleteIndexRequest(lowerCaseIndices));
 
-
+        if (lowerCaseIndices.length > 0) {
+            indices().delete(new DeleteIndexRequest(lowerCaseIndices));
+        }
     }
 
     @Override
@@ -138,15 +140,17 @@ public class ElasticsearchIndexClient extends RestHighLevelClient implements Ind
         Response response = getLowLevelClient().performRequest("GET", "/_cat/indices/" + lowerCaseName + "*");
 
         String full = EntityUtils.toString(response.getEntity());
-        String[] lines = full.split("\\r?\\n");
 
-        for (String line : lines) {
-            String[] tokenized = line.split("\\s");
-            indices.add(tokenized[2]);
+        if (!StringUtils.isBlank(full)) {
+            String[] lines = full.split("\\r?\\n");
+
+            for (String line : lines) {
+                String[] tokenized = line.split("\\s");
+                indices.add(tokenized[2]);
+            }
         }
 
         return indices;
-
     }
 
     @Override

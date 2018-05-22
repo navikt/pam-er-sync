@@ -29,12 +29,10 @@ import java.security.cert.X509Certificate;
 @ComponentScan(basePackageClasses = {Application.class})
 public class AppConfig {
 
-    private static final int TIMEOUT_MILLIS = 60000;
-
     @Value("${pam.elasticsearch.url}")
     private String elasticsearchUrl;
 
-    @Value("${pam.http.proxy.url}")
+    @Value("${pam.http.proxy.url:#{null}}")
     private String httpProxyUrl;
 
     @Bean
@@ -99,6 +97,9 @@ public class AppConfig {
     public Proxy proxy()
             throws MalformedURLException {
 
+        if (httpProxyUrl == null) {
+            return Proxy.NO_PROXY;
+        }
         URL url = new URL(httpProxyUrl);
         return new Proxy(Proxy.Type.HTTP, new InetSocketAddress(url.getHost(), url.getPort()));
 

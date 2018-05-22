@@ -1,7 +1,5 @@
 server:
-  port: ${server.port:9012}
-application:
-  version: @project.version@
+  port: 9012
 spring:
   datasource:
     url: jdbc:h2:mem:testdb;Mode=Oracle
@@ -21,7 +19,7 @@ spring:
         physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
       ddl-auto: none
   profiles:
-    active: prod
+    active: test
   batch:
     job:
       enabled: false # disabled batch startup, we are using scheduler
@@ -30,22 +28,22 @@ spring:
 pam:
   http:
       proxy:
-        url: ${PAM_NAIS_DRIFTPROXY_URL:http://webproxy-nais.nav.no:8088}
+        url: http://webproxy-nais.nav.no:8088
   elasticsearch:
-    url: ${STILLINGESBACKEND_URL:https://pamsok-elasticsearch.nais.oera-q.local}
+    url: localhost:9012
   enhetsregister:
     scheduler:
-      enabled: ${pam.enhetsregister.scheduler.enabled:false}
-      cron: ${pam.enhetsregister.scheduler.cron:0 0 0 * * *}
+      enabled: false
+      cron: 0 0 0 * * *
     sources:
       timeout:
-        millis: ${pam.enhetsregister.sources.timeout.millis:25000}
+        millis: 25000
       hovedenhet:
-        enabled: ${pam.enhetsregister.sources.hovedenhet.enabled:false}
-        url:  ${pam.enhetsregister.sources.hovedenhet.url:http://data.brreg.no/enhetsregisteret/download/enheter}
+        enabled: false
+        url:  http://data.brreg.no/enhetsregisteret/download/enheter
       underenhet:
-        enabled: ${pam.enhetsregister.sources.underenhet.enabled:true}
-        url: ${pam.enhetsregister.sources.underenhet.url:http://data.brreg.no/enhetsregisteret/download/underenheter}
+        enabled: true
+        url: http://data.brreg.no/enhetsregisteret/download/underenheter
 
 # Management endpoints for NAIS.
 management:

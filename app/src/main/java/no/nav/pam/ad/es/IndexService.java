@@ -2,6 +2,7 @@ package no.nav.pam.ad.es;
 
 import com.google.common.io.CharStreams;
 import no.nav.pam.ad.enhetsregister.model.Enhet;
+import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.action.bulk.BulkItemResponse;
 import org.elasticsearch.action.bulk.BulkResponse;
 import org.slf4j.Logger;
@@ -12,6 +13,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 
 @Service
@@ -103,15 +105,26 @@ public class IndexService {
     public void deleteOlderIndices(String prefix)
             throws IOException {
 
+        String prefixLowercased = prefix.toLowerCase();
         LocalDate maxAge = LocalDate.now().minusDays(INDEX_EXPIRATION_IN_DAYS);
         client.deleteIndex(
                 client
-                        .fetchAllIndicesStartingWith(prefix)
+                        .fetchAllIndicesStartingWith(prefixLowercased)
                         .stream()
-                        .filter(index -> Datestamp.parseFrom(index.replace(prefix, "")).isBefore(maxAge))
+                        .filter(index -> indexIsBefore(index, prefixLowercased, maxAge))
                         .toArray(String[]::new)
         );
 
+    }
+
+    private boolean indexIsBefore(String index, String prefix, LocalDate date){
+
+        try{
+            return Datestamp.parseFrom(StringUtils.remove(index, prefix)).isBefore(date);
+        }catch (DateTimeParseException e){
+            LOG.error("Couldn't parse date from index name {}", index);
+            return false;
+        }
     }
 
 }

@@ -32,10 +32,17 @@
       "properties": {
         "navn": {
           "type": "text",
-          "analyzer": "enhetsnavn_analyzer"
+          "analyzer": "enhetsnavn_analyzer",
+          "copy_to": "navn_suggest"
+        },
+        "organisasjonsnummer": {
+          "type": "keyword"
         },
         "adresse.postnummer": {
           "type": "keyword"
+        },
+        "navn_suggest": {
+          "type": "completion"
         }
       }
     }

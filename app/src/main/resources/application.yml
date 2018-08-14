@@ -42,10 +42,10 @@ pam:
         millis: ${pam.enhetsregister.sources.timeout.millis:25000}
       hovedenhet:
         enabled: ${pam.enhetsregister.sources.hovedenhet.enabled:false}
-        url:  ${pam.enhetsregister.sources.hovedenhet.url:http://data.brreg.no/enhetsregisteret/download/enheter}
+        url:  ${pam.enhetsregister.sources.hovedenhet.url:https://data.brreg.no/enhetsregisteret/download/enheter}
       underenhet:
         enabled: ${pam.enhetsregister.sources.underenhet.enabled:true}
-        url: ${pam.enhetsregister.sources.underenhet.url:http://data.brreg.no/enhetsregisteret/download/underenheter}
+        url: ${pam.enhetsregister.sources.underenhet.url:https://data.brreg.no/enhetsregisteret/download/underenheter}
 
 # Management endpoints for NAIS.
 management:

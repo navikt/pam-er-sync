@@ -27,7 +27,7 @@ import static org.junit.Assert.assertThat;
 public class DownloaderTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(DownloaderTest.class);
-    private static final String ENHETSREGISTER_UNDERENHET_URL = "http://data.brreg.no/enhetsregisteret/download/underenheter";
+    private static final String ENHETSREGISTER_UNDERENHET_URL = "https://data.brreg.no/enhetsregisteret/download/underenheter";
     private static final Proxy PROXY = Proxy.NO_PROXY; // You might need to change this if you rely on an actual proxy in your environment.
 
     @Test

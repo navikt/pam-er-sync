@@ -49,13 +49,13 @@ public class BatchConfig {
     @Value("${pam.enhetsregister.sources.hovedenhet.enabled:false}")
     private boolean enhetsregisterHovedenhetEnabled;
 
-    @Value("${pam.enhetsregister.sources.hovedenhet.url:http://data.brreg.no/enhetsregisteret/download/enheter}")
+    @Value("${pam.enhetsregister.sources.hovedenhet.url:https://data.brreg.no/enhetsregisteret/download/enheter}")
     private String enhetsregisterHovedenhetUrl;
 
     @Value("${pam.enhetsregister.sources.underenhet.enabled:true}")
     private boolean enhetsregisterUnderenhetEnabled;
 
-    @Value("${pam.enhetsregister.sources.underenhet.url:http://data.brreg.no/enhetsregisteret/download/underenheter}")
+    @Value("${pam.enhetsregister.sources.underenhet.url:https://data.brreg.no/enhetsregisteret/download/underenheter}")
     private String enhetsregisterUnderenhetUrl;
 
     private final JobBuilderFactory jobBuilderFactory;

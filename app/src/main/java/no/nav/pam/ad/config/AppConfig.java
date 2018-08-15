@@ -3,6 +3,7 @@ package no.nav.pam.ad.config;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import no.nav.pam.ad.Application;
 import org.apache.http.HttpHost;
+import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestClientBuilder;
 import org.springframework.beans.factory.annotation.Value;
@@ -37,6 +38,7 @@ public class AppConfig {
     public void disableJavaSslValidation() throws KeyManagementException, NoSuchAlgorithmException {
         SSLContext unsafeContext = UnsafeSSLContextUtil.newSSLContext(UnsafeSSLContextUtil.newUnsafeTrustManager());
         HttpsURLConnection.setDefaultSSLSocketFactory(unsafeContext.getSocketFactory());
+        HttpsURLConnection.setDefaultHostnameVerifier(new NoopHostnameVerifier());
     }
 
     @Bean
@@ -44,7 +46,9 @@ public class AppConfig {
         SSLContext unsafeContext = UnsafeSSLContextUtil.newSSLContext(UnsafeSSLContextUtil.newUnsafeTrustManager());
         return RestClient
                 .builder(HttpHost.create(elasticsearchUrl))
-                .setHttpClientConfigCallback(httpClientBuilder -> httpClientBuilder.setSSLContext(unsafeContext));
+                .setHttpClientConfigCallback(httpClientBuilder ->
+                    httpClientBuilder.setSSLContext(unsafeContext)
+                    .setSSLHostnameVerifier(new NoopHostnameVerifier()));
     }
 
     @Bean

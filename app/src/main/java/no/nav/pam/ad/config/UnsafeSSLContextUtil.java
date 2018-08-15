@@ -19,7 +19,7 @@ class UnsafeSSLContextUtil {
     /**
      * @return a new SSLContext using the provided trust manager instance, and otherwise defaults
      */
-    static SSLContext newSSLContext(X509TrustManager manager)
+    private static SSLContext newSSLContext(X509TrustManager manager)
             throws NoSuchAlgorithmException, KeyManagementException {
         SSLContext sc = SSLContext.getInstance("SSL");
         sc.init(null, new TrustManager[]{manager}, new SecureRandom());
@@ -29,7 +29,7 @@ class UnsafeSSLContextUtil {
     /**
      * @return an X509TrustManager which trusts all clients and servers unconditionally.
      */
-    static X509TrustManager newUnsafeTrustManager() {
+    private static X509TrustManager newUnsafeTrustManager() {
         return new X509TrustManager() {
             @Override
             public void checkClientTrusted(X509Certificate[] x509Certificates, String s) {

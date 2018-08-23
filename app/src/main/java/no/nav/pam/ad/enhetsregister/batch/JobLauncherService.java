@@ -25,7 +25,7 @@ public class JobLauncherService {
     static final String PARAM_FILENAME = "filename";
     static final String PARAM_DATESTAMP = "datestamp";
 
-    @Value("${pam.enhetsregister.sources.timeout.millis:60000}")
+    @Value("${pam.enhetsregister.sources.timeout.millis:300000}")
     private int timeoutMillis;
 
     private final Proxy proxy;

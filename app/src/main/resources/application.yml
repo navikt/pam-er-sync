@@ -39,7 +39,7 @@ pam:
       cron: ${pam.enhetsregister.scheduler.cron:0 0 0 * * *}
     sources:
       timeout:
-        millis: ${pam.enhetsregister.sources.timeout.millis:25000}
+        millis: ${pam.enhetsregister.sources.timeout.millis:300000}
       hovedenhet:
         enabled: ${pam.enhetsregister.sources.hovedenhet.enabled:false}
         url:  ${pam.enhetsregister.sources.hovedenhet.url:https://data.brreg.no/enhetsregisteret/download/enheter}

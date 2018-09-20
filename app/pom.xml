@@ -10,7 +10,7 @@
     <parent>
         <groupId>no.nav.pam.ad</groupId>
         <artifactId>pam-er-sync</artifactId>
-        <version>1.8-SNAPSHOT</version>
+        <version>1.9-SNAPSHOT</version>
     </parent>
 
     <dependencies>

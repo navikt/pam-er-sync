@@ -1,3 +1,6 @@
+## RELEASE - 1.8.85-82c2acd
+#### New in this release: 
++ 2018-09-20 [PAM-1448] Increase brreg download timeout to 300 seconds
 ## RELEASE - 1.7.84-f9ff763
 #### New in this release: 
 + 2018-08-23 [PAM-1239] Add ngram-based completion field for company name

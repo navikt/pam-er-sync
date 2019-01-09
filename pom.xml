@@ -18,7 +18,7 @@
     </modules>
 
     <properties>
-        <elasticsearch.version>6.2.4</elasticsearch.version>
+        <elasticsearch.version>6.5.4</elasticsearch.version>
         <guava.version>20.0</guava.version>
         <shedlock.version>0.14.0</shedlock.version>
         <micrometer.version>1.0.1</micrometer.version>

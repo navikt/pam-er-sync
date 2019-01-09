@@ -17,7 +17,7 @@ import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @Controller
-@RequestMapping("/api/enhetsregister")
+@RequestMapping("/internal/enhetsregister")
 public class EnhetsregisterBatchController {
 
     private static final Logger LOG = LoggerFactory.getLogger(EnhetsregisterBatchController.class);

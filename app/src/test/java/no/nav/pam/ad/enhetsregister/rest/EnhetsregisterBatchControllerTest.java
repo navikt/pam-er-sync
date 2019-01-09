@@ -45,7 +45,7 @@ public class EnhetsregisterBatchControllerTest {
     public void triggerDownloadOfHovedenheterAndGetNotFound() {
 
         given().port(port)
-                .post("/api/enhetsregister/sync/hovedenheter")
+                .post("/internal/enhetsregister/sync/hovedenheter")
                 .then()
                 .assertThat()
                 .statusCode(404); // Should be disabled in test configuration, so this is what we want.
@@ -56,7 +56,7 @@ public class EnhetsregisterBatchControllerTest {
     public void triggerDownloadOfUnderenheterAndProcessBatchJob() {
 
         given().port(port)
-                .post("/api/enhetsregister/sync/underenheter")
+                .post("/internal/enhetsregister/sync/underenheter")
                 .then()
                 .assertThat()
                 .statusCode(200);

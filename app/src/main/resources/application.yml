@@ -4,11 +4,11 @@ application:
   version: @project.version@
 spring:
   datasource:
-    url: jdbc:h2:mem:testdb;Mode=Oracle
+    url: jdbc:h2:mem:testdb;Mode=PostgreSQL
     platform: h2
     continue-on-error: true
   jpa:
-    database-platform: org.hibernate.dialect.Oracle10gDialect
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
     properties:
       hibernate:
        cache:

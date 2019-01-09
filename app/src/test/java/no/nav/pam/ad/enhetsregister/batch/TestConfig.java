@@ -26,7 +26,7 @@ import java.util.Map;
  * Expand as needed for further tests.
  */
 @TestConfiguration
-@Import({BatchConfig.class, AppConfig.class})
+@Import({AppConfig.class})
 public class TestConfig extends BatchConfig {
 
     @Autowired
@@ -46,6 +46,7 @@ public class TestConfig extends BatchConfig {
         return new Underenhet(true, EnhetsregisterBatchControllerTest.class.getResource("/enhetsregisteret.samples/underenheter.csv.gz"));
     }
 
+    @Override
     @Bean(name = "jobCompletionNotificationListenerDelay")
     public long jobCompletionNotificationListenerDelay() {
         return 1000;

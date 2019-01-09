@@ -2,7 +2,6 @@ package no.nav.pam.ad.enhetsregister.batch;
 
 
 import no.nav.pam.ad.enhetsregister.model.CsvEnhet;
-import no.nav.pam.ad.enhetsregister.rest.EnhetsregisterBatchController;
 import no.nav.pam.ad.es.IndexService;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -169,11 +168,6 @@ public class BatchConfig {
     public Underenhet underenhet()
             throws MalformedURLException {
         return new Underenhet(enhetsregisterUnderenhetEnabled, new URL(enhetsregisterUnderenhetUrl));
-    }
-
-    @Bean
-    public EnhetsregisterBatchController enhetsregisterBatchController(JobLauncherService service, Hovedenhet hovedenhet, Underenhet underenhet) {
-        return new EnhetsregisterBatchController(service, hovedenhet, underenhet);
     }
 
     public abstract static class SourceConfiguration {

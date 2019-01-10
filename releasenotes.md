@@ -1,3 +1,7 @@
+## RELEASE - 1.10.96-1162606
+#### New in this release: 
++ 2019-01-09 [UPGRADE] Elastic search client
++ 2019-01-09 [UPGRADE] Spring Boot 2.1.1 (#5)
 ## RELEASE - 1.8.85-82c2acd
 #### New in this release: 
 + 2018-09-20 [PAM-1448] Increase brreg download timeout to 300 seconds

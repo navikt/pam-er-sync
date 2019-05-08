@@ -1,2 +1,0 @@
-# Manually synchronize HOVEDENHET:
-POST http://localhost:9012/api/enhetsregister/sync/hovedenheter

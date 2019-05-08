@@ -32,4 +32,4 @@ spec:
   vault:
     enabled: true
   ingresses:
-    - https://pam-er-sync.nais.oera.no
+    - https://pam-er-sync.nais.oera-q.local

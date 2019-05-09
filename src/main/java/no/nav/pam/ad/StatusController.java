@@ -9,12 +9,8 @@ import org.springframework.boot.actuate.health.Status;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-
-import java.io.IOException;
 
 @Controller
-@RequestMapping("/internal/status")
 public class StatusController {
 
     private final IndexClientHealthIndicator indexClientHealthIndicator;
@@ -27,17 +23,17 @@ public class StatusController {
     }
 
     @GetMapping(path = "/isAlive")
-    public String isAlive() {
-        return "OK";
+    public ResponseEntity<String> isAlive() {
+        return ResponseEntity.ok("OK");
     }
 
     @GetMapping(path = "/isReady")
-    public String isReady() {
-        return "OK";
+    public ResponseEntity<String> isReady() {
+        return ResponseEntity.ok("OK");
     }
 
-    @GetMapping
-    public ResponseEntity<ObjectNode> statusHealth() throws IOException {
+    @GetMapping(path = "/internal/status")
+    public ResponseEntity<ObjectNode> statusHealth() {
 
         boolean isElastisSearchOK = indexClientHealthIndicator.health().getStatus().equals(Status.UP);
         boolean isBrregOk = brregHealthIndicator.health().getStatus().equals(Status.UP);

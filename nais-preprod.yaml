@@ -17,10 +17,10 @@ spec:
     path: /actuator/prometheus
   liveness:
     initialDelay: 20
-    path: /internal/status/isAlive
+    path: /isAlive
   readiness:
     initialDelay: 20
-    path: /internal/status/isReady
+    path: /isReady
   resources:
     limits:
       cpu: 1000m

@@ -26,7 +26,15 @@ public class StatusController {
         this.brregHealthIndicator = brregHealthIndicator;
     }
 
-    @Autowired
+    @GetMapping(path = "/isAlive")
+    public String isAlive() {
+        return "OK";
+    }
+
+    @GetMapping(path = "/isReady")
+    public String isReady() {
+        return "OK";
+    }
 
     @GetMapping
     public ResponseEntity<ObjectNode> statusHealth() throws IOException {

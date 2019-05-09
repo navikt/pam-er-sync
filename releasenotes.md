@@ -1,3 +1,7 @@
+## RELEASE - 1.11.101-243299f
+#### New in this release: 
++ 2019-05-09 [PAM-3254] Naiserator (#6)
++ 2019-01-23 [FIX] disable postgres use_jdbc_metadata_defaults
 ## RELEASE - 1.10.96-1162606
 #### New in this release: 
 + 2019-01-09 [UPGRADE] Elastic search client

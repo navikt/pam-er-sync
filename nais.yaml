@@ -30,6 +30,9 @@ spec:
       memory: 500Mi
   webproxy: true
   vault:
-    enabled: true
+    enabled: false
   ingresses:
     - https://pam-er-sync.nais.oera.no
+  env:
+    - name: STILLINGESBACKEND_URL
+      value: https://tpa-pamsok-elasticsearch.nais.oera.no

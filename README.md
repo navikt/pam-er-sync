@@ -1,8 +1,7 @@
 PAM Enhetsregister Sync
 
-Laster ned datasettet fra BRREG og indekserer til lokal en Elastic Search instance.
+Spring batch app som laster ned datasettet fra BRREG og indekserer til en lokal Elastic Search instance.
 
-TODO:
 
 # Elasticsearch on localhost Docker
 If you're able to run Docker, you could run the application against your own Elasticsearch instance.

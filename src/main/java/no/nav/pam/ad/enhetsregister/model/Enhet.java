@@ -15,18 +15,16 @@ public class Enhet {
     private final String overordnetEnhet;
 
     private final Adresse adresse;
-    private final Adresse postAdresse;
     private final List<Naringskode> naringskoder = new ArrayList<>();
 
 
-    public Enhet(String organisasjonsnummer, String navn, String organisasjonsform, Integer antallAnsatte, String overordnetEnhet, Adresse adresse, Adresse postAdresse) {
+    public Enhet(String organisasjonsnummer, String navn, String organisasjonsform, Integer antallAnsatte, String overordnetEnhet, Adresse adresse) {
         this.organisasjonsnummer = organisasjonsnummer;
         this.navn = navn;
         this.organisasjonsform = organisasjonsform;
         this.antallAnsatte = antallAnsatte;
         this.overordnetEnhet = overordnetEnhet;
         this.adresse = adresse;
-        this.postAdresse = postAdresse;
     }
 
     public String getOrganisasjonsnummer() {
@@ -51,10 +49,6 @@ public class Enhet {
 
     public Adresse getAdresse() {
         return adresse;
-    }
-
-    public Adresse getPostAdresse() {
-        return postAdresse;
     }
 
     public List<Naringskode> getNaringskoder() {

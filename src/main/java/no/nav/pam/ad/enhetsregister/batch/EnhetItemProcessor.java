@@ -34,8 +34,7 @@ public class EnhetItemProcessor implements ItemProcessor<ReaderEnhet, Enhet> {
                 readerEnhet.organisasjonsform.kode,
                 readerEnhet.antallAnsatte,
                 readerEnhet.overordnetEnhet,
-                adresse,
-                null);
+                adresse);
 
 
         if (readerEnhet.naeringskode1 != null) {

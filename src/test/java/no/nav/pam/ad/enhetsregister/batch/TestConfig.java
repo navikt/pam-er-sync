@@ -38,13 +38,13 @@ public class TestConfig extends BatchConfig {
     @Override
     @Bean
     public Hovedenhet hovedenhet() {
-        return new Hovedenhet(false, EnhetsregisterBatchControllerTest.class.getResource("/enhetsregisteret.samples/hovedenheter.csv.gz"));
+        return new Hovedenhet(false, EnhetsregisterBatchControllerTest.class.getResource("/enhetsregisteret.samples/enheter_alle.json.gz"));
     }
 
     @Override
     @Bean
     public Underenhet underenhet() {
-        return new Underenhet(true, EnhetsregisterBatchControllerTest.class.getResource("/enhetsregisteret.samples/underenheter.csv.gz"));
+        return new Underenhet(true, EnhetsregisterBatchControllerTest.class.getResource("/enhetsregisteret.samples/underenheter_alle.json.gz"));
     }
 
     @Override

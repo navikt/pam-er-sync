@@ -1,5 +1,6 @@
 package no.nav.pam.ad.enhetsregister.batch;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import no.nav.pam.ad.config.AppConfig;
 import no.nav.pam.ad.enhetsregister.model.Enhet;
 import no.nav.pam.ad.enhetsregister.rest.EnhetsregisterBatchControllerTest;
@@ -31,7 +32,7 @@ public class TestConfig extends BatchConfig {
 
     @Autowired
     public TestConfig(JobBuilderFactory jobBuilderFactory, StepBuilderFactory stepBuilderFactory) {
-        super(jobBuilderFactory, stepBuilderFactory);
+        super(jobBuilderFactory, stepBuilderFactory, new ObjectMapper());
     }
 
     @Override

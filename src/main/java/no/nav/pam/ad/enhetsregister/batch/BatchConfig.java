@@ -1,6 +1,7 @@
 package no.nav.pam.ad.enhetsregister.batch;
 
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import no.nav.pam.ad.enhetsregister.model.CsvEnhet;
 import no.nav.pam.ad.es.IndexService;
 import org.springframework.batch.core.Job;
@@ -59,11 +60,15 @@ public class BatchConfig {
 
     private final JobBuilderFactory jobBuilderFactory;
     private final StepBuilderFactory stepBuilderFactory;
+    private final ObjectMapper objectMapper;
 
     @Autowired
-    public BatchConfig(JobBuilderFactory jobBuilderFactory, StepBuilderFactory stepBuilderFactory) {
+    public BatchConfig(JobBuilderFactory jobBuilderFactory,
+                       StepBuilderFactory stepBuilderFactory,
+                       ObjectMapper objectMapper) {
         this.jobBuilderFactory = jobBuilderFactory;
         this.stepBuilderFactory = stepBuilderFactory;
+        this.objectMapper = objectMapper;
     }
 
     // tag::readerwriterprocessor[]

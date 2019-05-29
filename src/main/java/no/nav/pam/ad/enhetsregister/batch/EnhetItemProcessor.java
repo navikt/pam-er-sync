@@ -2,75 +2,67 @@ package no.nav.pam.ad.enhetsregister.batch;
 
 
 import no.nav.pam.ad.enhetsregister.model.Adresse;
-import no.nav.pam.ad.enhetsregister.model.CsvEnhet;
 import no.nav.pam.ad.enhetsregister.model.Enhet;
 import no.nav.pam.ad.enhetsregister.model.Naringskode;
-import org.apache.commons.lang3.StringUtils;
+import no.nav.pam.ad.enhetsregister.model.reader.ReaderAdresse;
+import no.nav.pam.ad.enhetsregister.model.reader.ReaderEnhet;
+import no.nav.pam.ad.enhetsregister.model.reader.ReaderNaringskode;
 import org.springframework.batch.item.ItemProcessor;
 
+import java.util.stream.Collectors;
 
-public class EnhetItemProcessor implements ItemProcessor<CsvEnhet, Enhet> {
+
+public class EnhetItemProcessor implements ItemProcessor<ReaderEnhet, Enhet> {
 
     @Override
-    public Enhet process(CsvEnhet enhet) {
+    public Enhet process(ReaderEnhet enhet) {
         return mapToJsonEnhet(enhet);
     }
 
-    private Enhet mapToJsonEnhet(CsvEnhet csv) {
+    private Enhet mapToJsonEnhet(ReaderEnhet readerEnhet) {
 
         Adresse adresse = null;
-        Adresse post = null;
-
-        if (StringUtils.isNotBlank(csv.getPostnummer())) {
-            adresse = new Adresse(
-                    csv.getAdresse(),
-                    csv.getPostnummer(),
-                    csv.getPoststed(),
-                    csv.getKommunenummer(),
-                    csv.getKommune(),
-                    csv.getLandkode(),
-                    csv.getLand());
-        }
-
-        if (StringUtils.isNotBlank(csv.getPostadresse_postnummer())) {
-            post = new Adresse(
-                    csv.getPostadresse_adresse(),
-                    csv.getPostadresse_postnummer(),
-                    csv.getPostadresse_poststed(),
-                    csv.getPostadresse_kommunenummer(),
-                    csv.getPostadresse_kommune(),
-                    csv.getPostadresse_landkode(),
-                    csv.getPostadresse_land());
+        if (readerEnhet.beliggenhetsadresse != null) {
+            adresse = map(readerEnhet.beliggenhetsadresse);
+        } else if (readerEnhet.forretningsadresse != null) {
+            adresse = map(readerEnhet.forretningsadresse);
         }
 
         Enhet json = new Enhet(
-                csv.getOrganisasjonsnummer(),
-                csv.getNavn(),
-                csv.getOrganisasjonsform(),
-                parse(csv.getAntallAnsatte()),
-                csv.getOverordnetEnhet(),
+                readerEnhet.organisasjonsnummer,
+                readerEnhet.navn,
+                readerEnhet.organisasjonsform.kode,
+                readerEnhet.antallAnsatte,
+                readerEnhet.overordnetEnhet,
                 adresse,
-                post);
+                null);
 
-        if (StringUtils.isNotBlank(csv.getNaeringskode1_kode())) {
-            json.getNaringskoder().add(new Naringskode(csv.getNaeringskode1_kode(), csv.getNaeringskode1_beskrivelse()));
+
+        if (readerEnhet.naeringskode1 != null) {
+            json.getNaringskoder().add(map(readerEnhet.naeringskode1));
         }
-        if (StringUtils.isNotBlank(csv.getNaeringskode2_kode())) {
-            json.getNaringskoder().add(new Naringskode(csv.getNaeringskode2_kode(), csv.getNaeringskode2_beskrivelse()));
+        if (readerEnhet.naeringskode2 != null) {
+            json.getNaringskoder().add(map(readerEnhet.naeringskode2));
         }
-        if (StringUtils.isNotBlank(csv.getNaeringskode3_kode())) {
-            json.getNaringskoder().add(new Naringskode(csv.getNaeringskode3_kode(), csv.getNaeringskode3_beskrivelse()));
+        if (readerEnhet.naeringskode3 != null) {
+            json.getNaringskoder().add(map(readerEnhet.naeringskode3));
         }
 
         return json;
     }
 
-    private static int parse(String value) {
-        try {
-            return Integer.parseInt(value);
-        } catch (NumberFormatException e) {
-            return 0;
-        }
+    private Naringskode map(ReaderNaringskode readerItem) {
+        return new Naringskode(readerItem.kode, readerItem.beskrivelse);
+    }
+
+    private Adresse map(ReaderAdresse readerItem) {
+        return new Adresse(readerItem.adresse.stream().collect(Collectors.joining(", ")),
+                readerItem.postnummer,
+                readerItem.poststed,
+                readerItem.kommunenummer,
+                readerItem.kommune,
+                readerItem.landkode,
+                readerItem.land);
     }
 
 }

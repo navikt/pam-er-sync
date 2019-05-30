@@ -28,8 +28,9 @@ pam:
   http:
       proxy:
         url: http://155.55.60.117:8088
+        enabled: true
   elasticsearch:
-    url:  https://pamsok-elasticsearch.nais.oera-q.local
+    url:  ${STILLINGESBACKEND_URL:https://pamsok-elasticsearch.nais.oera-q.local}
     usemock: false
 
 # Management endpoints for NAIS.

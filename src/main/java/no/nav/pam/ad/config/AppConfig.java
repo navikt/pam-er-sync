@@ -29,6 +29,9 @@ public class AppConfig {
     @Value("${pam.http.proxy.url:#{null}}")
     private String httpProxyUrl;
 
+    @Value("${pam.http.proxy.enabled:true}")
+    private boolean proxyEnabled;
+
     @Bean
     @Profile("prod")
     public RestClientBuilder elasticClientBuilder() {
@@ -55,7 +58,7 @@ public class AppConfig {
     public Proxy proxy()
             throws MalformedURLException {
 
-        if (httpProxyUrl == null) {
+        if (httpProxyUrl == null || !proxyEnabled) {
             return Proxy.NO_PROXY;
         }
         URL url = new URL(httpProxyUrl);

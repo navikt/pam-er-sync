@@ -11,10 +11,7 @@ import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.index.IndexRequest;
-import org.elasticsearch.client.Response;
-import org.elasticsearch.client.ResponseException;
-import org.elasticsearch.client.RestClientBuilder;
-import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.client.*;
 import org.elasticsearch.common.xcontent.XContentType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,7 +22,6 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -54,7 +50,7 @@ public class ElasticsearchIndexClient extends RestHighLevelClient implements Ind
             throws IOException {
 
         String lowerCaseIndex = index.toLowerCase();
-        indices().create(new CreateIndexRequest(lowerCaseIndex).source(settings, XContentType.JSON));
+        indices().create(new CreateIndexRequest(lowerCaseIndex).source(settings, XContentType.JSON), RequestOptions.DEFAULT);
 
     }
 
@@ -65,7 +61,7 @@ public class ElasticsearchIndexClient extends RestHighLevelClient implements Ind
         String[] lowerCaseIndices = Arrays.stream(indices).map(String::toLowerCase).toArray(String[]::new);
 
         if (lowerCaseIndices.length > 0) {
-            indices().delete(new DeleteIndexRequest(lowerCaseIndices));
+            indices().delete(new DeleteIndexRequest(lowerCaseIndices), RequestOptions.DEFAULT);
         }
     }
 
@@ -75,7 +71,7 @@ public class ElasticsearchIndexClient extends RestHighLevelClient implements Ind
 
         String lowerCaseIndex = index.toLowerCase();
         try {
-            getLowLevelClient().performRequest("GET", "/" + lowerCaseIndex);
+            getLowLevelClient().performRequest(new Request("GET", "/" + lowerCaseIndex));
             return true;
         } catch (ResponseException e) {
             LOG.debug("Exception while calling indexExists" + e.getMessage());
@@ -95,13 +91,10 @@ public class ElasticsearchIndexClient extends RestHighLevelClient implements Ind
                 "        { \"add\" : { \"index\" : \"" + lowerCaseAlias + indexDatestamp + "\", \"alias\" : \"" + lowerCaseAlias + "\" } }\n" +
                 "    ]\n" +
                 "}";
-        getLowLevelClient().performRequest(
-                "POST",
-                "/_aliases",
-                Collections.emptyMap(),
-                new NStringEntity(jsonString, ContentType.APPLICATION_JSON)
-        );
 
+        Request request = new Request("POST", "/_aliases");
+        request.setEntity(new NStringEntity(jsonString, ContentType.APPLICATION_JSON));
+        getLowLevelClient().performRequest(request);
     }
 
     @Override
@@ -115,7 +108,7 @@ public class ElasticsearchIndexClient extends RestHighLevelClient implements Ind
             request.add(new IndexRequest(lowerCaseIndex, UNDERENHET_TYPE, content.getOrganisasjonsnummer())
                     .source(objectMapper.writeValueAsString(content), XContentType.JSON));
         }
-        return bulk(request);
+        return bulk(request, RequestOptions.DEFAULT);
 
     }
 
@@ -124,8 +117,8 @@ public class ElasticsearchIndexClient extends RestHighLevelClient implements Ind
             throws IOException {
 
         String lowerCaseIndex = index.toLowerCase();
-        getLowLevelClient().performRequest("POST", "/" + lowerCaseIndex + "/_refresh");
-        Response response = getLowLevelClient().performRequest("GET", "/_cat/indices/" + lowerCaseIndex);
+        getLowLevelClient().performRequest(new Request("POST", "/" + lowerCaseIndex + "/_refresh"));
+        Response response = getLowLevelClient().performRequest(new Request("GET", "/_cat/indices/" + lowerCaseIndex));
         String line = EntityUtils.toString(response.getEntity());
         return Integer.parseInt(line.split(" ")[6]);
 
@@ -137,7 +130,7 @@ public class ElasticsearchIndexClient extends RestHighLevelClient implements Ind
 
         String lowerCaseName = name.toLowerCase();
         List<String> indices = new ArrayList<>();
-        Response response = getLowLevelClient().performRequest("GET", "/_cat/indices/" + lowerCaseName + "*");
+        Response response = getLowLevelClient().performRequest(new Request("GET", "/_cat/indices/" + lowerCaseName + "*"));
 
         String full = EntityUtils.toString(response.getEntity());
 
@@ -156,7 +149,7 @@ public class ElasticsearchIndexClient extends RestHighLevelClient implements Ind
     @Override
     public boolean isHealthy()
             throws IOException {
-        return super.ping();
+        return super.ping(RequestOptions.DEFAULT);
     }
 
 }

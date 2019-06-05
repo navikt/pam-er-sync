@@ -93,7 +93,7 @@ public class IndexService {
                 success++;
             }
         }
-        LOG.info("Indexed {} successfully and {} failed, index: {}", success, failed, index);
+        LOG.debug("Indexed {} successfully and {} failed, index: {}", success, failed, index);
 
     }
 

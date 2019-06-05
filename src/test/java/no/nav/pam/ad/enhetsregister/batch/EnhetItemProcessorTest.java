@@ -1,10 +1,15 @@
 package no.nav.pam.ad.enhetsregister.batch;
 
 
-import no.nav.pam.ad.enhetsregister.model.CsvEnhet;
 import no.nav.pam.ad.enhetsregister.model.Enhet;
+import no.nav.pam.ad.enhetsregister.model.reader.ReaderAdresse;
+import no.nav.pam.ad.enhetsregister.model.reader.ReaderEnhet;
+import no.nav.pam.ad.enhetsregister.model.reader.ReaderNaringskode;
+import no.nav.pam.ad.enhetsregister.model.reader.ReaderOrgform;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.Test;
+
+import java.util.Arrays;
 
 
 public class EnhetItemProcessorTest {
@@ -14,39 +19,48 @@ public class EnhetItemProcessorTest {
 
         EnhetItemProcessor processor = new EnhetItemProcessor();
 
-        CsvEnhet u = new CsvEnhet();
-        u.setNavn("Test 1");
-        u.setAntallAnsatte("15");
-        u.setOrganisasjonsform("BEDR");
-        u.setOrganisasjonsnummer("56789");
-        u.setOverordnetEnhet("12345");
+        ReaderEnhet input = new ReaderEnhet();
+        input.navn = "Test 1";
+        input.antallAnsatte = 15;
+        input.organisasjonsnummer = "56789";
+        input.overordnetEnhet = "12345";
+        ReaderOrgform orgform = new ReaderOrgform();
+        orgform.kode = "BEDR";
+        input.organisasjonsform = orgform;
 
-        u.setAdresse("Gate 1");
-        u.setPostnummer("0576");
-        u.setPoststed("Oslo");
-        u.setLand("Norge");
+        ReaderNaringskode kode1 = new ReaderNaringskode();
+        kode1.beskrivelse = "Butikkhandel";
+        kode1.kode = "47.111";
+        ReaderNaringskode kode2 = new ReaderNaringskode();
+        kode2.beskrivelse = "Produksjon av ferdigmat";
+        kode2.kode = "10.850";
+        input.naeringskode1 = kode1;
+        input.naeringskode2 = kode2;
 
-        u.setNaeringskode1_kode("47.111");
-        u.setNaeringskode1_beskrivelse("Butikkhandel");
-        u.setNaeringskode2_kode("10.850");
-        u.setNaeringskode2_beskrivelse("Produksjon av ferdigmat");
+        ReaderAdresse readerAdresse = new ReaderAdresse();
+        readerAdresse.adresse = Arrays.asList("Gate 1");
+        readerAdresse.postnummer = "0576";
+        readerAdresse.poststed = "Oslo";
+        readerAdresse.land = "Norge";
+        input.beliggenhetsadresse = readerAdresse;
 
-        Enhet jsonEnhet = processor.process(u);
+
+        Enhet jsonEnhet = processor.process(input);
         SoftAssertions softAssert = new SoftAssertions();
-        softAssert.assertThat(jsonEnhet.getNavn()).isEqualTo(u.getNavn());
-        softAssert.assertThat(jsonEnhet.getOrganisasjonsnummer()).isEqualTo(u.getOrganisasjonsnummer());
-        softAssert.assertThat(jsonEnhet.getOverordnetEnhet()).isEqualTo(u.getOverordnetEnhet());
-        softAssert.assertThat(jsonEnhet.getAntallAnsatte()).isEqualTo(Integer.parseInt(u.getAntallAnsatte()));
-        softAssert.assertThat(jsonEnhet.getOrganisasjonsform()).isEqualTo(u.getOrganisasjonsform());
+        softAssert.assertThat(jsonEnhet.getNavn()).isEqualTo(input.navn);
+        softAssert.assertThat(jsonEnhet.getOrganisasjonsnummer()).isEqualTo(input.organisasjonsnummer);
+        softAssert.assertThat(jsonEnhet.getOverordnetEnhet()).isEqualTo(input.overordnetEnhet);
+        softAssert.assertThat(jsonEnhet.getAntallAnsatte()).isEqualTo(input.antallAnsatte);
+        softAssert.assertThat(jsonEnhet.getOrganisasjonsform()).isEqualTo(input.organisasjonsform.kode);
 
-        softAssert.assertThat(jsonEnhet.getAdresse().getAdresse()).isEqualTo(u.getAdresse());
-        softAssert.assertThat(jsonEnhet.getAdresse().getPoststed()).isEqualTo(u.getPoststed());
-        softAssert.assertThat(jsonEnhet.getAdresse().getLand()).isEqualTo(u.getLand());
-        softAssert.assertThat(jsonEnhet.getAdresse().getPostnummer()).isEqualTo(u.getPostnummer());
+        softAssert.assertThat(jsonEnhet.getAdresse().getAdresse()).isEqualTo("Gate 1");
+        softAssert.assertThat(jsonEnhet.getAdresse().getPoststed()).isEqualTo(input.beliggenhetsadresse.poststed);
+        softAssert.assertThat(jsonEnhet.getAdresse().getLand()).isEqualTo(input.beliggenhetsadresse.land);
+        softAssert.assertThat(jsonEnhet.getAdresse().getPostnummer()).isEqualTo(input.beliggenhetsadresse.postnummer);
 
         softAssert.assertThat(jsonEnhet.getNaringskoder().size()).isEqualTo(2);
-        softAssert.assertThat(jsonEnhet.getNaringskoder().stream().anyMatch(n -> n.getKode().equals(u.getNaeringskode1_kode()))).isTrue();
-        softAssert.assertThat(jsonEnhet.getNaringskoder().stream().anyMatch(n -> n.getKode().equals(u.getNaeringskode2_kode()))).isTrue();
+        softAssert.assertThat(jsonEnhet.getNaringskoder().stream().anyMatch(n -> n.getKode().equals(input.naeringskode1.kode))).isTrue();
+        softAssert.assertThat(jsonEnhet.getNaringskoder().stream().anyMatch(n -> n.getKode().equals(input.naeringskode2.kode))).isTrue();
         softAssert.assertAll();
     }
 }

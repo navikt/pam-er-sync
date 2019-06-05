@@ -1,8 +1,7 @@
 PAM Enhetsregister Sync
 
-Laster ned datasettet fra BRREG og indekserer til lokal en Elastic Search instance.
+Spring batch app som laster ned datasettet fra BRREG og indekserer til en lokal Elastic Search instance.
 
-TODO:
 
 # Elasticsearch on localhost Docker
 If you're able to run Docker, you could run the application against your own Elasticsearch instance.
@@ -46,9 +45,9 @@ The cron value, Spring style (including leading seconds).
 The delay, in millis, before timeout when downloading the CSV file from one of the sources defined below.
 * ``pam.enhetsregister.sources.hovedenhet.enabled`` (false)  
 If *true*, the Hovedenhet source will be synchronized, and may be manually triggered using the appropriate endpoint. This endpoint will answer with 404 if *false*.
-* ``pam.enhetsregister.sources.hovedenhet.url`` (https://data.brreg.no/enhetsregisteret/download/enheter)  
-The URL for downloading the Hovedenhet CSV file.
+* ``pam.enhetsregister.sources.hovedenhet.url`` (https://data.brreg.no/enhetsregisteret/api/enheter/lastned)  
+The URL for downloading the Hovedenhet JSON file.
 * ``pam.enhetsregister.sources.underenhet.enabled`` (true)  
 If *true*, the Underenhet source will be synchronized, and may be manually triggered using the appropriate endpoint. This endpoint will answer with 404 if *false*.
-* ``pam.enhetsregister.sources.underenhet.url`` (https://data.brreg.no/enhetsregisteret/download/underenheter)  
-The URL for downloading the Underenhet CSV file.
+* ``pam.enhetsregister.sources.underenhet.url`` (https://data.brreg.no/enhetsregisteret/api/underenheter/lastned)  
+The URL for downloading the Underenhet JSON file.

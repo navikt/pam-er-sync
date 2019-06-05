@@ -3,6 +3,7 @@ package no.nav.pam.ad.enhetsregister.rest;
 import no.nav.pam.ad.enhetsregister.batch.TestConfig;
 import no.nav.pam.ad.enhetsregister.model.Enhet;
 import no.nav.pam.ad.es.IndexClient;
+import org.assertj.core.api.SoftAssertions;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -66,25 +67,25 @@ public class EnhetsregisterBatchControllerTest {
 
         List<Enhet> entry = index.entrySet().iterator().next().getValue();
         assertThat(index.keySet().iterator().next(), startsWith("UNDER"));
-        assertThat(entry, hasSize(5));
-        assertThat(entry.get(0).getOrganisasjonsnummer(), equalTo("917297193"));
-        assertThat(entry.get(0).getNavn(), equalTo("NG KIWI NORD AS AVD 169 HESSENG"));
-        assertThat(entry.get(0).getOrganisasjonsform(), equalTo("BEDR"));
-        assertThat(entry.get(0).getAntallAnsatte(), equalTo(14));
-        assertThat(entry.get(0).getOverordnetEnhet(), equalTo("990648492"));
-        assertThat(entry.get(0).getAdresse(), notNullValue());
-        assertThat(entry.get(0).getAdresse().getAdresse(), equalTo("Hessengveien 2"));
-        assertThat(entry.get(0).getAdresse().getPostnummer(), equalTo("9912"));
-        assertThat(entry.get(0).getAdresse().getPoststed(), equalTo("HESSENG"));
-        assertThat(entry.get(0).getAdresse().getKommunenummer(), equalTo("2030"));
-        assertThat(entry.get(0).getAdresse().getKommune(), equalTo("SØR-VARANGER"));
-        assertThat(entry.get(0).getAdresse().getLandkode(), equalTo("NO"));
-        assertThat(entry.get(0).getAdresse().getLand(), equalTo("Norge"));
-        assertThat(entry.get(0).getPostAdresse(), nullValue());
-        assertThat(entry.get(0).getNaringskoder(), hasSize(1));
-        assertThat(entry.get(0).getNaringskoder().get(0).getKode(), equalTo("47.111"));
-        assertThat(entry.get(0).getNaringskoder().get(0).getBeskrivelse(), equalTo("Butikkhandel med bredt vareutvalg med hovedvekt på nærings- og nytelsesmidler"));
+        assertThat(entry, hasSize(6));
 
+        SoftAssertions softAssert = new SoftAssertions();
+        softAssert.assertThat(entry.get(0).getOrganisasjonsnummer()).isEqualTo("914541662");
+        softAssert.assertThat(entry.get(0).getNavn()).isEqualTo("STANETA LOGISTICS AND SERVICE STANELY OKOROAFOR");
+        softAssert.assertThat(entry.get(0).getOrganisasjonsform()).isEqualTo("BEDR");
+        softAssert.assertThat(entry.get(0).getAntallAnsatte()).isEqualTo(0);
+        softAssert.assertThat(entry.get(0).getOverordnetEnhet()).isEqualTo("914514444");
+        softAssert.assertThat(entry.get(0).getAdresse()).isNotNull();
+        softAssert.assertThat(entry.get(0).getAdresse().getAdresse()).isEqualTo("Ognagata 1");
+        softAssert.assertThat(entry.get(0).getAdresse().getPostnummer()).isEqualTo("4014");
+        softAssert.assertThat(entry.get(0).getAdresse().getPoststed()).isEqualTo("STAVANGER");
+        softAssert.assertThat(entry.get(0).getAdresse().getKommune()).isEqualTo("STAVANGER");
+        softAssert.assertThat(entry.get(0).getAdresse().getLandkode()).isEqualTo("NO");
+        softAssert.assertThat(entry.get(0).getAdresse().getLand()).isEqualTo("Norge");
+        softAssert.assertThat(entry.get(0).getNaringskoder().size()).isEqualTo(1);
+        softAssert.assertThat(entry.get(0).getNaringskoder().get(0).getKode()).isEqualTo("53.200");
+        softAssert.assertThat(entry.get(0).getNaringskoder().get(0).getBeskrivelse()).isEqualTo("Andre post- og budtjenester");
+        softAssert.assertAll();
     }
 
 }

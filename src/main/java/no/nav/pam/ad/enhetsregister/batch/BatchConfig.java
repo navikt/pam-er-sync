@@ -1,7 +1,9 @@
 package no.nav.pam.ad.enhetsregister.batch;
 
 
-import no.nav.pam.ad.enhetsregister.model.CsvEnhet;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import no.nav.pam.ad.enhetsregister.model.Enhet;
+import no.nav.pam.ad.enhetsregister.model.reader.ReaderEnhet;
 import no.nav.pam.ad.es.IndexService;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -10,10 +12,9 @@ import org.springframework.batch.core.configuration.annotation.JobBuilderFactory
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
-import org.springframework.batch.item.file.FlatFileItemReader;
-import org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper;
-import org.springframework.batch.item.file.mapping.DefaultLineMapper;
-import org.springframework.batch.item.file.transform.DelimitedLineTokenizer;
+import org.springframework.batch.item.json.JacksonJsonObjectReader;
+import org.springframework.batch.item.json.JsonItemReader;
+import org.springframework.batch.item.json.builder.JsonItemReaderBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -28,7 +29,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 import java.util.zip.GZIPInputStream;
 
@@ -59,38 +59,34 @@ public class BatchConfig {
 
     private final JobBuilderFactory jobBuilderFactory;
     private final StepBuilderFactory stepBuilderFactory;
+    private final ObjectMapper objectMapper;
 
     @Autowired
-    public BatchConfig(JobBuilderFactory jobBuilderFactory, StepBuilderFactory stepBuilderFactory) {
+    public BatchConfig(JobBuilderFactory jobBuilderFactory,
+                       StepBuilderFactory stepBuilderFactory,
+                       ObjectMapper objectMapper) {
         this.jobBuilderFactory = jobBuilderFactory;
         this.stepBuilderFactory = stepBuilderFactory;
+        this.objectMapper = objectMapper;
     }
 
     // tag::readerwriterprocessor[]
     @Bean
     @StepScope
-    public FlatFileItemReader<CsvEnhet> reader(@Value("#{jobParameters['" + PARAM_PREFIX + "']}") String prefix,
-                                               @Value("#{jobParameters['" + PARAM_FILENAME + "']}") String filename)
+    public JsonItemReader<ReaderEnhet> reader(@Value("#{jobParameters['" + PARAM_PREFIX + "']}") String prefix,
+                                              @Value("#{jobParameters['" + PARAM_FILENAME + "']}") String filename)
             throws IOException {
 
-        final DataSet enhet = DataSet.valueOf(prefix);
+        JacksonJsonObjectReader<ReaderEnhet> jsonObjectReader =
+                new JacksonJsonObjectReader<>(ReaderEnhet.class);
+        jsonObjectReader.setMapper(objectMapper);
 
-        FlatFileItemReader<CsvEnhet> reader = new FlatFileItemReader<>();
-        reader.setEncoding(StandardCharsets.UTF_8.displayName());
-        reader.setResource(new FileSystemResource(filename));
-        reader.setResource(new InputStreamResource(new GZIPInputStream(new FileInputStream(filename))));
-        reader.setLineMapper(new DefaultLineMapper<CsvEnhet>() {{
-            setLineTokenizer(new DelimitedLineTokenizer() {{
-                reader.setLinesToSkip(1);
-                setDelimiter(";");
-                setIncludedFields(enhet.getIncludedFields());
-                setNames(enhet.getFieldNames());
-            }});
-            setFieldSetMapper(new BeanWrapperFieldSetMapper<CsvEnhet>() {{
-                setTargetType(CsvEnhet.class);
-            }});
-        }});
-        return reader;
+        return new JsonItemReaderBuilder<ReaderEnhet>()
+                .jsonObjectReader(jsonObjectReader)
+                .resource(new FileSystemResource(filename))
+                .resource(new InputStreamResource(new GZIPInputStream(new FileInputStream(filename))))
+                .name("tradeJsonItemReader")
+                .build();
 
     }
 
@@ -132,7 +128,7 @@ public class BatchConfig {
             throws IOException {
 
         return stepBuilderFactory.get("step1")
-                .<CsvEnhet, no.nav.pam.ad.enhetsregister.model.Enhet>chunk(1000)
+                .<ReaderEnhet, Enhet>chunk(1000)
                 .reader(reader(null, null))
                 .processor(processor())
                 .writer(writer(null, null))

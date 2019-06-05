@@ -44,10 +44,10 @@ pam:
         millis: 300000
       hovedenhet:
         enabled: false
-        url:  https://data.brreg.no/enhetsregisteret/download/enheter
+        url:  https://data.brreg.no/enhetsregisteret/api/enheter/lastned
       underenhet:
         enabled: true
-        url: https://data.brreg.no/enhetsregisteret/download/underenheter
+        url: https://data.brreg.no/enhetsregisteret/api/underenheter/lastned
 
 # Management endpoints for NAIS.
 management:

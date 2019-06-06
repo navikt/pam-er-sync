@@ -1,3 +1,6 @@
+## RELEASE - 1.13.106-1bee903
+#### New in this release: 
++ 2019-06-05 [PAM-1177] Bytte CVS input til JSON input (#8)
 ## RELEASE - 1.11.101-243299f
 #### New in this release: 
 + 2019-05-09 [PAM-3254] Naiserator (#6)

@@ -4,7 +4,7 @@
 
     <groupId>no.nav.pam.ad</groupId>
     <artifactId>pam-er-sync</artifactId>
-    <version>1.14-SNAPSHOT</version>
+    <version>1.15-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <parent>

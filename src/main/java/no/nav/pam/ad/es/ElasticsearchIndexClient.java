@@ -29,7 +29,6 @@ import java.util.List;
  * <br/><br>
  * Note that in cases where parameters are used as part of an index name, the value(s) are converted to lower case before being used.
  */
-@ConditionalOnProperty(prefix = "elasticsearch", name = "usemock", havingValue = "false", matchIfMissing = true)
 @Service
 public class ElasticsearchIndexClient extends RestHighLevelClient implements IndexClient {
 

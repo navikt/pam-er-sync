@@ -31,7 +31,6 @@ pam:
         enabled: true
   elasticsearch:
     url:  ${STILLINGESBACKEND_URL:https://pamsok-elasticsearch.nais.oera-q.local}
-    usemock: false
 
 # Management endpoints for NAIS.
 management:

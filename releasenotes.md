@@ -1,3 +1,6 @@
+## RELEASE - 1.15.109-f9bd2f5
+#### New in this release: 
++ 2019-06-19 [Fix] default brreg download URLs for JSON format
 ## RELEASE - 1.13.106-1bee903
 #### New in this release: 
 + 2019-06-05 [PAM-1177] Bytte CVS input til JSON input (#8)

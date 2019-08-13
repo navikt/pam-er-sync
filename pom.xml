@@ -16,7 +16,7 @@
     <properties>
         <java.version>1.8</java.version>
         <elasticsearch.version>6.5.4</elasticsearch.version>
-        <guava.version>20.0</guava.version>
+        <guava.version>24.1.1-android</guava.version>
         <shedlock.version>0.14.0</shedlock.version>
         <micrometer.version>1.0.1</micrometer.version>
         <prometheus.version>0.3.0</prometheus.version>

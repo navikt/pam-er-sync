@@ -17,7 +17,6 @@
         <java.version>12</java.version>
         <elasticsearch.version>6.5.4</elasticsearch.version>
         <guava.version>28.0-jre</guava.version>
-        <shedlock.version>2.5.0</shedlock.version>
         <prometheus.version>0.3.0</prometheus.version>
         <logstash.version>6.1</logstash.version>
         <rest-assured.version>4.0.0</rest-assured.version>
@@ -79,11 +78,6 @@
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
             <version>${guava.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>net.javacrumbs.shedlock</groupId>
-            <artifactId>shedlock-core</artifactId>
-            <version>${shedlock.version}</version>
         </dependency>
         <dependency>
             <groupId>io.rest-assured</groupId>

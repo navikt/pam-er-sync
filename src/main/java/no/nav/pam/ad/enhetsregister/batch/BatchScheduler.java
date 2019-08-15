@@ -1,6 +1,5 @@
 package no.nav.pam.ad.enhetsregister.batch;
 
-import net.javacrumbs.shedlock.core.SchedulerLock;
 import no.nav.pam.ad.es.IndexService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,7 +49,6 @@ class BatchScheduler implements InitializingBean {
     }
 
     @Scheduled(cron = VALUE_CRON)
-    @SchedulerLock(name = "BatchScheduler")
     private void run() {
 
         LOG.info("Starting scheduled synchronization of data set(s) {}", sync.keySet());
@@ -66,7 +64,6 @@ class BatchScheduler implements InitializingBean {
     }
 
     @Scheduled(cron = "0 0 1 * * *")
-    @SchedulerLock(name = "BatchScheduler")
     public void cleanup() {
 
         try {

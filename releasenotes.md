@@ -1,3 +1,6 @@
+## RELEASE - 1.16.111-60e4f91
+#### New in this release: 
++ 2019-08-14 [Oppgradere java og 3. parts avhengigheter]
 ## RELEASE - 1.15.109-f9bd2f5
 #### New in this release: 
 + 2019-06-19 [Fix] default brreg download URLs for JSON format

@@ -6,17 +6,17 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.http.entity.ContentType;
 import org.apache.http.nio.entity.NStringEntity;
 import org.apache.http.util.EntityUtils;
-import org.elasticsearch.action.admin.indices.create.CreateIndexRequest;
+
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.client.*;
+import org.elasticsearch.client.indices.CreateIndexRequest;
 import org.elasticsearch.common.xcontent.XContentType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -33,7 +33,6 @@ import java.util.List;
 public class ElasticsearchIndexClient extends RestHighLevelClient implements IndexClient {
 
     private final static Logger LOG = LoggerFactory.getLogger(ElasticsearchIndexClient.class);
-    private final static String UNDERENHET_TYPE = "underenhet";
 
     private final ObjectMapper objectMapper;
 
@@ -104,7 +103,8 @@ public class ElasticsearchIndexClient extends RestHighLevelClient implements Ind
         BulkRequest request = new BulkRequest();
 
         for (Enhet content : contents) {
-            request.add(new IndexRequest(lowerCaseIndex, UNDERENHET_TYPE, content.getOrganisasjonsnummer())
+            request.add(new IndexRequest(lowerCaseIndex)
+                    .id(content.getOrganisasjonsnummer())
                     .source(objectMapper.writeValueAsString(content), XContentType.JSON));
         }
         return bulk(request, RequestOptions.DEFAULT);

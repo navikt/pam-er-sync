@@ -61,24 +61,22 @@
     }
   },
   "mappings": {
-    "underenhet": {
-      "properties": {
-        "navn": {
-          "type": "text",
-          "analyzer": "enhetsnavn_analyzer",
-          "copy_to": "navn_ngram_completion"
-        },
-        "organisasjonsnummer": {
-          "type": "keyword"
-        },
-        "adresse.postnummer": {
-          "type": "keyword"
-        },
-        "navn_ngram_completion": {
-          "type": "text",
-          "analyzer": "enhetsnavn_completion_analyzer",
-          "search_analyzer": "enhetsnavn_completion_search_analyzer"
-        }
+    "properties": {
+      "navn": {
+        "type": "text",
+        "analyzer": "enhetsnavn_analyzer",
+        "copy_to": "navn_ngram_completion"
+      },
+      "organisasjonsnummer": {
+        "type": "keyword"
+      },
+      "adresse.postnummer": {
+        "type": "keyword"
+      },
+      "navn_ngram_completion": {
+        "type": "text",
+        "analyzer": "enhetsnavn_completion_analyzer",
+        "search_analyzer": "enhetsnavn_completion_search_analyzer"
       }
     }
   }

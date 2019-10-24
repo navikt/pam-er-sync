@@ -3,6 +3,7 @@ package no.nav.pam.ad.config;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import no.nav.pam.ad.Application;
 import org.apache.http.HttpHost;
+import org.apache.http.conn.ssl.DefaultHostnameVerifier;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestClientBuilder;
 import org.springframework.beans.factory.annotation.Value;
@@ -35,7 +36,9 @@ public class AppConfig {
     @Bean
     @Profile("prod")
     public RestClientBuilder elasticClientBuilder() {
-        return RestClient.builder(HttpHost.create(elasticsearchUrl));
+        return RestClient.builder(HttpHost.create(elasticsearchUrl)).setHttpClientConfigCallback(httpClientBuilder ->
+                httpClientBuilder.setSSLHostnameVerifier(new DefaultHostnameVerifier())
+        );
     }
 
     @Bean

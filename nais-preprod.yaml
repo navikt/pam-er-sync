@@ -6,7 +6,7 @@ metadata:
   labels:
     team: teampam
 spec:
-  image: navikt/pam-er-sync-odfe:1.17_odfe_1
+  image: repo.adeo.no:5443/pam-er-sync-odfe:1.17_odfe_1
   port: 9012
   replicas:
     min: 1

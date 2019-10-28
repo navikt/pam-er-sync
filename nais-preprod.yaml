@@ -1,12 +1,12 @@
 apiVersion: "nais.io/v1alpha1"
 kind: "Application"
 metadata:
-  name: pam-er-sync-odfe
+  name: pam-er-sync
   namespace: default
   labels:
     team: teampam
 spec:
-  image: repo.adeo.no:5443/pam-er-sync-odfe:1.17_odfe_1
+  image: repo.adeo.no:5443/pam-er-sync
   port: 9012
   replicas:
     min: 1
@@ -32,7 +32,7 @@ spec:
   vault:
     enabled: false
   ingresses:
-    - https://pam-er-sync-odfe.nais.oera-q.local
+    - https://pam-er-sync.nais.oera-q.local
   env:
     - name: STILLINGESBACKEND_URL
-      value: https://tpa-stilling-opendistro-elasticsearch.nais.oera-q.local
+      value: https://tpa-pamsok-elasticsearch.nais.oera-q.local

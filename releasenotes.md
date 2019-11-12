@@ -1,3 +1,8 @@
+## RELEASE - 1.18.113-d4fc587
+#### New in this release: 
++ 2019-11-11 [ES 7.2] peker mot opendistro-elasticsearch
++ 2019-10-24 [ES 7.2.0] config changes
++ 2019-10-23 [UPDATE] remove type and deprecated functions usage to support ES 7.2
 ## RELEASE - 1.16.111-60e4f91
 #### New in this release: 
 + 2019-08-14 [Oppgradere java og 3. parts avhengigheter]

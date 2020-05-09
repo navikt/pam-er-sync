@@ -1,0 +1,40 @@
+apiVersion: "nais.io/v1alpha1"
+kind: "Application"
+metadata:
+  name: pam-er-sync
+  namespace: default
+  labels:
+    team: teampam
+spec:
+  image: {{ image }}
+  port: 9012
+  liveness:
+    path: /isAlive
+    initialDelay: 40
+  readiness:
+    path: /isReady
+    initialDelay: 40
+  replicas:
+    min: 1
+    max: 1
+    cpuThresholdPercentage: 50
+  resources:
+    limits:
+      cpu: 1000m
+      memory: 1024Mi
+    requests:
+      cpu: 200m
+      memory: 256Mi
+  vault:
+    enabled: false
+  webproxy: true
+  prometheus:
+    enabled: true
+    path: /actuator/prometheus
+  ingresses:
+  {{#each ingress as |url|}}
+     - {{url}}
+  {{/each}}
+  env:
+    - name: STILLINGESBACKEND_URL
+      value: {{ stillingesbackend_url }}

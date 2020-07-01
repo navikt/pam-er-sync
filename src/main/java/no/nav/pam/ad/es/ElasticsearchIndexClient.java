@@ -85,7 +85,7 @@ public class ElasticsearchIndexClient extends RestHighLevelClient implements Ind
         String lowerCaseAlias = alias.toLowerCase();
         String jsonString = "{\n" +
                 "    \"actions\" : [\n" +
-                "        { \"remove\" : { \"index\" : \"*\", \"alias\" : \"" + lowerCaseAlias + "\" } },\n" +
+                "        { \"remove\" : { \"index\" : \"underenhet*\", \"alias\" : \"" + lowerCaseAlias + "\" } },\n" +
                 "        { \"add\" : { \"index\" : \"" + lowerCaseAlias + indexDatestamp + "\", \"alias\" : \"" + lowerCaseAlias + "\" } }\n" +
                 "    ]\n" +
                 "}";

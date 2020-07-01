@@ -1,4 +1,4 @@
 {
-    "ingress": ["https://pam-er-sync.nais.oera-q.local"],
-    "stillingesbackend_url": "https://tpa-stilling-opendistro-elasticsearch.nais.oera-q.local"
+    "ingress": ["https://pam-er-sync.dev-gcp.nais.io"],
+    "stillingesbackend_url": "http://stilling-opendistro-elasticsearch:9200"
 }

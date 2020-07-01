@@ -33,7 +33,7 @@ pam:
   http:
     proxy:
       url: ${$HTTP_PROXY:http://webproxy-nais.nav.no:8088}
-      enabled: true
+      enabled: false
   elasticsearch:
     url: ${STILLINGESBACKEND_URL:https://pamsok-elasticsearch.nais.oera-q.local}
   enhetsregister:

@@ -38,3 +38,13 @@ spec:
   env:
     - name: STILLINGESBACKEND_URL
       value: {{ stillingesbackend_url }}
+  accessPolicy:
+    outbound:
+      rules:
+        - application: stilling-opendistro-elasticsearch
+      external:
+        - host: data.brreg.no
+          ports:
+            - port: 443
+              name: https
+              protocol: HTTPS

@@ -43,6 +43,7 @@ public class JobLauncherService {
 
         LOG.info("Synchronizing data set {} from source {} using timeout {} ms", dataSet, url, timeoutMillis);
         long start = System.currentTimeMillis();
+        LOG.info("using Proxy {}", proxy.toString());
         try (Downloader downloader = new Downloader(proxy, url)) {
 
             File file = downloader.download().get(timeoutMillis, TimeUnit.MILLISECONDS);

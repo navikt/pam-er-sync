@@ -31,10 +31,6 @@ spec:
   prometheus:
     enabled: true
     path: /actuator/prometheus
-  ingresses:
-  {{#each ingress as |url|}}
-     - {{url}}
-  {{/each}}
   filesFrom:
     - secret: pam-er-sync-env-secret
       mountPath: /var/run/secrets/nais.io/vault
@@ -45,6 +41,7 @@ spec:
     outbound:
       rules:
         - application: stilling-opendistro-elasticsearch
+        - application: stillinger-opendistro-elasticsearch
       external:
         - host: data.brreg.no
           ports:

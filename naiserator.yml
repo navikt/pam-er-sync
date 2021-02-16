@@ -45,6 +45,7 @@ spec:
     outbound:
       rules:
         - application: stilling-opendistro-elasticsearch
+        - application: stillinger-opendistro-elasticsearch
       external:
         - host: data.brreg.no
           ports:

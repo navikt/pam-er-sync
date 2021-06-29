@@ -1,0 +1,22 @@
+{
+  "naringskoder": [
+    {
+      "beskrivelse": "Bygging av vann- og kloakk-anlegg",
+      "kode": "42.210"
+    }
+  ],
+  "adresse": {
+    "land": "Norge",
+    "landkode": "NO",
+    "kommune": "INDRE ØSTFOLD KOMMUNE",
+    "kommunenummer": "3014",
+    "poststed": "Spydeberg",
+    "postnummer": "1820",
+    "adresse": "Wilses Vei 3"
+  },
+  "antallAnsatte": 10,
+  "organisasjonsform": "BEDR",
+  "navn": "AUSTBØ OG KNAPPSTAD",
+  "organisasjonsnummer": "811057312",
+  "overordnetEnhet": "0"
+}

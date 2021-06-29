@@ -1,0 +1,24 @@
+apiVersion: nais.io/v1
+kind: Naisjob
+metadata:
+  labels:
+    team: teampam
+  name: pam-er-sync-dev-underenheter
+  namespace: teampam
+spec:
+  image: {{ image }}
+  schedule: "30 3 * * *"
+  activeDeadlineSeconds: 60
+
+  env:
+    - name: ES_STILLING_BACKEND
+      value: https://stillinger-opendistro-elasticsearch.dev.intern.nav.no
+  envFrom:
+    - secret: pam-er-sync-dev-underenheter-env
+
+  accessPolicy:
+    outbound:
+      rules:
+        - application: stillinger-opendistro-elasticsearch
+      external:
+        - host: stillinger-opendistro-elasticsearch.dev.intern.nav.no

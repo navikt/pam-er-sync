@@ -4,7 +4,7 @@ on:
     paths:
       - dev-underenheter/**
     branches:
-      - dev-underenheter
+      - master
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest

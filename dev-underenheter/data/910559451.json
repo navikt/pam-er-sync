@@ -1,0 +1,22 @@
+{
+  "naringskoder": [
+    {
+      "beskrivelse": "Hav- og kystfiske",
+      "kode": "03.111"
+    }
+  ],
+  "adresse": {
+    "land": "Norge",
+    "landkode": "NO",
+    "kommune": "VOSS",
+    "kommunenummer": "4621",
+    "poststed": "Vossevangen",
+    "postnummer": "5709",
+    "adresse": "Vosselandsvegen 6"
+  },
+  "antallAnsatte": 56,
+  "organisasjonsform": "BEDR",
+  "navn": "RØST OG VOSS",
+  "organisasjonsnummer": "910559451",
+  "overordnetEnhet": "0"
+}

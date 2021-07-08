@@ -38,7 +38,7 @@ pam:
     url: ${STILLINGESBACKEND_URL:https://pamsok-elasticsearch.nais.oera-q.local}
   enhetsregister:
     scheduler:
-      enabled: false
+      enabled: true
       cron: 0 0 3 * * *
     sources:
       timeout:

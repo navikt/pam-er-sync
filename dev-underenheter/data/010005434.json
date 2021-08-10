@@ -1,0 +1,22 @@
+{
+  "naringskoder": [
+    {
+      "beskrivelse": "Hav- og kystfiske",
+      "kode": "03.111"
+    }
+  ],
+  "adresse": {
+    "land": "Norge",
+    "landkode": "NO",
+    "kommune": "KRISTIANSAND",
+    "kommunenummer": "4204",
+    "poststed": "Brennåsen",
+    "postnummer": "4647",
+    "adresse": "Rosselandsvegen 6"
+  },
+  "antallAnsatte": 20,
+  "organisasjonsform": "BEDR",
+  "navn": "STOLMEN OG BRENNÅSEN",
+  "organisasjonsnummer": "010005434",
+  "overordnetEnhet": "0"
+}

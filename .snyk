@@ -2,4 +2,12 @@
 version: v1.14.1
 # ignores vulnerabilities until expiry date; change duration by modifying expiry date
 ignore:
+  SNYK-JAVA-ORGELASTICSEARCH-564117:
+    - '*':
+      reason: 'Upgrade elasticsearch to opensearch first'
+      expires: 2022-07-08T06:14:39.494Z
+  SNYK-JAVA-ORGELASTICSEARCH-571299:
+    - '*':
+      reason: 'Upgrade elasticsearch to opensearch first'
+      expires: 2022-07-08T06:14:39.494Z
 patch: {}

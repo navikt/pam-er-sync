@@ -34,8 +34,6 @@ pam:
     proxy:
       url: ${$HTTP_PROXY:http://webproxy-nais.nav.no:8088}
       enabled: false
-  elasticsearch:
-    url: ${STILLINGESBACKEND_URL:https://pamsok-elasticsearch.nais.oera-q.local}
   enhetsregister:
     scheduler:
       enabled: true
@@ -49,6 +47,11 @@ pam:
       underenhet:
         enabled: true
         url: https://data.brreg.no/enhetsregisteret/api/underenheter/lastned
+
+elasticsearch:
+  url: ${OPEN_SEARCH_URI:http://localhost:9200}
+  user: ${OPEN_SEARCH_USERNAME:foo}
+  password: ${OPEN_SEARCH_PASSWORD:bar}
 
 # Management endpoints for NAIS.
 management:

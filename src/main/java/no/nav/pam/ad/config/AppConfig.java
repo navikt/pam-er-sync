@@ -27,7 +27,7 @@ import java.security.NoSuchAlgorithmException;
 @ComponentScan(basePackageClasses = {Application.class})
 public class AppConfig {
 
-    @Value("${pam.elasticsearch.url}")
+    @Value("${elasticsearch.url}")
     private String elasticsearchUrl;
 
     @Value("${pam.http.proxy.url:#{null}}")

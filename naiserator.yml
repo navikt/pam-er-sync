@@ -1,7 +1,7 @@
 apiVersion: "nais.io/v1alpha1"
 kind: "Application"
 metadata:
-  name: pam-er-sync
+  name: pam-er-sync-opensearch
   namespace: teampam
   labels:
     team: teampam
@@ -25,23 +25,14 @@ spec:
     requests:
       cpu: 200m
       memory: 256Mi
-  vault:
-    enabled: false
-  webproxy: false
   prometheus:
     enabled: true
     path: /actuator/prometheus
-  filesFrom:
-    - secret: pam-er-sync-env-secret
-      mountPath: /var/run/secrets/nais.io/vault
-  env:
-    - name: STILLINGESBACKEND_URL
-      value: {{ stillingesbackend_url }}
+  openSearch:
+    access: readwrite
+    instance: stilling
   accessPolicy:
     outbound:
-      rules:
-        - application: stilling-opendistro-elasticsearch
-        - application: stillinger-opendistro-elasticsearch
       external:
         - host: data.brreg.no
           ports:

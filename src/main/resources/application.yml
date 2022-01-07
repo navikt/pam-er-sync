@@ -27,7 +27,8 @@ spring:
   batch:
     job:
       enabled: false # disabled batch startup, we are using scheduler
-    initialize-schema: always
+    jdbc:
+      initialize-schema: always
 
 pam:
   http:

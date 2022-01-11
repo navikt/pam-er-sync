@@ -116,7 +116,6 @@ public class ElasticsearchIndexClient extends RestHighLevelClient implements Ind
             throws IOException {
 
         String lowerCaseIndex = index.toLowerCase();
-        getLowLevelClient().performRequest(new Request("POST", "/" + lowerCaseIndex + "/_refresh"));
         Response response = getLowLevelClient().performRequest(new Request("GET", "/_cat/indices/" + lowerCaseIndex));
         String line = EntityUtils.toString(response.getEntity());
         return Integer.parseInt(line.split(" ")[6]);

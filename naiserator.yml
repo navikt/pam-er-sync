@@ -29,7 +29,7 @@ spec:
     enabled: true
     path: /actuator/prometheus
   openSearch:
-    access: readwrite
+    access: admin
     instance: stilling
   accessPolicy:
     outbound:

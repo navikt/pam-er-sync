@@ -25,23 +25,14 @@ spec:
     requests:
       cpu: 200m
       memory: 256Mi
-  vault:
-    enabled: false
-  webproxy: false
   prometheus:
     enabled: true
     path: /actuator/prometheus
-  filesFrom:
-    - secret: pam-er-sync-env-secret
-      mountPath: /var/run/secrets/nais.io/vault
-  env:
-    - name: STILLINGESBACKEND_URL
-      value: {{ stillingesbackend_url }}
+  openSearch:
+    access: admin
+    instance: stilling
   accessPolicy:
     outbound:
-      rules:
-        - application: stilling-opendistro-elasticsearch
-        - application: stillinger-opendistro-elasticsearch
       external:
         - host: data.brreg.no
           ports:

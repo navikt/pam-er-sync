@@ -9,6 +9,8 @@ import org.apache.http.conn.ssl.DefaultHostnameVerifier;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestClientBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -27,7 +29,7 @@ import java.security.NoSuchAlgorithmException;
 @ComponentScan(basePackageClasses = {Application.class})
 public class AppConfig {
 
-    @Value("${pam.elasticsearch.url}")
+    @Value("${elasticsearch.url}")
     private String elasticsearchUrl;
 
     @Value("${pam.http.proxy.url:#{null}}")
@@ -36,10 +38,13 @@ public class AppConfig {
     @Value("${pam.http.proxy.enabled:true}")
     private boolean proxyEnabled;
 
+    private static final Logger LOG = LoggerFactory.getLogger(AppConfig.class);
     @Bean
     @Profile("prod")
     public RestClientBuilder elasticClientBuilder(@Value("${elasticsearch.user:foo}") String user,
                                                   @Value("${elasticsearch.password:bar}") String password) {
+
+        LOG.info("elasticsearch url {} and user {}", elasticsearchUrl, user);
         return RestClient.builder(HttpHost.create(elasticsearchUrl)).setHttpClientConfigCallback(httpClientBuilder -> {
             BasicCredentialsProvider credentialsProvider = new BasicCredentialsProvider();
             credentialsProvider.setCredentials(AuthScope.ANY, new UsernamePasswordCredentials(user,password));

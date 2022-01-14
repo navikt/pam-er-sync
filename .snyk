@@ -10,4 +10,12 @@ ignore:
     - '*':
       reason: 'Upgrade elasticsearch to opensearch first'
       expires: 2022-07-08T06:14:39.494Z
+  SNYK-JAVA-COMH2DATABASE-2331071:
+      - '*':
+        reason: 'Spring batch is not compatible with latest h2'
+        expires: 2022-07-08T06:14:39.494Z
+  SNYK-JAVA-COMH2DATABASE-1769238:
+      - '*':
+        reason: 'Spring batch is not compatible with latest h2'
+        expires: 2022-07-08T06:14:39.494Z
 patch: {}

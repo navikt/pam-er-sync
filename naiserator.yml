@@ -1,7 +1,7 @@
 apiVersion: "nais.io/v1alpha1"
 kind: "Application"
 metadata:
-  name: pam-er-sync-opensearch
+  name: pam-er-sync
   namespace: teampam
   labels:
     team: teampam

@@ -21,7 +21,7 @@ public class IndexService {
 
     private static final Logger LOG = LoggerFactory.getLogger(IndexService.class);
     private static final String CLASSPATH_SETTINGS = "/ESUnderenheterSetting.json";
-    private static final int INDEX_EXPIRATION_IN_DAYS = 5;
+    private static final int INDEX_EXPIRATION_IN_DAYS = 7;
 
     private final IndexClient client;
 

@@ -65,7 +65,7 @@ public class JobCompletionNotificationListener extends JobExecutionListenerSuppo
                 service.replaceAlias(prefix, datestamp);
             } else {
                LOG.error("Write count {} is greater than index doc count {}. Skipping verification, aliasing", writeCount, docCount);
-               LOG.error("We should do a manually alias switch");
+               LOG.error("We should do a manually alias switch of index {}", prefix+datestamp);
             }
         } catch (Exception e) {
             LOG.error("Failed to verify job", e);

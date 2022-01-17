@@ -107,14 +107,11 @@ public class IndexService {
 
         String prefixLowercased = prefix.toLowerCase();
         LocalDate maxAge = LocalDate.now().minusDays(INDEX_EXPIRATION_IN_DAYS);
-        client.deleteIndex(
-                client
-                        .fetchAllIndicesStartingWith(prefixLowercased)
-                        .stream()
-                        .filter(index -> indexIsBefore(index, prefixLowercased, maxAge))
-                        .toArray(String[]::new)
-        );
-
+        String[] deleteIndices = client.fetchAllIndicesStartingWith(prefixLowercased).stream()
+                .filter(index -> indexIsBefore(index, prefixLowercased, maxAge))
+                .toArray(String[]::new);
+        LOG.info("Delete old indices {}", deleteIndices);
+        client.deleteIndex(deleteIndices);
     }
 
     private boolean indexIsBefore(String index, String prefix, LocalDate date){

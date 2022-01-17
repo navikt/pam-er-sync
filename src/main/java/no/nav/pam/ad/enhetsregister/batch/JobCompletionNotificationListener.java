@@ -57,17 +57,17 @@ public class JobCompletionNotificationListener extends JobExecutionListenerSuppo
         String datestamp = parameters.get(JobLauncherService.PARAM_DATESTAMP).toString();
         try {
 
-            Thread.sleep(delay);
+            //Thread.sleep(delay);
             int docCount = service.fetchDocCount(prefix, datestamp);
 
-            if (docCount >= writeCount) {
+            //if (docCount >= writeCount) {
                 LOG.info("Index doc count: {}", docCount);
-                LOG.info("Verifying the new index and replacing the alias.");
+            //    LOG.info("Verifying the new index and replacing the alias.");
                 service.replaceAlias(prefix, datestamp);
-            } else {
-                LOG.error("Write count {} is greater than index doc count {}. Skipping verification, aliasing and deleting the new index.", writeCount, docCount);
-                service.deleteIndexWithDatestamp(prefix, datestamp);
-            }
+            //} else {
+            //   LOG.error("Write count {} is greater than index doc count {}. Skipping verification, aliasing and deleting the new index.", writeCount, docCount);
+            //    service.deleteIndexWithDatestamp(prefix, datestamp);
+            //}
 
         } catch (Exception e) {
             LOG.error("Failed to verify job", e);

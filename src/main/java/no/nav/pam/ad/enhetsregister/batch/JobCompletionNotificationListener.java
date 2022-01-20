@@ -59,12 +59,12 @@ public class JobCompletionNotificationListener extends JobExecutionListenerSuppo
 
             Thread.sleep(60000);
             int docCount = service.fetchDocCount(prefix, datestamp);
-            if (docCount >= writeCount) {
+            if (docCount > 1000 ) {
                 LOG.info("Index doc count: {}", docCount);
-                LOG.info("Verifying the new index and replacing the alias.");
+                LOG.info("replacing the alias.");
                 service.replaceAlias(prefix, datestamp);
             } else {
-               LOG.error("Write count {} is greater than index doc count {}. Skipping verification, aliasing", writeCount, docCount);
+               LOG.error("docCount is {} less than 1000", docCount);
                LOG.error("We should do a manually alias switch of index {}", prefix+datestamp);
             }
         } catch (Exception e) {

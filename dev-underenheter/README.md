@@ -1,3 +1,6 @@
+# 04.10.2022
+Denne jobbe ble skrudd av da den ikke er i bruk lenger. Bør mulig bli slettet. Om det ønskes å starte denne jobben igjen, lag en ny workflow fil slik den som ble slettet i denne committen.
+
 # Insert Altinn test companies for dev-gcp environment in underenhet index
 
 Some Altinn company orgnrs that we use in our testing environment are not

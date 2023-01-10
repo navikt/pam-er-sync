@@ -12,7 +12,7 @@ spec:
 
   env:
     - name: ES_STILLING_BACKEND
-      value: https://stillinger-opendistro-elasticsearch.dev.intern.nav.no
+      value: https://opensearch-teampam-stilling-nav-dev.aivencloud.com:26482
   envFrom:
     - secret: pam-er-sync-dev-underenheter-env
 

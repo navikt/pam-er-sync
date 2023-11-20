@@ -1,7 +1,6 @@
 package no.nav.pam.ad.enhetsregister.batch;
 
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,17 +11,17 @@ import java.net.Proxy;
 import java.net.URL;
 import java.nio.channels.FileChannel;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import static org.assertj.core.api.FactoryBasedNavigableListAssert.assertThat;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.nullValue;
-import static org.junit.Assert.assertThat;
 
 /**
  * Ignored, since it actually performs downloads. Run manually if needed, and use {@link #downloadAndKeepFileForManualTesting()} if you need
  * to preserve a copy of the downloaded (gzipped) file.
  */
+/*
 @Ignore
 public class DownloaderTest {
 
@@ -102,3 +101,5 @@ public class DownloaderTest {
     }
 
 }
+
+ */

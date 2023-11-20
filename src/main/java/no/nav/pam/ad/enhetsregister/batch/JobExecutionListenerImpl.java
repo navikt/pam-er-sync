@@ -31,7 +31,7 @@ public class JobExecutionListenerImpl implements JobExecutionListener {
     public void beforeJob(JobExecution jobExecution) {
         LOG.info("Preconfiguring ES before job execution");
 
-        Map<String, JobParameter> parameters = jobExecution.getJobParameters().getParameters();
+        Map<String, JobParameter<?>> parameters = jobExecution.getJobParameters().getParameters();
         if (parameters.containsKey(PARAM_DATESTAMP)) {
 
             String prefix = parameters.get(PARAM_PREFIX).toString();

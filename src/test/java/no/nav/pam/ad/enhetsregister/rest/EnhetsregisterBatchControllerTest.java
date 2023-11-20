@@ -4,24 +4,19 @@ import no.nav.pam.ad.enhetsregister.batch.TestConfig;
 import no.nav.pam.ad.enhetsregister.model.Enhet;
 import no.nav.pam.ad.es.IndexClient;
 import org.assertj.core.api.SoftAssertions;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.web.server.LocalServerPort;
+import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.List;
 import java.util.Map;
 
 import static io.restassured.RestAssured.given;
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ContextConfiguration(classes = TestConfig.class)
 public class EnhetsregisterBatchControllerTest {
@@ -32,12 +27,12 @@ public class EnhetsregisterBatchControllerTest {
     @Autowired
     private IndexClient client;
 
-    @Before
+    @BeforeEach
     public void before() {
-        assertThat(client, instanceOf(TestConfig.IndexClient.class));
+        assertEquals(client.getClass(), TestConfig.IndexClient.class);
     }
 
-    @After
+    @AfterEach
     public void after() {
         ((TestConfig.IndexClient) client).getStorage().clear();
     }
@@ -63,11 +58,11 @@ public class EnhetsregisterBatchControllerTest {
                 .statusCode(200);
 
         Map<String, List<Enhet>> index = ((TestConfig.IndexClient) client).getStorage();
-        assertThat(index.keySet(), hasSize(1));
+        assertEquals(index.keySet().size(), 1);
 
         List<Enhet> entry = index.entrySet().iterator().next().getValue();
-        assertThat(index.keySet().iterator().next(), startsWith("UNDER"));
-        assertThat(entry, hasSize(6));
+        assertTrue(index.keySet().iterator().next().startsWith("UNDER"));
+        assertEquals(entry.size(), 6);
 
         SoftAssertions softAssert = new SoftAssertions();
         softAssert.assertThat(entry.get(0).getOrganisasjonsnummer()).isEqualTo("914541662");

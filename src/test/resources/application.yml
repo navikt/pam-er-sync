@@ -6,8 +6,6 @@ config:
 spring:
   datasource:
     url: jdbc:h2:mem:testdb;Mode=PostgreSQL
-    platform: h2
-    continue-on-error: true
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
@@ -20,17 +18,22 @@ spring:
   batch:
     job:
       enabled: false
-    initialize-schema: always
+    jdbc:
+      initialize-schema: always
   main:
     allow-bean-definition-overriding: true
+  sql:
+    init:
+      continue-on-error: true
+      platform: h2
 
 pam:
   http:
       proxy:
         url: http://155.55.60.117:8088
         enabled: true
-  elasticsearch:
-    url:  ${STILLINGESBACKEND_URL:https://pamsok-elasticsearch.nais.oera-q.local}
+elasticsearch:
+  url:  ${STILLINGESBACKEND_URL:https://pamsok-elasticsearch.nais.oera-q.local}
 
 # Management endpoints for NAIS.
 management:

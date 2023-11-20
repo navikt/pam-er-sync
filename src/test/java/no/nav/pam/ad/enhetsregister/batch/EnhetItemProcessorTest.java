@@ -7,7 +7,7 @@ import no.nav.pam.ad.enhetsregister.model.reader.ReaderEnhet;
 import no.nav.pam.ad.enhetsregister.model.reader.ReaderNaringskode;
 import no.nav.pam.ad.enhetsregister.model.reader.ReaderOrgform;
 import org.assertj.core.api.SoftAssertions;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 

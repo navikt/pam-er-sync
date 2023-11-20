@@ -7,23 +7,25 @@ import no.nav.pam.ad.enhetsregister.model.reader.ReaderEnhet;
 import no.nav.pam.ad.es.IndexService;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
-import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
-import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
-import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepScope;
+import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
+import org.springframework.batch.core.repository.JobRepository;
+import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.item.json.JacksonJsonObjectReader;
 import org.springframework.batch.item.json.JsonItemReader;
 import org.springframework.batch.item.json.builder.JsonItemReaderBuilder;
+import org.springframework.batch.support.transaction.ResourcelessTransactionManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
-import org.springframework.core.io.FileSystemResource;
+
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.transaction.PlatformTransactionManager;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -35,7 +37,6 @@ import java.util.zip.GZIPInputStream;
 import static no.nav.pam.ad.enhetsregister.batch.JobLauncherService.*;
 
 @Configuration
-@EnableBatchProcessing
 @EnableScheduling
 public class BatchConfig {
 
@@ -57,16 +58,13 @@ public class BatchConfig {
     @Value("${pam.enhetsregister.sources.underenhet.url:https://data.brreg.no/enhetsregisteret/api/underenheter/lastned}")
     private String enhetsregisterUnderenhetUrl;
 
-    private final JobBuilderFactory jobBuilderFactory;
-    private final StepBuilderFactory stepBuilderFactory;
     private final ObjectMapper objectMapper;
 
+    private JobRepository jobRepository;
+
+
     @Autowired
-    public BatchConfig(JobBuilderFactory jobBuilderFactory,
-                       StepBuilderFactory stepBuilderFactory,
-                       ObjectMapper objectMapper) {
-        this.jobBuilderFactory = jobBuilderFactory;
-        this.stepBuilderFactory = stepBuilderFactory;
+    public BatchConfig(ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;
     }
 
@@ -109,31 +107,39 @@ public class BatchConfig {
     @Bean
     public Job importUserJob(
             JobCompletionNotificationListener completionNotificationListener,
-            JobExecutionListenerImpl executionListener)
+            JobExecutionListenerImpl executionListener,
+            JobRepository jobRepository)
             throws IOException {
 
-        return jobBuilderFactory.get("importUserJob")
+        return new JobBuilder("importUserJob", jobRepository)
                 .incrementer(new RunIdIncrementer())
                 .listener(executionListener)
                 .listener(completionNotificationListener)
-                .flow(step1())
+                .flow(step1(jobRepository, getTransactionManager()))
                 .end()
                 .build();
 
     }
 
     @Bean
-    public Step step1()
+    public Step step1(JobRepository jobRepository, PlatformTransactionManager transactionManager)
             throws IOException {
 
-        return stepBuilderFactory.get("step1")
+        return new StepBuilder("step1", jobRepository)
                 .<ReaderEnhet, Enhet>chunk(1000)
+                .transactionManager(transactionManager)
                 .reader(reader(null, null))
                 .processor(processor())
                 .writer(writer(null, null))
                 .build();
 
     }
+
+    @Bean(name = "transactionManager")
+    public PlatformTransactionManager getTransactionManager() {
+        return new ResourcelessTransactionManager();
+    }
+
     // end::jobstep[]
 
     /**

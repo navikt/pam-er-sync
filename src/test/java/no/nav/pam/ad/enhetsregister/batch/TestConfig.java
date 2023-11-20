@@ -31,8 +31,8 @@ import java.util.Map;
 public class TestConfig extends BatchConfig {
 
     @Autowired
-    public TestConfig(JobBuilderFactory jobBuilderFactory, StepBuilderFactory stepBuilderFactory) {
-        super(jobBuilderFactory, stepBuilderFactory, new ObjectMapper());
+    public TestConfig() {
+        super(new ObjectMapper());
     }
 
     @Override

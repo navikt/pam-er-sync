@@ -37,7 +37,7 @@ import java.util.zip.GZIPInputStream;
 import static no.nav.pam.ad.enhetsregister.batch.JobLauncherService.*;
 
 @Configuration
-@EnableBatchProcessing
+//@EnableBatchProcessing
 @EnableScheduling
 public class BatchConfig {
 

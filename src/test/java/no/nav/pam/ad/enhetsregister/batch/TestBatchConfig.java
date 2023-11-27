@@ -23,14 +23,21 @@ import org.springframework.batch.test.JobLauncherTestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.jdbc.DataSourceBuilder;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
 
 import org.springframework.core.io.InputStreamResource;
+import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
+import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.PlatformTransactionManager;
 
+import javax.sql.DataSource;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -40,13 +47,30 @@ import java.util.zip.GZIPInputStream;
 
 import static no.nav.pam.ad.enhetsregister.batch.JobLauncherService.*;
 
-@Configuration
+@TestConfiguration
 public class TestBatchConfig extends DefaultBatchConfiguration {
+
+    @Value("${spring.datasource.url}")
+    private String jdbcUrl;
 
     @Autowired
     public TestBatchConfig() {
     }
+    @Bean
+    public DataSource primaryDataSource() {
+        EmbeddedDatabaseBuilder builder = new EmbeddedDatabaseBuilder();
+        return builder.setType(EmbeddedDatabaseType.H2)
+                .addScript("classpath:org/springframework/batch/core/schema-drop-h2.sql")
+                .addScript("classpath:org/springframework/batch/core/schema-h2.sql")
+                .build();
+    }
 
+    @Override
+    public DataSource getDataSource() {
+        return primaryDataSource();
+    }
+
+    /*
     @Bean
     JobLauncherTestUtils jobLauncherTestUtils(JobRepository jobRepository, JobLauncher jobLauncher, Job importUserJob) {
         JobLauncherTestUtils jobLauncherTestUtils1 = new JobLauncherTestUtils();
@@ -55,6 +79,8 @@ public class TestBatchConfig extends DefaultBatchConfiguration {
         jobLauncherTestUtils1.setJobLauncher(jobLauncher);
         return jobLauncherTestUtils1;
     }
+
+     */
 
 
 }

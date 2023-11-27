@@ -37,7 +37,6 @@ import java.util.zip.GZIPInputStream;
 import static no.nav.pam.ad.enhetsregister.batch.JobLauncherService.*;
 
 @Configuration
-//@EnableBatchProcessing
 @EnableScheduling
 public class BatchConfig {
 
@@ -61,17 +60,13 @@ public class BatchConfig {
 
     private final ObjectMapper objectMapper;
     private final JobRepository jobRepository;
-    private final JobLauncher jobLauncher;
     private final PlatformTransactionManager batchTransactionManager;
-
 
     @Autowired
     public BatchConfig(ObjectMapper objectMapper,
-            JobLauncher jobLauncher,
                        JobRepository jobRepository,
                        PlatformTransactionManager batchTransactionManager) {
         this.objectMapper = objectMapper;
-        this.jobLauncher = jobLauncher;
         this.jobRepository = jobRepository;
         this.batchTransactionManager = batchTransactionManager;
     }

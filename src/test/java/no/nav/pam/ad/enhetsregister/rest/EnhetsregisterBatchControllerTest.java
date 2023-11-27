@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ContextConfiguration(classes = TestConfig.class)
 public class EnhetsregisterBatchControllerTest {
-/*
+
     @LocalServerPort
     private int port;
 
@@ -83,6 +83,6 @@ public class EnhetsregisterBatchControllerTest {
         softAssert.assertAll();
     }
 
- */
+
 
 }

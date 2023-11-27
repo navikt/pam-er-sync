@@ -6,8 +6,10 @@ import no.nav.pam.ad.es.Datestamp;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.batch.core.*;
 import org.springframework.batch.test.JobLauncherTestUtils;
+import org.springframework.batch.test.context.SpringBatchTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -25,12 +27,11 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
-@ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = {TestBatchConfig.class})
+@ExtendWith({SpringExtension.class, MockitoExtension.class})
+@ContextConfiguration(classes = {TestConfig.class})
 @ActiveProfiles("test")
-//AutoConfigureTestDatabase
 public class BatchJobTest {
-/*
+
     private static final String FILEPATH = "src/test/resources/enhetsregisteret.samples/";
 
     @Autowired
@@ -42,7 +43,7 @@ public class BatchJobTest {
     @MockBean
     private JobExecutionListenerImpl executionListener;
 
-    @MockBean
+    @Autowired
     private TestConfig.IndexClient indexClient;
 
     @Test
@@ -87,7 +88,7 @@ public class BatchJobTest {
         softAssert.assertAll();
     }
 
- */
+
 }
 
 

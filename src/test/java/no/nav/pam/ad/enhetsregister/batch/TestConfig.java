@@ -9,8 +9,10 @@ import org.elasticsearch.action.bulk.BulkItemResponse;
 import org.elasticsearch.action.bulk.BulkResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.batch.core.Job;
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.batch.core.repository.JobRepository;
+import org.springframework.batch.test.JobLauncherTestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
@@ -28,14 +30,22 @@ import java.util.Map;
  * Expand as needed for further tests.
  */
 @TestConfiguration
-@Import({AppConfig.class})
+@Import({AppConfig.class, TestBatchConfig.class})
 public class TestConfig extends BatchConfig {
 
+
     @Autowired
-    public TestConfig(JobLauncher jobLauncher,
-                      JobRepository jobRepository,
+    public TestConfig(JobRepository jobRepository,
                       PlatformTransactionManager batchTransactionManager) {
-        super(new ObjectMapper(), jobLauncher, jobRepository, batchTransactionManager);
+        super(new ObjectMapper(), jobRepository, batchTransactionManager);
+    }
+
+    @Bean
+    JobLauncherTestUtils jobLauncherTestUtils(JobLauncher jobLauncher, Job importUserJob) {
+        JobLauncherTestUtils jobLauncherTestUtils1 = new JobLauncherTestUtils();
+        jobLauncherTestUtils1.setJob(importUserJob);
+        jobLauncherTestUtils1.setJobLauncher(jobLauncher);
+        return jobLauncherTestUtils1;
     }
 
     @Override

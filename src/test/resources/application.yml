@@ -8,8 +8,6 @@ spring:
     active: test
   datasource:
     url: jdbc:h2:mem:testdb;Mode=PostgreSQL
-    username: user
-    password:
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:

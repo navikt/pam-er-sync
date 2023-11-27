@@ -34,8 +34,8 @@ public class JobExecutionListenerImpl implements JobExecutionListener {
         Map<String, JobParameter<?>> parameters = jobExecution.getJobParameters().getParameters();
         if (parameters.containsKey(PARAM_DATESTAMP)) {
 
-            String prefix = parameters.get(PARAM_PREFIX).toString();
-            String datestamp = parameters.get(PARAM_DATESTAMP).toString();
+            String prefix = parameters.get(PARAM_PREFIX).getValue().toString();
+            String datestamp = parameters.get(PARAM_DATESTAMP).getValue().toString();
             try {
                 service.createAndConfigure(prefix, datestamp);
             } catch (IOException e) {

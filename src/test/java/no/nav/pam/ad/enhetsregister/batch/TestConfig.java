@@ -9,13 +9,14 @@ import org.elasticsearch.action.bulk.BulkItemResponse;
 import org.elasticsearch.action.bulk.BulkResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
-import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
+import org.springframework.batch.core.launch.JobLauncher;
+import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Primary;
+import org.springframework.transaction.PlatformTransactionManager;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -31,8 +32,10 @@ import java.util.Map;
 public class TestConfig extends BatchConfig {
 
     @Autowired
-    public TestConfig() {
-        super(new ObjectMapper());
+    public TestConfig(JobLauncher jobLauncher,
+                      JobRepository jobRepository,
+                      PlatformTransactionManager batchTransactionManager) {
+        super(new ObjectMapper(), jobLauncher, jobRepository, batchTransactionManager);
     }
 
     @Override

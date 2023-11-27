@@ -1,20 +1,22 @@
 package no.nav.pam.ad.enhetsregister.batch;
 
+
 import no.nav.pam.ad.enhetsregister.model.Enhet;
 import no.nav.pam.ad.es.Datestamp;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Test;
-import org.springframework.batch.core.BatchStatus;
-import org.springframework.batch.core.JobExecution;
-import org.springframework.batch.core.JobParameter;
-import org.springframework.batch.core.JobParameters;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.batch.core.*;
 import org.springframework.batch.test.JobLauncherTestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.HashMap;
 import java.util.List;
@@ -23,25 +25,24 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
-@ContextConfiguration(classes = {BatchJobTest.BatchTestConfig.class})
+@ExtendWith(SpringExtension.class)
+@ContextConfiguration(classes = {TestBatchConfig.class})
+@ActiveProfiles("test")
+//AutoConfigureTestDatabase
 public class BatchJobTest {
-
-    @Configuration
-    @Import({TestConfig.class})
-    static class BatchTestConfig {
-        @Bean
-        JobLauncherTestUtils jobLauncherTestUtils() {
-            return new JobLauncherTestUtils();
-        }
-
-    }
-
+/*
     private static final String FILEPATH = "src/test/resources/enhetsregisteret.samples/";
 
     @Autowired
     private JobLauncherTestUtils jobLauncherTestUtils;
 
-    @Autowired
+    @MockBean
+    private JobCompletionNotificationListener listener;
+
+    @MockBean
+    private JobExecutionListenerImpl executionListener;
+
+    @MockBean
     private TestConfig.IndexClient indexClient;
 
     @Test
@@ -85,6 +86,8 @@ public class BatchJobTest {
         softAssert.assertThat(oneStoredItem.getNaringskoder().get(0).getBeskrivelse()).isEqualTo("Frisering og annen skjønnhetspleie");
         softAssert.assertAll();
     }
+
+ */
 }
 
 

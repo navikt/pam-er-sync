@@ -4,8 +4,12 @@ config:
   cors:
     allowCredentials: true
 spring:
+  profiles:
+    active: test
   datasource:
     url: jdbc:h2:mem:testdb;Mode=PostgreSQL
+    username: user
+    password:
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
@@ -13,8 +17,6 @@ spring:
     properties:
       hibernate:
         current_session_contextclass: org.springframework.orm.hibernate5.SpringSessionContext
-  profiles:
-    active: test
   batch:
     job:
       enabled: false

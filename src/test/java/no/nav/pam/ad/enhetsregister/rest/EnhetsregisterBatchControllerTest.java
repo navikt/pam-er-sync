@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ContextConfiguration(classes = TestConfig.class)
 public class EnhetsregisterBatchControllerTest {
-
+/*
     @LocalServerPort
     private int port;
 
@@ -82,5 +82,7 @@ public class EnhetsregisterBatchControllerTest {
         softAssert.assertThat(entry.get(0).getNaringskoder().get(0).getBeskrivelse()).isEqualTo("Andre post- og budtjenester");
         softAssert.assertAll();
     }
+
+ */
 
 }

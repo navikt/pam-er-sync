@@ -7,22 +7,22 @@ import no.nav.pam.ad.enhetsregister.model.reader.ReaderEnhet;
 import no.nav.pam.ad.es.IndexService;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
+import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.job.builder.JobBuilder;
+import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.item.json.JacksonJsonObjectReader;
 import org.springframework.batch.item.json.JsonItemReader;
 import org.springframework.batch.item.json.builder.JsonItemReaderBuilder;
-import org.springframework.batch.support.transaction.ResourcelessTransactionManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
-
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -37,6 +37,7 @@ import java.util.zip.GZIPInputStream;
 import static no.nav.pam.ad.enhetsregister.batch.JobLauncherService.*;
 
 @Configuration
+@EnableBatchProcessing
 @EnableScheduling
 public class BatchConfig {
 
@@ -59,13 +60,20 @@ public class BatchConfig {
     private String enhetsregisterUnderenhetUrl;
 
     private final ObjectMapper objectMapper;
-
-    private JobRepository jobRepository;
+    private final JobRepository jobRepository;
+    private final JobLauncher jobLauncher;
+    private final PlatformTransactionManager batchTransactionManager;
 
 
     @Autowired
-    public BatchConfig(ObjectMapper objectMapper) {
+    public BatchConfig(ObjectMapper objectMapper,
+            JobLauncher jobLauncher,
+                       JobRepository jobRepository,
+                       PlatformTransactionManager batchTransactionManager) {
         this.objectMapper = objectMapper;
+        this.jobLauncher = jobLauncher;
+        this.jobRepository = jobRepository;
+        this.batchTransactionManager = batchTransactionManager;
     }
 
     // tag::readerwriterprocessor[]
@@ -107,39 +115,30 @@ public class BatchConfig {
     @Bean
     public Job importUserJob(
             JobCompletionNotificationListener completionNotificationListener,
-            JobExecutionListenerImpl executionListener,
-            JobRepository jobRepository)
+            JobExecutionListenerImpl executionListener)
             throws IOException {
 
         return new JobBuilder("importUserJob", jobRepository)
                 .incrementer(new RunIdIncrementer())
                 .listener(executionListener)
                 .listener(completionNotificationListener)
-                .flow(step1(jobRepository, getTransactionManager()))
+                .flow(step1())
                 .end()
                 .build();
-
     }
 
     @Bean
-    public Step step1(JobRepository jobRepository, PlatformTransactionManager transactionManager)
+    public Step step1()
             throws IOException {
 
         return new StepBuilder("step1", jobRepository)
-                .<ReaderEnhet, Enhet>chunk(1000)
-                .transactionManager(transactionManager)
+                .<ReaderEnhet, Enhet>chunk(1000, batchTransactionManager)
                 .reader(reader(null, null))
                 .processor(processor())
                 .writer(writer(null, null))
                 .build();
 
     }
-
-    @Bean(name = "transactionManager")
-    public PlatformTransactionManager getTransactionManager() {
-        return new ResourcelessTransactionManager();
-    }
-
     // end::jobstep[]
 
     /**

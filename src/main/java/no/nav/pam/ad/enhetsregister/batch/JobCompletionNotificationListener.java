@@ -53,8 +53,8 @@ public class JobCompletionNotificationListener extends JobExecutionListenerSuppo
             return;
         }
 
-        String prefix = parameters.get(JobLauncherService.PARAM_PREFIX).toString();
-        String datestamp = parameters.get(JobLauncherService.PARAM_DATESTAMP).toString();
+        String prefix = parameters.get(JobLauncherService.PARAM_PREFIX).getValue().toString();
+        String datestamp = parameters.get(JobLauncherService.PARAM_DATESTAMP).getValue().toString();
         try {
 
             Thread.sleep(60000);

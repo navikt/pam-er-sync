@@ -3,7 +3,8 @@ package no.nav.pam.ad.enhetsregister.model;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import no.nav.pam.ad.enhetsregister.model.reader.ReaderEnhet;
 import org.assertj.core.api.SoftAssertions;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
 
 import java.io.IOException;
 

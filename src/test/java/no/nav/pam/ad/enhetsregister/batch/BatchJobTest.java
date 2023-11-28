@@ -1,50 +1,43 @@
 package no.nav.pam.ad.enhetsregister.batch;
 
+
 import no.nav.pam.ad.enhetsregister.model.Enhet;
 import no.nav.pam.ad.es.Datestamp;
 import org.assertj.core.api.SoftAssertions;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.batch.core.BatchStatus;
-import org.springframework.batch.core.JobExecution;
-import org.springframework.batch.core.JobParameter;
-import org.springframework.batch.core.JobParameters;
-import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.batch.core.*;
 import org.springframework.batch.test.JobLauncherTestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-@RunWith(SpringRunner.class)
 @SpringBootTest
-@ContextConfiguration(classes = {BatchJobTest.BatchTestConfig.class})
+@ExtendWith({SpringExtension.class, MockitoExtension.class})
+@ContextConfiguration(classes = {TestConfig.class})
+@ActiveProfiles("test")
 public class BatchJobTest {
-
-    @Configuration
-    @EnableBatchProcessing
-    @Import({TestConfig.class})
-    static class BatchTestConfig {
-        @Bean
-        JobLauncherTestUtils jobLauncherTestUtils() {
-            return new JobLauncherTestUtils();
-        }
-
-    }
 
     private static final String FILEPATH = "src/test/resources/enhetsregisteret.samples/";
 
     @Autowired
     private JobLauncherTestUtils jobLauncherTestUtils;
+
+    @MockBean
+    private JobCompletionNotificationListener listener;
+
+    @MockBean
+    private JobExecutionListenerImpl executionListener;
 
     @Autowired
     private TestConfig.IndexClient indexClient;
@@ -54,10 +47,10 @@ public class BatchJobTest {
         String type = "TESTUNDERENHET";
         String datestamp = Datestamp.getCurrent();
 
-        Map<String, JobParameter> params = new HashMap<>();
-        params.put(JobLauncherService.PARAM_FILENAME, new JobParameter(FILEPATH + "underenheter_alle.json.gz"));
-        params.put(JobLauncherService.PARAM_PREFIX, new JobParameter(type));
-        params.put(JobLauncherService.PARAM_DATESTAMP, new JobParameter(datestamp));
+        Map<String, JobParameter<?>> params = new HashMap<>();
+        params.put(JobLauncherService.PARAM_FILENAME, new JobParameter(FILEPATH + "underenheter_alle.json.gz", String.class));
+        params.put(JobLauncherService.PARAM_PREFIX, new JobParameter(type, String.class));
+        params.put(JobLauncherService.PARAM_DATESTAMP, new JobParameter(datestamp, String.class));
 
         assertTrue(indexClient.getStorage().isEmpty());
 
@@ -90,6 +83,8 @@ public class BatchJobTest {
         softAssert.assertThat(oneStoredItem.getNaringskoder().get(0).getBeskrivelse()).isEqualTo("Frisering og annen skjønnhetspleie");
         softAssert.assertAll();
     }
+
+
 }
 
 

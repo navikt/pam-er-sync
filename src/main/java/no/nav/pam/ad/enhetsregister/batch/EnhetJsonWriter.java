@@ -3,6 +3,7 @@ package no.nav.pam.ad.enhetsregister.batch;
 
 import no.nav.pam.ad.enhetsregister.model.Enhet;
 import no.nav.pam.ad.es.IndexService;
+import org.springframework.batch.item.Chunk;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -23,7 +24,7 @@ public class EnhetJsonWriter implements ItemWriter<Enhet> {
     }
 
     @Override
-    public void write(List<? extends Enhet> list) throws Exception {
-        service.indexCompanies(prefix, datestamp, new ArrayList<>(list));
+    public void write(Chunk<? extends Enhet> chunk) throws Exception {
+        service.indexCompanies(prefix, datestamp, (List<Enhet>) chunk.getItems());
     }
 }

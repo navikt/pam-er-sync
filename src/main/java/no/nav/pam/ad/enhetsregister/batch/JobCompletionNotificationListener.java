@@ -48,13 +48,13 @@ public class JobCompletionNotificationListener extends JobExecutionListenerSuppo
         }
         LOG.info("Total write count: {}, skip count {}", writeCount, skipCount);
 
-        Map<String, JobParameter> parameters = jobExecution.getJobParameters().getParameters();
+        Map<String, JobParameter<?>> parameters = jobExecution.getJobParameters().getParameters();
         if (!parameters.containsKey(JobLauncherService.PARAM_DATESTAMP)) {
             return;
         }
 
-        String prefix = parameters.get(JobLauncherService.PARAM_PREFIX).toString();
-        String datestamp = parameters.get(JobLauncherService.PARAM_DATESTAMP).toString();
+        String prefix = parameters.get(JobLauncherService.PARAM_PREFIX).getValue().toString();
+        String datestamp = parameters.get(JobLauncherService.PARAM_DATESTAMP).getValue().toString();
         try {
 
             Thread.sleep(60000);

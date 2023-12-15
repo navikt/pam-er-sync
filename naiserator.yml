@@ -37,5 +37,3 @@ spec:
         - host: data.brreg.no
           ports:
             - port: 443
-              name: https
-              protocol: HTTPS

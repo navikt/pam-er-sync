@@ -1,7 +1,7 @@
 package no.nav.pam.ad.es;
 
 import no.nav.pam.ad.enhetsregister.model.Enhet;
-import org.elasticsearch.action.bulk.BulkResponse;
+import org.opensearch.action.bulk.BulkResponse;
 
 import java.io.IOException;
 import java.util.List;

@@ -4,6 +4,14 @@
   "organisasjonsform" : "BEDR",
   "antallAnsatte" : 3,
   "overordnetEnhet" : "313606333",
-  "adresse" : null,
+  "adresse": {
+    "land": "Norge",
+    "landkode": "NO",
+    "kommune": "TRONDHEIM",
+    "kommunenummer": "5001",
+    "poststed": "TILLER",
+    "postnummer": "7075",
+    "adresse": "Okstadbrinken 18"
+  },
   "naringskoder" : null
 }

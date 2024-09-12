@@ -1,6 +1,14 @@
 {
   "naringskoder": null,
-  "adresse": null,
+  "adresse": {
+    "land": "Norge",
+    "landkode": "NO",
+    "kommune": "OSLO",
+    "kommunenummer": "0301",
+    "poststed": "Oslo",
+    "postnummer": "0661",
+    "adresse": "Fyrstikkalléen 1"
+  },
   "antallAnsatte": 4,
   "organisasjonsform": "BEDR",
   "navn": "ORDKNAPP BLOMSTRETE TIGER AS",

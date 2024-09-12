@@ -5,6 +5,7 @@ on:
       - dev-underenheter/**
     branches:
       - master
+      - feature/**
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest

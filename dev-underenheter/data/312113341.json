@@ -1,6 +1,14 @@
 {
   "naringskoder": null,
-  "adresse": null,
+  "adresse": {
+    "land": "Norge",
+    "landkode": "NO",
+    "kommune": "NORDRE FOLLO",
+    "kommunenummer": "3207",
+    "poststed": "KOLBOTN",
+    "postnummer": "1410",
+    "adresse": "Nordre Kvervet"
+  },
   "antallAnsatte": 4,
   "organisasjonsform": "BEDR",
   "navn": "ORDKNAPP BLOMSTRETE TIGER AS",

@@ -3,10 +3,14 @@ on:
   push:
     paths:
       - dev-underenheter/**
+      - .github/workflows/deploy-dev-underenheter.yml
     branches:
       - master
+      - feature/**
 jobs:
   build-and-deploy:
+    permissions:
+      packages: write
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1

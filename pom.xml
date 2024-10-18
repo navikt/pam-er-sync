@@ -10,17 +10,18 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.1.1</version>
+        <version>3.3.4</version>
     </parent>
 
     <properties>
-        <java.version>17</java.version>
-        <opensearch.version>2.11.1</opensearch.version>
-        <guava.version>28.0-jre</guava.version>
+        <java.version>21</java.version>
+        <opensearch.version>2.17.1</opensearch.version>
+        <guava.version>33.3.1-jre</guava.version>
         <prometheus.version>0.16.0</prometheus.version>
-        <logstash.version>7.3</logstash.version>
-        <rest-assured.version>5.3.0</rest-assured.version>
-        <hamcrest-library.version>1.3</hamcrest-library.version>
+        <micrometer.version>1.13.6</micrometer.version>
+        <logstash.version>8.0</logstash.version>
+        <rest-assured.version>5.5.0</rest-assured.version>
+        <hamcrest.version>3.0</hamcrest.version>
     </properties>
 
     <dependencies>
@@ -60,7 +61,7 @@
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
-            <version>2.2.224</version>
+            <version>2.3.232</version>
         </dependency>
 
         <dependency>
@@ -92,8 +93,8 @@
         </dependency>
         <dependency>
             <groupId>org.hamcrest</groupId>
-            <artifactId>hamcrest-library</artifactId>
-            <version>${hamcrest-library.version}</version>
+            <artifactId>hamcrest</artifactId>
+            <version>${hamcrest.version}</version>
         </dependency>
         <dependency>
             <groupId>io.micrometer</groupId>
@@ -113,7 +114,7 @@
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
-            <version>5.10.1</version>
+            <version>5.11.2</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -131,4 +132,21 @@
             </plugin>
         </plugins>
     </build>
+
+    <repositories>
+        <repository>
+            <id>github</id>
+            <name>nav github</name>
+            <url>https://github-package-registry-mirror.gc.nav.no/cached/maven-release</url>
+        </repository>
+        <repository>
+            <id>central</id>
+            <name>maven central</name>
+            <url>https://repo.maven.apache.org/maven2/</url>
+        </repository>
+        <repository>
+            <id>confluent</id>
+            <url>https://packages.confluent.io/maven/</url>
+        </repository>
+    </repositories>
 </project>

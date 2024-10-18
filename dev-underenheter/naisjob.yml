@@ -18,7 +18,5 @@ spec:
 
   accessPolicy:
     outbound:
-      rules:
-        - application: stillinger-opendistro-elasticsearch
       external:
-        - host: stillinger-opendistro-elasticsearch.dev.intern.nav.no
+        - host: opensearch-teampam-stilling-nav-dev.aivencloud.com

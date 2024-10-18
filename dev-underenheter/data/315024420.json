@@ -4,6 +4,14 @@
   "organisasjonsform" : "BEDR",
   "antallAnsatte" : 10,
   "overordnetEnhet" : "313970736",
-  "adresse" : null,
+  "adresse": {
+    "land": "Norge",
+    "landkode": "NO",
+    "kommune": "FROLAND",
+    "kommunenummer": "4214",
+    "poststed": "FROLAND",
+    "postnummer": "4820",
+    "adresse": "Løvjomåsveien 168"
+  },
   "naringskoder" : null
 }

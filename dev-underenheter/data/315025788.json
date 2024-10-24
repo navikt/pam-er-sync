@@ -1,0 +1,17 @@
+{
+  "organisasjonsnummer" : "315275784",
+  "navn" : "UNYTTIG KOMISK HUND DA",
+  "organisasjonsform" : "BEDR",
+  "antallAnsatte" : 0,
+  "overordnetEnhet" : "312941279",
+  "adresse": {
+    "land": "Norge",
+    "landkode": "NO",
+    "kommune": "TROMSØ",
+    "kommunenummer": "5501",
+    "poststed": "TROMSØ",
+    "postnummer": "9008",
+    "adresse": "Rektor Steens gate 30"
+  },
+  "naringskoder" : null
+}

@@ -1,0 +1,17 @@
+{
+  "organisasjonsnummer" : "315025788",
+  "navn" : "KLOK UNG FJELLREV",
+  "organisasjonsform" : "BEDR",
+  "antallAnsatte" : 7,
+  "overordnetEnhet" : "313970736",
+  "adresse": {
+    "land": "Norge",
+    "landkode": "NO",
+    "kommune": "HASVIK",
+    "kommunenummer": "5616",
+    "poststed": "SØRVÆR",
+    "postnummer": "9595",
+    "adresse": "Søndre Plassenøya"
+  },
+  "naringskoder" : null
+}

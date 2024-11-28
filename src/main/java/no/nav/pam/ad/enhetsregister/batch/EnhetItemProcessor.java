@@ -7,6 +7,9 @@ import no.nav.pam.ad.enhetsregister.model.Naringskode;
 import no.nav.pam.ad.enhetsregister.model.reader.ReaderAdresse;
 import no.nav.pam.ad.enhetsregister.model.reader.ReaderEnhet;
 import no.nav.pam.ad.enhetsregister.model.reader.ReaderNaringskode;
+import no.nav.pam.ad.es.IndexService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.batch.item.ItemProcessor;
 
 import java.util.stream.Collectors;
@@ -14,9 +17,15 @@ import java.util.stream.Collectors;
 
 public class EnhetItemProcessor implements ItemProcessor<ReaderEnhet, Enhet> {
 
+    private static final Logger LOG = LoggerFactory.getLogger(IndexService.class);
+
     @Override
-    public Enhet process(ReaderEnhet enhet) {
-        return mapToJsonEnhet(enhet);
+    public Enhet process(ReaderEnhet readerEnhet) {
+        Enhet enhet = mapToJsonEnhet(readerEnhet);
+        if ("834547732".equals(enhet.getOrganisasjonsnummer())) {
+            LOG.info("Processing enhet: {}", enhet);
+        }
+        return enhet;
     }
 
     private Enhet mapToJsonEnhet(ReaderEnhet readerEnhet) {

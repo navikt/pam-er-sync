@@ -15,8 +15,8 @@ import java.util.stream.Collectors;
 public class EnhetItemProcessor implements ItemProcessor<ReaderEnhet, Enhet> {
 
     @Override
-    public Enhet process(ReaderEnhet readerEnhet) {
-        return mapToJsonEnhet(readerEnhet);
+    public Enhet process(ReaderEnhet enhet) {
+        return mapToJsonEnhet(enhet);
     }
 
     private Enhet mapToJsonEnhet(ReaderEnhet readerEnhet) {

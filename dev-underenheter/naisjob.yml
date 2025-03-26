@@ -7,7 +7,7 @@ metadata:
   namespace: teampam
 spec:
   image: {{ image }}
-  schedule: "* 7 * * *" # GMT
+  schedule: "0 7 * * *" # GMT
   activeDeadlineSeconds: 60
 
   env:

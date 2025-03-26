@@ -9,26 +9,18 @@ on:
       - feature/**
 jobs:
   build-and-deploy:
+    uses: navikt/pam-deploy/.github/workflows/deploy-dev.yml@v7
     permissions:
-      packages: write
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v1
-      - name: build and push image
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          cd dev-underenheter
-          VTAG=$(TZ=Europe/Oslo date +"%y.%j.%H%M%S")
-          IMAGE=docker.pkg.github.com/$GITHUB_REPOSITORY/dev-underenheter:$VTAG
-          docker build . --pull -t "$IMAGE"
-          echo "$GITHUB_TOKEN" | docker login docker.pkg.github.com --username "$GITHUB_REPOSITORY" --password-stdin
-          docker push "$IMAGE"
-          echo "IMAGE=$IMAGE" >> "$GITHUB_ENV"
-          echo $IMAGE
-      - name: deploy naisjob to dev-gcp
-        uses: nais/deploy/actions/deploy@v1
-        env:
-          APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
-          CLUSTER: dev-gcp
-          RESOURCE: dev-underenheter/naisjob.yml
+      actions: read
+      contents: write
+      security-events: write
+      id-token: write
+    with:
+      CODEQL_ENABLED: false
+      SKIP_DRAFT_RELEASE: ${{ github.ref_name != 'master' }}
+      WORKING_DIRECTORY: "./dev-underenheter/"
+      IMAGE_SUFFIX: "dev-underenheter"
+      NAIS_RESOURCE: "./dev-underenheter/naisjob.yml"
+      LANGUAGE: "bash"
+    secrets:
+      NAIS_WORKLOAD_IDENTITY_PROVIDER: ${{ secrets.NAIS_WORKLOAD_IDENTITY_PROVIDER }}

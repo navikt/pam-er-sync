@@ -33,6 +33,10 @@ spec:
       destinations:
         - id: loki
         - id: elastic
+  ingresses:
+  {{#each ingress as |url|}}
+     - {{url}}
+  {{/each}}
   openSearch:
     access: admin
     instance: stilling

@@ -1,0 +1,17 @@
+{
+  "naringskoder": null,
+  "adresse": {
+    "land": "Norge",
+    "landkode": "NO",
+    "kommune": "OSLO",
+    "kommunenummer": "0301",
+    "poststed": "OSLO",
+    "postnummer": "0661",
+    "adresse": "Fyrstikkalléen 1"
+  },
+  "antallAnsatte": 25,
+  "organisasjonsform": "BEDR",
+  "navn": "Maura Og Kolbu Regnskap",
+  "organisasjonsnummer": "910825518",
+  "overordnetEnhet": "0"
+}

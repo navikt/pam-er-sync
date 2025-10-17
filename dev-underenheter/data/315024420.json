@@ -13,5 +13,10 @@
     "postnummer": "4820",
     "adresse": "Løvjomåsveien 168"
   },
-  "naringskoder" : null
+  "naringskoder" : [
+    {
+      "beskrivelse": "Detaljhandel med apotekvarer",
+      "kode": "47.730"
+    }
+  ]
 }

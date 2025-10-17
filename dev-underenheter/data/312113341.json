@@ -1,5 +1,10 @@
 {
-  "naringskoder": null,
+  "naringskoder": [
+    {
+      "kode": "95.310",
+      "beskrivelse": "Reparasjon og vedlikehold av motorvogner"
+    }
+  ],
   "adresse": {
     "land": "Norge",
     "landkode": "NO",

@@ -4,6 +4,19 @@
   "organisasjonsform" : "BEDR",
   "antallAnsatte" : 5,
   "overordnetEnhet" : "312785552",
-  "adresse" : null,
-  "naringskoder" : null
+  "adresse" : {
+    "adresse" : "Vardeveien 60",
+    "postnummer" : "2020",
+    "poststed": "SKEDSMOKORSET",
+    "kommunenummer": "3205",
+    "kommune": "LILLESTRØM",
+    "landkode": "NO",
+    "land": "Norge"
+  },
+  "naringskoder" : [
+    {
+      "kode" : "47.631",
+      "beskrivelse" : "Detaljhandel med sportsvarer"
+    }
+  ]
 }

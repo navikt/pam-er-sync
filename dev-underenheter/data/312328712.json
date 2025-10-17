@@ -5,5 +5,10 @@
 	"antallAnsatte" : 1,
 	"overordnetEnhet" : "310071900",
 	"adresse" : null,
-	"naringskoder" : null
+	"naringskoder" : [
+      {
+        "kode" : "64.323",
+        "beskrivelse" : "Andre egeninvesteringsselskaper"
+      }
+    ]
 }

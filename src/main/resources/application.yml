@@ -20,7 +20,7 @@ pam:
   enhetsregister:
     scheduler:
       enabled: true
-      cron: 0 30 6 * * *
+      cron: 0 30 5 * * *
     sources:
       timeout:
         millis: 300000

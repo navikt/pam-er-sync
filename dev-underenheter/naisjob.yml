@@ -20,6 +20,6 @@ spec:
         - host: opensearch-teampam-stilling-nav-dev.aivencloud.com
 
   openSearch:
-    access: admin
+    access: write
     instance: stilling
 

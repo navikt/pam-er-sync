@@ -13,6 +13,10 @@ spec:
   env:
     - name: ES_STILLING_BACKEND
       value: https://opensearch-teampam-stilling-nav-dev.aivencloud.com:26482
+    - name: ES_USER
+      value: {{ OPEN_SEARCH_USERNAME}}
+    - name: ES_PASSWORD
+      value: {{ OPEN_SEARCH_PASSWORD }}
   envFrom:
     - secret: pam-er-sync-dev-underenheter-env
 
@@ -20,3 +24,8 @@ spec:
     outbound:
       external:
         - host: opensearch-teampam-stilling-nav-dev.aivencloud.com
+
+  openSearch:
+    access: write
+    instance: stilling
+

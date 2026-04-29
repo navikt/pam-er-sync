@@ -11,7 +11,7 @@ exec 1>&${JSON_LOGGER[1]} 2>&${JSON_LOGGER[1]}
 
 for doc in /data/*.json; do
     orgnr=$(basename $doc .json)
-    curl -sS -u "$ES_USER:$ES_PASSWORD" -XPOST -H 'Content-type: application/json' --data-binary @"$doc" "$ES_STILLING_BACKEND/underenhet/_doc/$orgnr?pretty=true"
+    curl -sS -u "$OPEN_SEARCH_USERNAME:$OPEN_SEARCH_PASSWORD" -XPOST -H 'Content-type: application/json' --data-binary @"$doc" "$OPEN_SEARCH_HOST/underenhet/_doc/$orgnr?pretty=true"
     echo
     echo "Indexed dev-underenhet $orgnr"
 done

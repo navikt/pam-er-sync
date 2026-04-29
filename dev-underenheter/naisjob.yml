@@ -12,11 +12,7 @@ spec:
 
   env:
     - name: ES_STILLING_BACKEND
-      value: {{ OPEN_SEARCH_URI}}
-    - name: ES_USER
-      value: {{ OPEN_SEARCH_USERNAME}}
-    - name: ES_PASSWORD
-      value: {{ OPEN_SEARCH_PASSWORD }}
+      value: https://opensearch-teampam-stilling-nav-dev.aivencloud.com:26482
 
   accessPolicy:
     outbound:

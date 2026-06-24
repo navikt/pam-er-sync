@@ -47,7 +47,7 @@ public class AppConfig {
         LOG.info("elasticsearch url {} and user {}", elasticsearchUrl, user);
         return RestClient.builder(HttpHost.create(elasticsearchUrl)).setHttpClientConfigCallback(httpClientBuilder -> {
             BasicCredentialsProvider credentialsProvider = new BasicCredentialsProvider();
-            credentialsProvider.setCredentials(AuthScope.ANY, new UsernamePasswordCredentials(user,password));
+            credentialsProvider.setCredentials(AuthScope.ANY, new UsernamePasswordCredentials(user, password));
             httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider);
             // Fix SSL hostname verification for *.local domains:
             httpClientBuilder.setSSLHostnameVerifier(new DefaultHostnameVerifier());

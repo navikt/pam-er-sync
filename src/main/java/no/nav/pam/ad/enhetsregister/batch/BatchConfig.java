@@ -29,6 +29,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.util.Optional;
 import java.util.zip.GZIPInputStream;
@@ -68,11 +69,6 @@ public class BatchConfig {
         this.objectMapper = objectMapper;
         this.jobRepository = jobRepository;
         this.batchTransactionManager = batchTransactionManager;
-    }
-
-    @Bean
-    public static BeanDefinitionRegistryPostProcessor jobRegistryBeanPostProcessorRemover() {
-        return registry -> registry.removeBeanDefinition("jobRegistryBeanPostProcessor");
     }
 
     // tag::readerwriterprocessor[]
@@ -121,8 +117,7 @@ public class BatchConfig {
                 .incrementer(new RunIdIncrementer())
                 .listener(executionListener)
                 .listener(completionNotificationListener)
-                .flow(step1())
-                .end()
+                .start(step1())
                 .build();
     }
 
@@ -160,13 +155,13 @@ public class BatchConfig {
     @Bean
     public Hovedenhet hovedenhet()
             throws MalformedURLException {
-        return new Hovedenhet(enhetsregisterHovedenhetEnabled, new URL(enhetsregisterHovedenhetUrl));
+        return new Hovedenhet(enhetsregisterHovedenhetEnabled, URI.create(enhetsregisterHovedenhetUrl).toURL());
     }
 
     @Bean
     public Underenhet underenhet()
             throws MalformedURLException {
-        return new Underenhet(enhetsregisterUnderenhetEnabled, new URL(enhetsregisterUnderenhetUrl));
+        return new Underenhet(enhetsregisterUnderenhetEnabled, URI.create(enhetsregisterUnderenhetUrl).toURL());
     }
 
     public abstract static class SourceConfiguration {

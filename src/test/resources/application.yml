@@ -38,7 +38,8 @@ elasticsearch:
 # Management endpoints for NAIS.
 management:
   endpoints:
-    enabled-by-default: false
+    access:
+      default: none
   metrics:
       enable:
         jvm: false

@@ -1,6 +1,6 @@
 package no.nav.pam.ad.es;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 import no.nav.pam.ad.enhetsregister.model.Enhet;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.entity.ContentType;
@@ -34,11 +34,11 @@ public class ElasticsearchIndexClient extends RestHighLevelClient implements Ind
 
     private final static Logger LOG = LoggerFactory.getLogger(ElasticsearchIndexClient.class);
 
-    private final ObjectMapper objectMapper;
+    private final JsonMapper objectMapper;
 
     @Autowired
     public ElasticsearchIndexClient(RestClientBuilder client,
-                                    ObjectMapper objectMapper) {
+                                    JsonMapper objectMapper) {
         super(client);
         this.objectMapper = objectMapper;
     }

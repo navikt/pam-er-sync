@@ -3,8 +3,12 @@ package no.nav.pam.ad.enhetsregister.batch;
 import no.nav.pam.ad.es.Datestamp;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.batch.core.*;
-import org.springframework.batch.core.launch.JobLauncher;
+import org.springframework.batch.core.BatchStatus;
+import org.springframework.batch.core.job.Job;
+import org.springframework.batch.core.job.JobExecutionException;
+import org.springframework.batch.core.job.parameters.JobParameters;
+import org.springframework.batch.core.job.parameters.JobParametersBuilder;
+import org.springframework.batch.core.launch.JobOperator;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -29,10 +33,10 @@ public class JobLauncherService {
     private int timeoutMillis;
 
     private final Proxy proxy;
-    private final JobLauncher launcher;
+    private final JobOperator launcher;
     private final Job job;
 
-    JobLauncherService(Proxy proxy, JobLauncher launcher, Job job) {
+    JobLauncherService(Proxy proxy, JobOperator launcher, Job job) {
         this.proxy = proxy;
         this.launcher = launcher;
         this.job = job;

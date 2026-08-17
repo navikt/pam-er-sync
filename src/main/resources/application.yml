@@ -39,18 +39,19 @@ elasticsearch:
 # Management endpoints for NAIS.
 management:
   endpoints:
-    enabled-by-default: false
+    access:
+      default: none
     web:
       base-path: /actuator
       exposure:
         include: health, info, prometheus
   endpoint:
     prometheus:
-      enabled: true
+      access: read-only
     health:
-      enabled: true
+      access: read-only
     info:
-      enabled: true
+      access: read-only
   metrics:
     enable:
       jvm:

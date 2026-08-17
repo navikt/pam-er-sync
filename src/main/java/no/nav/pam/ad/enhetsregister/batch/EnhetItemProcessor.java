@@ -7,7 +7,7 @@ import no.nav.pam.ad.enhetsregister.model.Naringskode;
 import no.nav.pam.ad.enhetsregister.model.reader.ReaderAdresse;
 import no.nav.pam.ad.enhetsregister.model.reader.ReaderEnhet;
 import no.nav.pam.ad.enhetsregister.model.reader.ReaderNaringskode;
-import org.springframework.batch.item.ItemProcessor;
+import org.springframework.batch.infrastructure.item.ItemProcessor;
 
 import java.util.stream.Collectors;
 

@@ -1,11 +1,10 @@
 package no.nav.pam.ad;
 
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import tools.jackson.databind.node.JsonNodeFactory;
+import tools.jackson.databind.node.ObjectNode;
 import no.nav.pam.ad.enhetsregister.BrregHealthIndicator;
 import no.nav.pam.ad.es.IndexClientHealthIndicator;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.actuate.health.Status;
+import org.springframework.boot.health.contributor.Status;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,7 +15,6 @@ public class StatusController {
     private final IndexClientHealthIndicator indexClientHealthIndicator;
     private final BrregHealthIndicator brregHealthIndicator;
 
-    @Autowired
     public StatusController(IndexClientHealthIndicator indexClientHealthIndicator, BrregHealthIndicator brregHealthIndicator) {
         this.indexClientHealthIndicator = indexClientHealthIndicator;
         this.brregHealthIndicator = brregHealthIndicator;

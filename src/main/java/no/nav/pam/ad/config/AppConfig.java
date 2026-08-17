@@ -1,6 +1,6 @@
 package no.nav.pam.ad.config;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 import no.nav.pam.ad.Application;
 import org.apache.http.HttpHost;
 import org.apache.http.auth.AuthScope;
@@ -67,8 +67,8 @@ public class AppConfig {
     }
 
     @Bean
-    public ObjectMapper jacksonMapper() {
-        return new ObjectMapper();
+    public JsonMapper jacksonMapper() {
+        return new JsonMapper();
     }
 
     @Bean

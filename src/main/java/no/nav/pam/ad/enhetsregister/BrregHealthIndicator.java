@@ -6,9 +6,8 @@ import com.google.common.cache.LoadingCache;
 import no.nav.pam.ad.enhetsregister.batch.BatchConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.actuate.health.Health;
-import org.springframework.boot.actuate.health.HealthIndicator;
+import org.springframework.boot.health.contributor.Health;
+import org.springframework.boot.health.contributor.HealthIndicator;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -29,7 +28,6 @@ public class BrregHealthIndicator implements HealthIndicator {
 
     private LoadingCache<Integer, Health> healthCache;
 
-    @Autowired
     public BrregHealthIndicator(BatchConfig.Underenhet underenhet, Proxy proxy) {
         this.underenhet = underenhet;
         this.proxy = proxy;
@@ -38,9 +36,9 @@ public class BrregHealthIndicator implements HealthIndicator {
                 .maximumSize(10)
                 .expireAfterWrite(10, TimeUnit.MINUTES)
                 .build(
-                        new CacheLoader<Integer, Health>() {
+                        new CacheLoader<>() {
                             @Override
-                            public Health load(Integer integer) throws Exception {
+                            public Health load(Integer integer) {
                                 return fetchHealthStatus();
                             }
                         });
@@ -58,15 +56,14 @@ public class BrregHealthIndicator implements HealthIndicator {
     }
 
     private Health fetchHealthStatus() {
-        if (!underenhet.getUrl().isPresent()) {
+        if (underenhet.getUrl().isEmpty()) {
             return Health.down().build();
         }
 
         try {
             URL url = underenhet.getUrl().get();
             URLConnection connection =  url.openConnection(proxy);
-            if(connection instanceof HttpURLConnection){
-                HttpURLConnection httpConnection = (HttpURLConnection) connection;
+            if(connection instanceof HttpURLConnection httpConnection){
                 httpConnection.setRequestMethod("HEAD");
                 return (httpConnection.getResponseCode() == 200) ? Health.up().build() : Health.down().build();
             } else {

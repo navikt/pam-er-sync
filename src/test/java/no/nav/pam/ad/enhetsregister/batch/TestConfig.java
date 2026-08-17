@@ -1,6 +1,6 @@
 package no.nav.pam.ad.enhetsregister.batch;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 import no.nav.pam.ad.config.AppConfig;
 import no.nav.pam.ad.enhetsregister.model.Enhet;
 import no.nav.pam.ad.enhetsregister.rest.EnhetsregisterBatchControllerTest;
@@ -9,7 +9,7 @@ import org.opensearch.action.bulk.BulkItemResponse;
 import org.opensearch.action.bulk.BulkResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.batch.core.Job;
+import org.springframework.batch.core.job.Job;
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.test.JobLauncherTestUtils;
@@ -37,7 +37,7 @@ public class TestConfig extends BatchConfig {
     @Autowired
     public TestConfig(JobRepository jobRepository,
                       PlatformTransactionManager batchTransactionManager) {
-        super(new ObjectMapper(), jobRepository, batchTransactionManager);
+        super(new JsonMapper(), jobRepository, batchTransactionManager);
     }
 
     @Bean

@@ -5,6 +5,7 @@ on:
 
 jobs:
   call-workflow:
+    if: ${{ !contains(github.event.release.tag_name, '/') }}
     uses: navikt/pam-deploy/.github/workflows/deploy-prod.yml@v9
     permissions:
       contents: write

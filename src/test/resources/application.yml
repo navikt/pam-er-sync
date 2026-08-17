@@ -27,13 +27,14 @@ spring:
       continue-on-error: true
       platform: h2
 
+elasticsearch:
+  url: ${STILLINGESBACKEND_URL:https://pamsok-elasticsearch.nais.oera-q.local}
+
 pam:
   http:
       proxy:
         url: http://155.55.60.117:8088
         enabled: true
-elasticsearch:
-  url:  ${STILLINGESBACKEND_URL:https://pamsok-elasticsearch.nais.oera-q.local}
 
 # Management endpoints for NAIS.
 management:

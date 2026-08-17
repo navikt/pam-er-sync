@@ -15,19 +15,18 @@
 
     <properties>
         <java.version>25</java.version>
-        <opensearch.version>2.19.5</opensearch.version>
+        <opensearch.version>3.1.0</opensearch.version>
         <guava.version>33.4.8-jre</guava.version>
         <logstash.version>8.1</logstash.version>
         <rest-assured.version>5.5.7</rest-assured.version>
         <argLine/>
     </properties>
-
     <dependencyManagement>
         <dependencies>
             <dependency>
                 <groupId>io.rest-assured</groupId>
                 <artifactId>rest-assured</artifactId>
-                <version>${rest-assured.version}</version>
+                <version>5.5.7</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -62,7 +61,13 @@
 
         <dependency>
             <groupId>org.opensearch.client</groupId>
-            <artifactId>opensearch-rest-high-level-client</artifactId>
+            <artifactId>opensearch-java</artifactId>
+            <version>${opensearch.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.opensearch.client</groupId>
+            <artifactId>opensearch-rest-client</artifactId>
             <version>${opensearch.version}</version>
         </dependency>
 
@@ -86,6 +91,10 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents.client5</groupId>
+            <artifactId>httpclient5</artifactId>
         </dependency>
         <dependency>
             <groupId>com.google.guava</groupId>

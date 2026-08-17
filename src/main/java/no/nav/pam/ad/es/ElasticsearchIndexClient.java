@@ -1,27 +1,25 @@
 package no.nav.pam.ad.es;
 
-import tools.jackson.databind.json.JsonMapper;
 import no.nav.pam.ad.enhetsregister.model.Enhet;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.entity.ContentType;
-import org.apache.http.nio.entity.NStringEntity;
-import org.apache.http.util.EntityUtils;
-
-import org.opensearch.action.admin.indices.delete.DeleteIndexRequest;
-import org.opensearch.action.bulk.BulkRequest;
-import org.opensearch.action.bulk.BulkResponse;
-import org.opensearch.action.index.IndexRequest;
-import org.opensearch.client.*;
-import org.opensearch.client.indices.CreateIndexRequest;
-import org.opensearch.common.xcontent.XContentType;
+import org.apache.hc.core5.http.ContentType;
+import org.apache.hc.core5.http.ParseException;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
+import org.apache.hc.core5.http.io.entity.StringEntity;
+import org.opensearch.client.opensearch.OpenSearchClient;
+import org.opensearch.client.opensearch.core.BulkRequest;
+import org.opensearch.client.opensearch.core.BulkResponse;
+import org.opensearch.client.Request;
+import org.opensearch.client.Response;
+import org.opensearch.client.RestClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Locale;
 import java.util.List;
 
 /**
@@ -30,25 +28,27 @@ import java.util.List;
  * Note that in cases where parameters are used as part of an index name, the value(s) are converted to lower case before being used.
  */
 @Service
-public class ElasticsearchIndexClient extends RestHighLevelClient implements IndexClient {
+public class ElasticsearchIndexClient implements IndexClient {
 
     private final static Logger LOG = LoggerFactory.getLogger(ElasticsearchIndexClient.class);
 
-    private final JsonMapper objectMapper;
+    private final OpenSearchClient openSearchClient;
+    private final RestClient lowLevelClient;
 
-    @Autowired
-    public ElasticsearchIndexClient(RestClientBuilder client,
-                                    JsonMapper objectMapper) {
-        super(client);
-        this.objectMapper = objectMapper;
+    public ElasticsearchIndexClient(OpenSearchClient openSearchClient,
+                                    RestClient lowLevelClient) {
+        this.openSearchClient = openSearchClient;
+        this.lowLevelClient = lowLevelClient;
     }
 
     @Override
     public void createIndex(String index, String settings)
             throws IOException {
 
-        String lowerCaseIndex = index.toLowerCase();
-        indices().create(new CreateIndexRequest(lowerCaseIndex).source(settings, XContentType.JSON), RequestOptions.DEFAULT);
+        String lowerCaseIndex = lower(index);
+        Request request = new Request("PUT", "/" + lowerCaseIndex);
+        request.setEntity(new StringEntity(settings, ContentType.APPLICATION_JSON));
+        lowLevelClient.performRequest(request);
 
     }
 
@@ -56,10 +56,10 @@ public class ElasticsearchIndexClient extends RestHighLevelClient implements Ind
     public void deleteIndex(String... indices)
             throws IOException {
 
-        String[] lowerCaseIndices = Arrays.stream(indices).map(String::toLowerCase).toArray(String[]::new);
+        String[] lowerCaseIndices = lower(indices);
 
         if (lowerCaseIndices.length > 0) {
-            indices().delete(new DeleteIndexRequest(lowerCaseIndices), RequestOptions.DEFAULT);
+            openSearchClient.indices().delete(request -> request.index(Arrays.asList(lowerCaseIndices)));
         }
     }
 
@@ -67,14 +67,8 @@ public class ElasticsearchIndexClient extends RestHighLevelClient implements Ind
     public boolean indexExists(String index)
             throws IOException {
 
-        String lowerCaseIndex = index.toLowerCase();
-        try {
-            getLowLevelClient().performRequest(new Request("GET", "/" + lowerCaseIndex));
-            return true;
-        } catch (ResponseException e) {
-            LOG.debug("Exception while calling indexExists" + e.getMessage());
-        }
-        return false;
+        String lowerCaseIndex = lower(index);
+        return openSearchClient.indices().exists(request -> request.index(lowerCaseIndex)).value();
 
     }
 
@@ -82,32 +76,30 @@ public class ElasticsearchIndexClient extends RestHighLevelClient implements Ind
     public void replaceAlias(String alias, String indexDatestamp)
             throws IOException {
 
-        String lowerCaseAlias = alias.toLowerCase();
-        String jsonString = "{\n" +
-                "    \"actions\" : [\n" +
-                "        { \"remove\" : { \"index\" : \"underenhet*\", \"alias\" : \"" + lowerCaseAlias + "\" } },\n" +
-                "        { \"add\" : { \"index\" : \"" + lowerCaseAlias + indexDatestamp + "\", \"alias\" : \"" + lowerCaseAlias + "\" } }\n" +
-                "    ]\n" +
-                "}";
-
-        Request request = new Request("POST", "/_aliases");
-        request.setEntity(new NStringEntity(jsonString, ContentType.APPLICATION_JSON));
-        getLowLevelClient().performRequest(request);
+        String lowerCaseAlias = lower(alias);
+        openSearchClient.indices().updateAliases(request -> request
+                .actions(action -> action.remove(remove -> remove
+                        .index("underenhet*")
+                        .alias(lowerCaseAlias)))
+                .actions(action -> action.add(add -> add
+                        .index(lowerCaseAlias + indexDatestamp)
+                        .alias(lowerCaseAlias))));
     }
 
     @Override
     public BulkResponse indexBulk(List<Enhet> contents, String index)
             throws IOException {
 
-        String lowerCaseIndex = index.toLowerCase();
-        BulkRequest request = new BulkRequest();
+        String lowerCaseIndex = lower(index);
+        BulkRequest.Builder request = new BulkRequest.Builder();
 
         for (Enhet content : contents) {
-            request.add(new IndexRequest(lowerCaseIndex)
+            request.operations(operation -> operation.index(doc -> doc
+                    .index(lowerCaseIndex)
                     .id(content.organisasjonsnummer())
-                    .source(objectMapper.writeValueAsString(content), XContentType.JSON));
+                    .document(content)));
         }
-        return bulk(request, RequestOptions.DEFAULT);
+        return openSearchClient.bulk(request.build());
 
     }
 
@@ -115,9 +107,9 @@ public class ElasticsearchIndexClient extends RestHighLevelClient implements Ind
     public int fetchIndexDocCount(String index)
             throws IOException {
 
-        String lowerCaseIndex = index.toLowerCase();
-        Response response = getLowLevelClient().performRequest(new Request("GET", "/_cat/indices/" + lowerCaseIndex));
-        String line = EntityUtils.toString(response.getEntity());
+        String lowerCaseIndex = lower(index);
+        Response response = lowLevelClient.performRequest(new Request("GET", "/_cat/indices/" + lowerCaseIndex));
+        String line = responseBody(response);
         return Integer.parseInt(line.split(" ")[6]);
 
     }
@@ -126,11 +118,11 @@ public class ElasticsearchIndexClient extends RestHighLevelClient implements Ind
     public List<String> fetchAllIndicesStartingWith(String name)
             throws IOException {
 
-        String lowerCaseName = name.toLowerCase();
+        String lowerCaseName = lower(name);
         List<String> indices = new ArrayList<>();
-        Response response = getLowLevelClient().performRequest(new Request("GET", "/_cat/indices/" + lowerCaseName + "*"));
+        Response response = lowLevelClient.performRequest(new Request("GET", "/_cat/indices/" + lowerCaseName + "*"));
 
-        String full = EntityUtils.toString(response.getEntity());
+        String full = responseBody(response);
 
         if (!StringUtils.isBlank(full)) {
             String[] lines = full.split("\\r?\\n");
@@ -147,7 +139,27 @@ public class ElasticsearchIndexClient extends RestHighLevelClient implements Ind
     @Override
     public boolean isHealthy()
             throws IOException {
-        return super.ping(RequestOptions.DEFAULT);
+        return openSearchClient.ping().value();
+    }
+
+    private String responseBody(Response response) throws IOException {
+        try {
+            return EntityUtils.toString(response.getEntity());
+        } catch (ParseException e) {
+            throw new IOException("Failed to parse OpenSearch response", e);
+        }
+    }
+
+    private static String[] lower(String... values) {
+        String[] lowered = new String[values.length];
+        for (int i = 0; i < values.length; i++) {
+            lowered[i] = lower(values[i]);
+        }
+        return lowered;
+    }
+
+    private static String lower(String value) {
+        return value.toLowerCase(Locale.ROOT);
     }
 
 }

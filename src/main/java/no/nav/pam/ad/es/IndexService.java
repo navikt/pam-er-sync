@@ -3,8 +3,9 @@ package no.nav.pam.ad.es;
 import com.google.common.io.CharStreams;
 import no.nav.pam.ad.enhetsregister.model.Enhet;
 import org.apache.commons.lang3.StringUtils;
-import org.opensearch.action.bulk.BulkItemResponse;
-import org.opensearch.action.bulk.BulkResponse;
+import org.apache.commons.lang3.Strings;
+import org.opensearch.client.opensearch.core.BulkResponse;
+import org.opensearch.client.opensearch.core.bulk.BulkResponseItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -84,10 +85,10 @@ public class IndexService {
 
         int failed = 0;
         int success = 0;
-        for (BulkItemResponse item : bulkResponse.getItems()) {
-            if (item.isFailed()) {
+        for (BulkResponseItem item : bulkResponse.items()) {
+            if (item.error() != null) {
                 // TODO implement failed handling later
-                LOG.error("Failed item: {}, index: {}", item.getFailureMessage(), index);
+                LOG.error("Failed item: {}, index: {}", item.error().reason(), index);
                 failed++;
             } else {
                 success++;
@@ -112,7 +113,7 @@ public class IndexService {
     private boolean indexIsBefore(String index, String prefix, LocalDate date){
 
         try{
-            return Datestamp.parseFrom(StringUtils.remove(index, prefix)).isBefore(date);
+            return Datestamp.parseFrom(Strings.CS.remove(index, prefix)).isBefore(date);
         }catch (DateTimeParseException e){
             LOG.error("Couldn't parse date from index name {}", index);
             return false;

@@ -1,0 +1,17 @@
+elasticsearch:
+  url: ${OPEN_SEARCH_URI:http://localhost:9200}
+  user: ${OPEN_SEARCH_USERNAME:admin}
+  password: ${OPEN_SEARCH_PASSWORD:admin}
+
+pam:
+  http:
+    proxy:
+      enabled: false
+  enhetsregister:
+    scheduler:
+      enabled: false  # trigger sync manually via HTTP endpoint in dev
+    sources:
+      underenhet:
+        enabled: true
+      hovedenhet:
+        enabled: false

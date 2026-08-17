@@ -2,28 +2,25 @@ package no.nav.pam.ad.config;
 
 import tools.jackson.databind.json.JsonMapper;
 import no.nav.pam.ad.Application;
-import org.apache.http.HttpHost;
-import org.apache.http.auth.AuthScope;
-import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.conn.ssl.DefaultHostnameVerifier;
-import org.apache.http.impl.client.BasicCredentialsProvider;
-import org.opensearch.client.RestClientBuilder;
+import org.opensearch.client.json.jackson.JacksonJsonpMapper;
+import org.opensearch.client.opensearch.OpenSearchClient;
+import org.opensearch.client.transport.OpenSearchTransport;
+import org.opensearch.client.transport.rest_client.RestClientTransport;
 import org.opensearch.client.RestClient;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.hc.client5.http.auth.AuthScope;
+import org.apache.hc.client5.http.auth.UsernamePasswordCredentials;
+import org.apache.hc.client5.http.impl.auth.BasicCredentialsProvider;
+import org.apache.hc.core5.http.HttpHost;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
 
-import javax.net.ssl.SSLContext;
 import java.net.InetSocketAddress;
+import java.net.URI;
 import java.net.MalformedURLException;
 import java.net.Proxy;
 import java.net.URL;
-import java.security.KeyManagementException;
-import java.security.NoSuchAlgorithmException;
 
 @Configuration
 @ComponentScan(basePackageClasses = {Application.class})
@@ -38,37 +35,29 @@ public class AppConfig {
     @Value("${pam.http.proxy.enabled:true}")
     private boolean proxyEnabled;
 
-    private static final Logger LOG = LoggerFactory.getLogger(AppConfig.class);
-    @Bean
-    @Profile("prod")
-    public RestClientBuilder elasticClientBuilder(@Value("${elasticsearch.user:foo}") String user,
-                                                  @Value("${elasticsearch.password:bar}") String password) {
-
-        LOG.info("elasticsearch url {} and user {}", elasticsearchUrl, user);
-        return RestClient.builder(HttpHost.create(elasticsearchUrl)).setHttpClientConfigCallback(httpClientBuilder -> {
-            BasicCredentialsProvider credentialsProvider = new BasicCredentialsProvider();
-            credentialsProvider.setCredentials(AuthScope.ANY, new UsernamePasswordCredentials(user, password));
-            httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider);
-            // Fix SSL hostname verification for *.local domains:
-            httpClientBuilder.setSSLHostnameVerifier(new DefaultHostnameVerifier());
-            return httpClientBuilder;
-        });
-    }
-
-    @Bean
-    @Profile({"test", "dev"})
-    public RestClientBuilder unsafeElasticClientBuilder()
-            throws KeyManagementException, NoSuchAlgorithmException {
-
-        SSLContext unsafeContext = UnsafeSSLContextUtil.newSSLContext(UnsafeSSLContextUtil.newUnsafeTrustManager());
-        return RestClient
-                .builder(HttpHost.create(elasticsearchUrl))
-                .setHttpClientConfigCallback(httpClientBuilder -> httpClientBuilder.setSSLContext(unsafeContext));
-    }
-
     @Bean
     public JsonMapper jacksonMapper() {
         return new JsonMapper();
+    }
+
+    @Bean(destroyMethod = "close")
+    public RestClient openSearchRestClient(@Value("${elasticsearch.user:foo}") String user,
+                                           @Value("${elasticsearch.password:bar}") String password) {
+
+        BasicCredentialsProvider credentialsProvider = new BasicCredentialsProvider();
+        credentialsProvider.setCredentials(new AuthScope(null, -1),
+                new UsernamePasswordCredentials(user, password.toCharArray()));
+
+        return RestClient.builder(HttpHost.create(URI.create(elasticsearchUrl)))
+                .setHttpClientConfigCallback(httpClientBuilder ->
+                        httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider))
+                .build();
+    }
+
+    @Bean
+    public OpenSearchClient openSearchClient(RestClient restClient) {
+        OpenSearchTransport transport = new RestClientTransport(restClient, new JacksonJsonpMapper());
+        return new OpenSearchClient(transport);
     }
 
     @Bean

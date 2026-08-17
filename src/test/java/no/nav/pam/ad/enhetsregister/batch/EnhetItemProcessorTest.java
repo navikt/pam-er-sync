@@ -19,48 +19,48 @@ public class EnhetItemProcessorTest {
 
         EnhetItemProcessor processor = new EnhetItemProcessor();
 
-        ReaderEnhet input = new ReaderEnhet();
-        input.navn = "Test 1";
-        input.antallAnsatte = 15;
-        input.organisasjonsnummer = "56789";
-        input.overordnetEnhet = "12345";
-        ReaderOrgform orgform = new ReaderOrgform();
-        orgform.kode = "BEDR";
-        input.organisasjonsform = orgform;
-
-        ReaderNaringskode kode1 = new ReaderNaringskode();
-        kode1.beskrivelse = "Butikkhandel";
-        kode1.kode = "47.111";
-        ReaderNaringskode kode2 = new ReaderNaringskode();
-        kode2.beskrivelse = "Produksjon av ferdigmat";
-        kode2.kode = "10.850";
-        input.naeringskode1 = kode1;
-        input.naeringskode2 = kode2;
-
-        ReaderAdresse readerAdresse = new ReaderAdresse();
-        readerAdresse.adresse = Arrays.asList("Gate 1");
-        readerAdresse.postnummer = "0576";
-        readerAdresse.poststed = "Oslo";
-        readerAdresse.land = "Norge";
-        input.beliggenhetsadresse = readerAdresse;
+        ReaderOrgform orgform = new ReaderOrgform("BEDR");
+        ReaderNaringskode kode1 = new ReaderNaringskode("47.111", "Butikkhandel");
+        ReaderNaringskode kode2 = new ReaderNaringskode("10.850", "Produksjon av ferdigmat");
+        ReaderAdresse readerAdresse = new ReaderAdresse(
+                Arrays.asList("Gate 1"),
+                "0576",
+                "Oslo",
+                null,
+                null,
+                null,
+                "Norge"
+        );
+        ReaderEnhet input = new ReaderEnhet(
+                "56789",
+                "Test 1",
+                15,
+                "12345",
+                orgform,
+                kode1,
+                kode2,
+                null,
+                readerAdresse,
+                null
+        );
 
 
         Enhet jsonEnhet = processor.process(input);
         SoftAssertions softAssert = new SoftAssertions();
-        softAssert.assertThat(jsonEnhet.getNavn()).isEqualTo(input.navn);
-        softAssert.assertThat(jsonEnhet.getOrganisasjonsnummer()).isEqualTo(input.organisasjonsnummer);
-        softAssert.assertThat(jsonEnhet.getOverordnetEnhet()).isEqualTo(input.overordnetEnhet);
-        softAssert.assertThat(jsonEnhet.getAntallAnsatte()).isEqualTo(input.antallAnsatte);
-        softAssert.assertThat(jsonEnhet.getOrganisasjonsform()).isEqualTo(input.organisasjonsform.kode);
+        softAssert.assertThat(jsonEnhet.navn()).isEqualTo(input.navn());
+        softAssert.assertThat(jsonEnhet.organisasjonsnummer()).isEqualTo(input.organisasjonsnummer());
+        softAssert.assertThat(jsonEnhet.overordnetEnhet()).isEqualTo(input.overordnetEnhet());
+        softAssert.assertThat(jsonEnhet.antallAnsatte()).isEqualTo(input.antallAnsatte());
+        softAssert.assertThat(jsonEnhet.organisasjonsform()).isEqualTo(input.organisasjonsform().kode());
 
-        softAssert.assertThat(jsonEnhet.getAdresse().getAdresse()).isEqualTo("Gate 1");
-        softAssert.assertThat(jsonEnhet.getAdresse().getPoststed()).isEqualTo(input.beliggenhetsadresse.poststed);
-        softAssert.assertThat(jsonEnhet.getAdresse().getLand()).isEqualTo(input.beliggenhetsadresse.land);
-        softAssert.assertThat(jsonEnhet.getAdresse().getPostnummer()).isEqualTo(input.beliggenhetsadresse.postnummer);
+        softAssert.assertThat(jsonEnhet.adresse().adresse()).isEqualTo("Gate 1");
+        softAssert.assertThat(jsonEnhet.adresse().poststed()).isEqualTo(input.beliggenhetsadresse().poststed());
+        softAssert.assertThat(jsonEnhet.adresse().land()).isEqualTo(input.beliggenhetsadresse().land());
+        softAssert.assertThat(jsonEnhet.adresse().postnummer()).isEqualTo(input.beliggenhetsadresse().postnummer());
 
-        softAssert.assertThat(jsonEnhet.getNaringskoder().size()).isEqualTo(2);
-        softAssert.assertThat(jsonEnhet.getNaringskoder().stream().anyMatch(n -> n.getKode().equals(input.naeringskode1.kode))).isTrue();
-        softAssert.assertThat(jsonEnhet.getNaringskoder().stream().anyMatch(n -> n.getKode().equals(input.naeringskode2.kode))).isTrue();
+        softAssert.assertThat(jsonEnhet.naringskoder().size()).isEqualTo(2);
+        softAssert.assertThat(jsonEnhet.naringskoder().stream().anyMatch(n -> n.kode().equals(input.naeringskode1().kode()))).isTrue();
+        softAssert.assertThat(jsonEnhet.naringskoder().stream().anyMatch(n -> n.kode().equals(input.naeringskode2().kode()))).isTrue();
         softAssert.assertAll();
     }
 }

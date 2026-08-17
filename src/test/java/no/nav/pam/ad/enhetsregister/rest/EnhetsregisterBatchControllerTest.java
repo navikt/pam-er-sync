@@ -65,21 +65,21 @@ public class EnhetsregisterBatchControllerTest {
         assertEquals(entry.size(), 6);
 
         SoftAssertions softAssert = new SoftAssertions();
-        softAssert.assertThat(entry.get(0).getOrganisasjonsnummer()).isEqualTo("914541662");
-        softAssert.assertThat(entry.get(0).getNavn()).isEqualTo("STANETA LOGISTICS AND SERVICE STANELY OKOROAFOR");
-        softAssert.assertThat(entry.get(0).getOrganisasjonsform()).isEqualTo("BEDR");
-        softAssert.assertThat(entry.get(0).getAntallAnsatte()).isEqualTo(0);
-        softAssert.assertThat(entry.get(0).getOverordnetEnhet()).isEqualTo("914514444");
-        softAssert.assertThat(entry.get(0).getAdresse()).isNotNull();
-        softAssert.assertThat(entry.get(0).getAdresse().getAdresse()).isEqualTo("Ognagata 1");
-        softAssert.assertThat(entry.get(0).getAdresse().getPostnummer()).isEqualTo("4014");
-        softAssert.assertThat(entry.get(0).getAdresse().getPoststed()).isEqualTo("STAVANGER");
-        softAssert.assertThat(entry.get(0).getAdresse().getKommune()).isEqualTo("STAVANGER");
-        softAssert.assertThat(entry.get(0).getAdresse().getLandkode()).isEqualTo("NO");
-        softAssert.assertThat(entry.get(0).getAdresse().getLand()).isEqualTo("Norge");
-        softAssert.assertThat(entry.get(0).getNaringskoder().size()).isEqualTo(1);
-        softAssert.assertThat(entry.get(0).getNaringskoder().get(0).getKode()).isEqualTo("53.200");
-        softAssert.assertThat(entry.get(0).getNaringskoder().get(0).getBeskrivelse()).isEqualTo("Andre post- og budtjenester");
+        softAssert.assertThat(entry.get(0).organisasjonsnummer()).isEqualTo("914541662");
+        softAssert.assertThat(entry.get(0).navn()).isEqualTo("STANETA LOGISTICS AND SERVICE STANELY OKOROAFOR");
+        softAssert.assertThat(entry.get(0).organisasjonsform()).isEqualTo("BEDR");
+        softAssert.assertThat(entry.get(0).antallAnsatte()).isEqualTo(0);
+        softAssert.assertThat(entry.get(0).overordnetEnhet()).isEqualTo("914514444");
+        softAssert.assertThat(entry.get(0).adresse()).isNotNull();
+        softAssert.assertThat(entry.get(0).adresse().adresse()).isEqualTo("Ognagata 1");
+        softAssert.assertThat(entry.get(0).adresse().postnummer()).isEqualTo("4014");
+        softAssert.assertThat(entry.get(0).adresse().poststed()).isEqualTo("STAVANGER");
+        softAssert.assertThat(entry.get(0).adresse().kommune()).isEqualTo("STAVANGER");
+        softAssert.assertThat(entry.get(0).adresse().landkode()).isEqualTo("NO");
+        softAssert.assertThat(entry.get(0).adresse().land()).isEqualTo("Norge");
+        softAssert.assertThat(entry.get(0).naringskoder().size()).isEqualTo(1);
+        softAssert.assertThat(entry.get(0).naringskoder().get(0).kode()).isEqualTo("53.200");
+        softAssert.assertThat(entry.get(0).naringskoder().get(0).beskrivelse()).isEqualTo("Andre post- og budtjenester");
         softAssert.assertAll();
     }
 

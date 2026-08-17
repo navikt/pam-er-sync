@@ -15,10 +15,10 @@
 
     <properties>
         <java.version>25</java.version>
-        <opensearch.version>2.19.5</opensearch.version>
-        <guava.version>33.4.8-jre</guava.version>
-        <logstash.version>8.1</logstash.version>
-        <rest-assured.version>5.5.7</rest-assured.version>
+        <opensearch.version>3.8.0</opensearch.version>
+        <guava.version>33.6.0-jre</guava.version>
+        <logstash.version>9.0</logstash.version>
+        <rest-assured.version>6.0.1</rest-assured.version>
         <argLine/>
     </properties>
 

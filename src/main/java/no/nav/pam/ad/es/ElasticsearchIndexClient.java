@@ -104,7 +104,7 @@ public class ElasticsearchIndexClient extends RestHighLevelClient implements Ind
 
         for (Enhet content : contents) {
             request.add(new IndexRequest(lowerCaseIndex)
-                    .id(content.getOrganisasjonsnummer())
+                    .id(content.organisasjonsnummer())
                     .source(objectMapper.writeValueAsString(content), XContentType.JSON));
         }
         return bulk(request, RequestOptions.DEFAULT);

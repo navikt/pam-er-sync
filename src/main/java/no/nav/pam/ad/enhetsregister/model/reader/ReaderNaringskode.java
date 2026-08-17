@@ -1,10 +1,9 @@
 package no.nav.pam.ad.enhetsregister.model.reader;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import org.jspecify.annotations.Nullable;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ReaderNaringskode {
-
-    public String kode;
-    public String beskrivelse;
+public record ReaderNaringskode(@Nullable String kode,
+                                @Nullable String beskrivelse) {
 }

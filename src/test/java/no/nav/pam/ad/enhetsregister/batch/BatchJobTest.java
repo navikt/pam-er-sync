@@ -64,25 +64,25 @@ public class BatchJobTest {
         List<Enhet> storedList = indexClient.getStorage().get(type+datestamp);
         assertEquals(6, storedList.size());
 
-        Enhet oneStoredItem = storedList.stream().filter(e -> e.getOrganisasjonsnummer().equals("914541697")).findAny().get();
+        Enhet oneStoredItem = storedList.stream().filter(e -> e.organisasjonsnummer().equals("914541697")).findAny().get();
         assertNotNull(oneStoredItem);
 
         SoftAssertions softAssert = new SoftAssertions();
-        softAssert.assertThat(oneStoredItem.getOrganisasjonsnummer()).isEqualTo("914541697");
-        softAssert.assertThat(oneStoredItem.getNavn()).isEqualTo("HAIR & BEAUTY LOUNGE AS");
-        softAssert.assertThat(oneStoredItem.getOrganisasjonsform()).isEqualTo("BEDR");
-        softAssert.assertThat(oneStoredItem.getAntallAnsatte()).isEqualTo(0);
-        softAssert.assertThat(oneStoredItem.getOverordnetEnhet()).isEqualTo("914516552");
-        softAssert.assertThat(oneStoredItem.getAdresse()).isNotNull();
-        softAssert.assertThat(oneStoredItem.getAdresse().getAdresse()).isEqualTo("Niels Juels gate 51");
-        softAssert.assertThat(oneStoredItem.getAdresse().getPostnummer()).isEqualTo("0259");
-        softAssert.assertThat(oneStoredItem.getAdresse().getPoststed()).isEqualTo("OSLO");
-        softAssert.assertThat(oneStoredItem.getAdresse().getKommune()).isEqualTo("OSLO");
-        softAssert.assertThat(oneStoredItem.getAdresse().getLandkode()).isEqualTo("NO");
-        softAssert.assertThat(oneStoredItem.getAdresse().getLand()).isEqualTo("Norge");
-        softAssert.assertThat(oneStoredItem.getNaringskoder().size()).isEqualTo(1);
-        softAssert.assertThat(oneStoredItem.getNaringskoder().get(0).getKode()).isEqualTo("96.020");
-        softAssert.assertThat(oneStoredItem.getNaringskoder().get(0).getBeskrivelse()).isEqualTo("Frisering og annen skjønnhetspleie");
+        softAssert.assertThat(oneStoredItem.organisasjonsnummer()).isEqualTo("914541697");
+        softAssert.assertThat(oneStoredItem.navn()).isEqualTo("HAIR & BEAUTY LOUNGE AS");
+        softAssert.assertThat(oneStoredItem.organisasjonsform()).isEqualTo("BEDR");
+        softAssert.assertThat(oneStoredItem.antallAnsatte()).isEqualTo(0);
+        softAssert.assertThat(oneStoredItem.overordnetEnhet()).isEqualTo("914516552");
+        softAssert.assertThat(oneStoredItem.adresse()).isNotNull();
+        softAssert.assertThat(oneStoredItem.adresse().adresse()).isEqualTo("Niels Juels gate 51");
+        softAssert.assertThat(oneStoredItem.adresse().postnummer()).isEqualTo("0259");
+        softAssert.assertThat(oneStoredItem.adresse().poststed()).isEqualTo("OSLO");
+        softAssert.assertThat(oneStoredItem.adresse().kommune()).isEqualTo("OSLO");
+        softAssert.assertThat(oneStoredItem.adresse().landkode()).isEqualTo("NO");
+        softAssert.assertThat(oneStoredItem.adresse().land()).isEqualTo("Norge");
+        softAssert.assertThat(oneStoredItem.naringskoder().size()).isEqualTo(1);
+        softAssert.assertThat(oneStoredItem.naringskoder().get(0).kode()).isEqualTo("96.020");
+        softAssert.assertThat(oneStoredItem.naringskoder().get(0).beskrivelse()).isEqualTo("Frisering og annen skjønnhetspleie");
         softAssert.assertAll();
     }
 

@@ -48,7 +48,13 @@ public class AppConfig {
         credentialsProvider.setCredentials(new AuthScope(null, -1),
                 new UsernamePasswordCredentials(user, password.toCharArray()));
 
+        // Gzip må håndteres av OpenSearch sin RestClient, ikke av Apache HttpClient 5.
+        // HttpClient 5 dekomprimerer responsen, men lar «Content-Encoding: gzip» stå igjen i headeren.
+        // RestClient (HeapBufferedAsyncResponseConsumer) leser den headeren og pakker ut på nytt,
+        // noe som gir «ZipException: Not in GZIP format». setCompressionEnabled(true) gir oss dessuten
+        // gzip-komprimerte request-bodyer, som monner en del for bulk-indeksering.
         return RestClient.builder(HttpHost.create(URI.create(elasticsearchUrl)))
+                .setCompressionEnabled(true)
                 .setHttpClientConfigCallback(httpClientBuilder ->
                         httpClientBuilder
                                 .setDefaultCredentialsProvider(credentialsProvider)

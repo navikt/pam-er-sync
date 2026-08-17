@@ -15,6 +15,7 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -106,7 +107,7 @@ public class IndexService {
         String[] deleteIndices = client.fetchAllIndicesStartingWith(prefixLowercased).stream()
                 .filter(index -> indexIsBefore(index, prefixLowercased, maxAge))
                 .toArray(String[]::new);
-        LOG.info("Delete old indices {}", deleteIndices);
+        LOG.info("Delete old indices {}", Arrays.toString(deleteIndices));
         client.deleteIndex(deleteIndices);
     }
 

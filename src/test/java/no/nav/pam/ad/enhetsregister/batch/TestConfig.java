@@ -9,10 +9,7 @@ import org.opensearch.client.opensearch.core.bulk.BulkResponseItem;
 import org.opensearch.client.opensearch.core.bulk.OperationType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.batch.core.job.Job;
-import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.batch.core.repository.JobRepository;
-import org.springframework.batch.test.JobLauncherTestUtils;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
@@ -37,14 +34,6 @@ public class TestConfig extends BatchConfig {
     public TestConfig(JobRepository jobRepository,
                       PlatformTransactionManager batchTransactionManager) {
         super(new JsonMapper(), jobRepository, batchTransactionManager);
-    }
-
-    @Bean
-    JobLauncherTestUtils jobLauncherTestUtils(JobLauncher jobLauncher, Job importUserJob) {
-        JobLauncherTestUtils jobLauncherTestUtils1 = new JobLauncherTestUtils();
-        jobLauncherTestUtils1.setJob(importUserJob);
-        jobLauncherTestUtils1.setJobLauncher(jobLauncher);
-        return jobLauncherTestUtils1;
     }
 
     @Override

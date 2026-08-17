@@ -9,9 +9,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.core.job.JobExecution;
+import org.springframework.batch.core.job.Job;
 import org.springframework.batch.core.job.parameters.JobParameter;
 import org.springframework.batch.core.job.parameters.JobParameters;
-import org.springframework.batch.test.JobLauncherTestUtils;
+import org.springframework.batch.core.launch.JobOperator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
@@ -32,7 +33,10 @@ public class BatchJobTest {
     private static final String FILEPATH = "src/test/resources/enhetsregisteret.samples/";
 
     @Autowired
-    private JobLauncherTestUtils jobLauncherTestUtils;
+    private JobOperator jobOperator;
+
+    @Autowired
+    private Job importUserJob;
 
     @MockitoBean
     private JobCompletionNotificationListener listener;
@@ -57,7 +61,7 @@ public class BatchJobTest {
         assertTrue(indexClient.getStorage().isEmpty());
 
         //testing a job
-        JobExecution jobExecution = jobLauncherTestUtils.launchJob(params);
+        JobExecution jobExecution = jobOperator.run(importUserJob, params);
         assertEquals(BatchStatus.COMPLETED, jobExecution.getStatus());
 
         assertTrue(indexClient.getStorage().containsKey(type+datestamp));
@@ -88,4 +92,3 @@ public class BatchJobTest {
 
 
 }
-

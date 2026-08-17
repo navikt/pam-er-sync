@@ -50,7 +50,9 @@ public class AppConfig {
 
         return RestClient.builder(HttpHost.create(URI.create(elasticsearchUrl)))
                 .setHttpClientConfigCallback(httpClientBuilder ->
-                        httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider))
+                        httpClientBuilder
+                                .setDefaultCredentialsProvider(credentialsProvider)
+                                .disableContentCompression())
                 .build();
     }
 

@@ -1,23 +1,22 @@
 package no.nav.pam.ad.enhetsregister.batch;
 
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
+import tools.jackson.databind.DeserializationFeature;
 import no.nav.pam.ad.enhetsregister.model.Enhet;
 import no.nav.pam.ad.enhetsregister.model.reader.ReaderEnhet;
 import no.nav.pam.ad.es.IndexService;
-import org.springframework.batch.core.Job;
-import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.StepScope;
+import org.springframework.batch.core.job.Job;
 import org.springframework.batch.core.job.builder.JobBuilder;
-import org.springframework.batch.core.launch.support.RunIdIncrementer;
+import org.springframework.batch.core.job.parameters.RunIdIncrementer;
 import org.springframework.batch.core.repository.JobRepository;
+import org.springframework.batch.core.step.Step;
 import org.springframework.batch.core.step.builder.StepBuilder;
-import org.springframework.batch.item.json.JacksonJsonObjectReader;
-import org.springframework.batch.item.json.JsonItemReader;
-import org.springframework.batch.item.json.builder.JsonItemReaderBuilder;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.batch.infrastructure.item.json.JacksonJsonObjectReader;
+import org.springframework.batch.infrastructure.item.json.JsonItemReader;
+import org.springframework.batch.infrastructure.item.json.builder.JsonItemReaderBuilder;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.beans.factory.support.BeanDefinitionRegistryPostProcessor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -58,12 +57,11 @@ public class BatchConfig {
     @Value("${pam.enhetsregister.sources.underenhet.url:https://data.brreg.no/enhetsregisteret/api/underenheter/lastned}")
     private String enhetsregisterUnderenhetUrl;
 
-    private final ObjectMapper objectMapper;
+    private final JsonMapper objectMapper;
     private final JobRepository jobRepository;
     private final PlatformTransactionManager batchTransactionManager;
 
-    @Autowired
-    public BatchConfig(ObjectMapper objectMapper,
+    public BatchConfig(JsonMapper objectMapper,
                        JobRepository jobRepository,
                        PlatformTransactionManager batchTransactionManager) {
         this.objectMapper = objectMapper;
@@ -80,7 +78,11 @@ public class BatchConfig {
 
         JacksonJsonObjectReader<ReaderEnhet> jsonObjectReader =
                 new JacksonJsonObjectReader<>(ReaderEnhet.class);
-        jsonObjectReader.setMapper(objectMapper);
+        jsonObjectReader.setMapper(
+                objectMapper.rebuild()
+                        .disable(DeserializationFeature.FAIL_ON_TRAILING_TOKENS)
+                        .build()
+        );
 
         return new JsonItemReaderBuilder<ReaderEnhet>()
                 .jsonObjectReader(jsonObjectReader)
@@ -126,7 +128,8 @@ public class BatchConfig {
             throws IOException {
 
         return new StepBuilder("step1", jobRepository)
-                .<ReaderEnhet, Enhet>chunk(1000, batchTransactionManager)
+                .<ReaderEnhet, Enhet>chunk(1000)
+                .transactionManager(batchTransactionManager)
                 .reader(reader(null, null))
                 .processor(processor())
                 .writer(writer(null, null))

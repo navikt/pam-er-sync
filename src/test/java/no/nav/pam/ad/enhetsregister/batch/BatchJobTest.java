@@ -7,24 +7,25 @@ import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.batch.core.*;
+import org.springframework.batch.core.BatchStatus;
+import org.springframework.batch.core.job.JobExecution;
+import org.springframework.batch.core.job.parameters.JobParameter;
+import org.springframework.batch.core.job.parameters.JobParameters;
 import org.springframework.batch.test.JobLauncherTestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
-@ExtendWith({SpringExtension.class, MockitoExtension.class})
-@ContextConfiguration(classes = {TestConfig.class})
+@ExtendWith({MockitoExtension.class})
+@SpringJUnitConfig(classes = {TestConfig.class})
 @ActiveProfiles("test")
 public class BatchJobTest {
 
@@ -33,10 +34,10 @@ public class BatchJobTest {
     @Autowired
     private JobLauncherTestUtils jobLauncherTestUtils;
 
-    @MockBean
+    @MockitoBean
     private JobCompletionNotificationListener listener;
 
-    @MockBean
+    @MockitoBean
     private JobExecutionListenerImpl executionListener;
 
     @Autowired
@@ -47,15 +48,16 @@ public class BatchJobTest {
         String type = "TESTUNDERENHET";
         String datestamp = Datestamp.getCurrent();
 
-        Map<String, JobParameter<?>> params = new HashMap<>();
-        params.put(JobLauncherService.PARAM_FILENAME, new JobParameter(FILEPATH + "underenheter_alle.json.gz", String.class));
-        params.put(JobLauncherService.PARAM_PREFIX, new JobParameter(type, String.class));
-        params.put(JobLauncherService.PARAM_DATESTAMP, new JobParameter(datestamp, String.class));
+        JobParameters params = new JobParameters(Set.of(
+                new JobParameter<>(JobLauncherService.PARAM_FILENAME, FILEPATH + "underenheter_alle.json.gz", String.class),
+                new JobParameter<>(JobLauncherService.PARAM_PREFIX, type, String.class),
+                new JobParameter<>(JobLauncherService.PARAM_DATESTAMP, datestamp, String.class)
+        ));
 
         assertTrue(indexClient.getStorage().isEmpty());
 
         //testing a job
-        JobExecution jobExecution = jobLauncherTestUtils.launchJob(new JobParameters(params));
+        JobExecution jobExecution = jobLauncherTestUtils.launchJob(params);
         assertEquals(BatchStatus.COMPLETED, jobExecution.getStatus());
 
         assertTrue(indexClient.getStorage().containsKey(type+datestamp));

@@ -1,6 +1,7 @@
 package no.nav.pam.ad.enhetsregister.model;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 import no.nav.pam.ad.enhetsregister.model.reader.ReaderEnhet;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Test;
@@ -10,7 +11,7 @@ import java.io.IOException;
 
 public class ReaderEnhetSerializationTest {
 
-    private ObjectMapper objectMapper = new ObjectMapper();
+    private ObjectMapper objectMapper = new JsonMapper();
 
     @Test
     public void underenhet_should_deserialize_properly() throws IOException {

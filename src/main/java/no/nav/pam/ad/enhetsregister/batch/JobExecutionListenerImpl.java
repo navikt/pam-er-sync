@@ -4,13 +4,11 @@ package no.nav.pam.ad.enhetsregister.batch;
 import no.nav.pam.ad.es.IndexService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.batch.core.JobExecution;
-import org.springframework.batch.core.JobExecutionListener;
-import org.springframework.batch.core.JobParameter;
+import org.springframework.batch.core.job.JobExecution;
+import org.springframework.batch.core.listener.JobExecutionListener;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.util.Map;
 
 import static no.nav.pam.ad.enhetsregister.batch.JobLauncherService.PARAM_DATESTAMP;
 import static no.nav.pam.ad.enhetsregister.batch.JobLauncherService.PARAM_PREFIX;
@@ -31,11 +29,9 @@ public class JobExecutionListenerImpl implements JobExecutionListener {
     public void beforeJob(JobExecution jobExecution) {
         LOG.info("Preconfiguring ES before job execution");
 
-        Map<String, JobParameter<?>> parameters = jobExecution.getJobParameters().getParameters();
-        if (parameters.containsKey(PARAM_DATESTAMP)) {
-
-            String prefix = parameters.get(PARAM_PREFIX).getValue().toString();
-            String datestamp = parameters.get(PARAM_DATESTAMP).getValue().toString();
+        String prefix = jobExecution.getJobParameters().getString(PARAM_PREFIX);
+        String datestamp = jobExecution.getJobParameters().getString(PARAM_DATESTAMP);
+        if (prefix != null && datestamp != null) {
             try {
                 service.createAndConfigure(prefix, datestamp);
             } catch (IOException e) {

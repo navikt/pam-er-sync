@@ -5,25 +5,22 @@ import no.nav.pam.ad.es.IndexService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.BatchStatus;
-import org.springframework.batch.core.JobExecution;
-import org.springframework.batch.core.JobParameter;
-import org.springframework.batch.core.StepExecution;
-import org.springframework.batch.core.listener.JobExecutionListenerSupport;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.batch.core.job.JobExecution;
+import org.springframework.batch.core.listener.JobExecutionListener;
+import org.springframework.batch.core.step.StepExecution;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
-import java.util.Map;
+import java.io.IOException;
 
 @Component
-public class JobCompletionNotificationListener extends JobExecutionListenerSupport {
+public class JobCompletionNotificationListener implements JobExecutionListener {
 
     private static final Logger LOG = LoggerFactory.getLogger(JobCompletionNotificationListener.class);
 
     private final IndexService service;
     private final long delay;
 
-    @Autowired
     private JobCompletionNotificationListener(
             IndexService service,
             @Qualifier("jobCompletionNotificationListenerDelay") long delay
@@ -48,16 +45,13 @@ public class JobCompletionNotificationListener extends JobExecutionListenerSuppo
         }
         LOG.info("Total write count: {}, skip count {}", writeCount, skipCount);
 
-        Map<String, JobParameter<?>> parameters = jobExecution.getJobParameters().getParameters();
-        if (!parameters.containsKey(JobLauncherService.PARAM_DATESTAMP)) {
+        String prefix = jobExecution.getJobParameters().getString(JobLauncherService.PARAM_PREFIX);
+        String datestamp = jobExecution.getJobParameters().getString(JobLauncherService.PARAM_DATESTAMP);
+        if (prefix == null || datestamp == null) {
             return;
         }
-
-        String prefix = parameters.get(JobLauncherService.PARAM_PREFIX).getValue().toString();
-        String datestamp = parameters.get(JobLauncherService.PARAM_DATESTAMP).getValue().toString();
         try {
-
-            Thread.sleep(60000);
+            Thread.sleep(delay);
             int docCount = service.fetchDocCount(prefix, datestamp);
             if (docCount > 1000 ) {
                 LOG.info("Index doc count: {}", docCount);
@@ -67,7 +61,10 @@ public class JobCompletionNotificationListener extends JobExecutionListenerSuppo
                LOG.error("docCount is {} less than 1000", docCount);
                LOG.error("We should do a manually alias switch of index {}", prefix+datestamp);
             }
-        } catch (Exception e) {
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            LOG.error("Interrupted while waiting for index verification", e);
+        } catch (IOException e) {
             LOG.error("Failed to verify job", e);
         }
     }

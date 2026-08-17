@@ -1,6 +1,6 @@
 services:
   opensearch:
-    image: opensearchproject/opensearch:2.19.5
+    image: opensearchproject/opensearch:3
     environment:
       - discovery.type=single-node
       - DISABLE_SECURITY_PLUGIN=true
@@ -16,7 +16,7 @@ services:
       - opensearch-data:/usr/share/opensearch/data
 
   opensearch-dashboards:
-    image: opensearchproject/opensearch-dashboards:2.19.5
+    image: opensearchproject/opensearch-dashboards:3
     ports:
       - "5601:5601"
     environment:

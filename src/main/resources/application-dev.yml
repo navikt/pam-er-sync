@@ -1,4 +1,4 @@
-elasticsearch:
+opensearch:
   url: ${OPEN_SEARCH_URI:http://localhost:9200}
   user: ${OPEN_SEARCH_USERNAME:admin}
   password: ${OPEN_SEARCH_PASSWORD:admin}

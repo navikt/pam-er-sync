@@ -27,7 +27,7 @@ public class JobExecutionListenerImpl implements JobExecutionListener {
 
     @Override
     public void beforeJob(JobExecution jobExecution) {
-        LOG.info("Preconfiguring ES before job execution");
+        LOG.info("Preconfiguring OpenSearch before job execution");
 
         String prefix = jobExecution.getJobParameters().getString(PARAM_PREFIX);
         String datestamp = jobExecution.getJobParameters().getString(PARAM_DATESTAMP);
@@ -39,7 +39,7 @@ public class JobExecutionListenerImpl implements JobExecutionListener {
             }
 
         } else {
-            LOG.error("No param with name {} could be found. Elastic Search index can't be configured.", PARAM_DATESTAMP);
+            LOG.error("No param with name {} could be found. OpenSearch index can't be configured.", PARAM_DATESTAMP);
         }
     }
 

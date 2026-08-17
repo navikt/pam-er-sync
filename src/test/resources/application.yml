@@ -27,8 +27,8 @@ spring:
       continue-on-error: true
       platform: h2
 
-elasticsearch:
-  url: ${STILLINGESBACKEND_URL:https://pamsok-elasticsearch.nais.oera-q.local}
+opensearch:
+  url: ${STILLINGESBACKEND_URL:https://pamsok-opensearch.nais.oera-q.local}
 
 pam:
   http:

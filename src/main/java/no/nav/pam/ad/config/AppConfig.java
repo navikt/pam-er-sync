@@ -26,8 +26,8 @@ import java.net.URL;
 @ComponentScan(basePackageClasses = {Application.class})
 public class AppConfig {
 
-    @Value("${elasticsearch.url}")
-    private String elasticsearchUrl;
+    @Value("${opensearch.url}")
+    private String openSearchUrl;
 
     @Value("${pam.http.proxy.url:#{null}}")
     private String httpProxyUrl;
@@ -41,8 +41,8 @@ public class AppConfig {
     }
 
     @Bean(destroyMethod = "close")
-    public RestClient openSearchRestClient(@Value("${elasticsearch.user:foo}") String user,
-                                           @Value("${elasticsearch.password:bar}") String password) {
+    public RestClient openSearchRestClient(@Value("${opensearch.user:foo}") String user,
+                                           @Value("${opensearch.password:bar}") String password) {
 
         BasicCredentialsProvider credentialsProvider = new BasicCredentialsProvider();
         credentialsProvider.setCredentials(new AuthScope(null, -1),
@@ -53,7 +53,7 @@ public class AppConfig {
         // RestClient (HeapBufferedAsyncResponseConsumer) leser den headeren og pakker ut på nytt,
         // noe som gir «ZipException: Not in GZIP format». setCompressionEnabled(true) gir oss dessuten
         // gzip-komprimerte request-bodyer, som monner en del for bulk-indeksering.
-        return RestClient.builder(HttpHost.create(URI.create(elasticsearchUrl)))
+        return RestClient.builder(HttpHost.create(URI.create(openSearchUrl)))
                 .setCompressionEnabled(true)
                 .setHttpClientConfigCallback(httpClientBuilder ->
                         httpClientBuilder

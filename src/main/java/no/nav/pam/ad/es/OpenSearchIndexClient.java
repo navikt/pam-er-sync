@@ -23,20 +23,20 @@ import java.util.Locale;
 import java.util.List;
 
 /**
- * Elasticsearch client implementation.
+ * OpenSearch client implementation.
  * <br/><br>
  * Note that in cases where parameters are used as part of an index name, the value(s) are converted to lower case before being used.
  */
 @Service
-public class ElasticsearchIndexClient implements IndexClient {
+public class OpenSearchIndexClient implements IndexClient {
 
-    private final static Logger LOG = LoggerFactory.getLogger(ElasticsearchIndexClient.class);
+    private final static Logger LOG = LoggerFactory.getLogger(OpenSearchIndexClient.class);
 
     private final OpenSearchClient openSearchClient;
     private final RestClient lowLevelClient;
 
-    public ElasticsearchIndexClient(OpenSearchClient openSearchClient,
-                                    RestClient lowLevelClient) {
+    public OpenSearchIndexClient(OpenSearchClient openSearchClient,
+                                 RestClient lowLevelClient) {
         this.openSearchClient = openSearchClient;
         this.lowLevelClient = lowLevelClient;
     }

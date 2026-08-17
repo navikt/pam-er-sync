@@ -14,13 +14,13 @@ import org.springframework.web.server.ResponseStatusException;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @Controller
-@RequestMapping("/internal/enhetsregister/es")
-public class ElasticsearchController {
+@RequestMapping({"/internal/enhetsregister/es", "/internal/enhetsregister/opensearch"})
+public class OpenSearchController {
 
-    private final Logger LOG = LoggerFactory.getLogger(ElasticsearchController.class);
+    private final Logger LOG = LoggerFactory.getLogger(OpenSearchController.class);
     private final IndexClient service;
 
-    private ElasticsearchController(IndexClient service) {
+    private OpenSearchController(IndexClient service) {
         this.service = service;
     }
 

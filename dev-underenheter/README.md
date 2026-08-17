@@ -3,9 +3,9 @@
 Some Altinn company orgnrs that we use in our testing environment are not
 available in production data downloaded from brreg.no. This is a Kubernetes job
 which we can run on dev-gcp to add some of the test companies to underenhet
-index in Elastic Search stilling cluster periodically.
+index in Open Search stilling cluster periodically.
 
-Test companies are located as ES stilling underenhet formatted index documents,
+Test companies are located as OpenSearch stilling underenhet formatted index documents,
 one JSON file per orgnr, under `data/*.json`.
 
 ## Deploying naisjob

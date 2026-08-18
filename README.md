@@ -3,25 +3,11 @@ PAM Enhetsregister Sync
 Spring batch app som laster ned datasettet fra BRREG og indekserer til en lokal OpenSearch instance.
 
 
-# OpenSearch on localhost Docker
-The repository ships with a `compose.yml` that starts OpenSearch 3, OpenSearch Dashboards and the app:
-```
-> docker compose up -d
-```
-OpenSearch is then available on http://localhost:9200 and Dashboards on http://localhost:5601.
-The app reads `OPEN_SEARCH_URI`, `OPEN_SEARCH_USERNAME` and `OPEN_SEARCH_PASSWORD`, which
-`compose.yml` already sets. To sync and verify in one go, run `./local-sync-test.sh`.
+# Local testing
+Run `./local-sync-test.sh` to build the app, start OpenSearch and the app via `compose.yml`,
+trigger a sync and verify the result, then clean up.
 
-To run only OpenSearch and point a locally started app at it:
-1. Start the container:
-    ```
-    > docker compose up -d opensearch
-    ```
-2. Change your configuration to use this instance:
-    ```
-    opensearch:
-      url: http://localhost:9200
-    ```
+OpenSearch is available on http://localhost:9200 and Dashboards on http://localhost:5601.
 
 # Configuration for NAIS
 * ``Dockerfile``  

@@ -25,7 +25,7 @@ public class OpenSearchController {
     }
 
     @PutMapping("/alias/{prefix}/{datestamp}")
-    public ResponseEntity changeAlias(
+    public ResponseEntity<Void> changeAlias(
             @PathVariable("prefix") String prefix,
             @PathVariable("datestamp") String datestamp
     ) {
@@ -41,7 +41,7 @@ public class OpenSearchController {
     }
 
     @DeleteMapping("/index/{index}")
-    public ResponseEntity deleteIndex(@PathVariable("index") String index) {
+    public ResponseEntity<Void> deleteIndex(@PathVariable("index") String index) {
         try {
             service.deleteIndex(index);
             return ResponseEntity.ok().build();

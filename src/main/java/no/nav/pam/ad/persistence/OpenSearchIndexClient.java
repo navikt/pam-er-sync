@@ -9,7 +9,6 @@ import org.opensearch.client.opensearch.core.BulkRequest;
 import org.opensearch.client.opensearch.core.BulkResponse;
 import org.opensearch.client.opensearch.generic.OpenSearchGenericClient;
 import org.opensearch.client.opensearch.generic.Requests;
-import org.opensearch.client.opensearch.generic.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -20,11 +19,6 @@ import java.util.Arrays;
 import java.util.Locale;
 import java.util.List;
 
-/**
- * OpenSearch client implementation.
- * <br/><br>
- * Note that in cases where parameters are used as part of an index name, the value(s) are converted to lower case before being used.
- */
 @Service
 class OpenSearchIndexClient implements IndexClient {
 
@@ -45,8 +39,6 @@ class OpenSearchIndexClient implements IndexClient {
 
         String lowerCaseIndex = lower(index);
 
-        // Innstillingene leses som rå JSON fra classpath, og sendes derfor via generic-klienten
-        // framfor det typede API-et.
         try (var _ = genericClient.execute(Requests.builder()
                 .endpoint("/" + lowerCaseIndex)
                 .method("PUT")

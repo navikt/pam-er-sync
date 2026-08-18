@@ -17,7 +17,10 @@ ok()    { echo -e "${GREEN}✓ $*${RESET}"; }
 warn()  { echo -e "${YELLOW}! $*${RESET}"; }
 fail()  { echo -e "${RED}✗ $*${RESET}" >&2; exit 1; }
 
+COMPOSE_STARTED=0
+
 cleanup() {
+  [ "$COMPOSE_STARTED" -eq 1 ] || return 0
   info "Cleaning up Docker Compose..."
   docker compose down -v --remove-orphans
 }
@@ -32,18 +35,62 @@ if [ "${#MISSING[@]}" -gt 0 ]; then
   fail "Missing required tool(s): ${MISSING[*]} — install them and try again (e.g. 'brew install ${MISSING[*]}')"
 fi
 
+# ── 0b. Check Docker daemon ───────────────────────────────────────────────────
+# Docker Desktop/Colima kan være installert uten å kjøre. Da feiler alt senere
+# med "failed to connect to the docker API ... daemon is running".
+docker_ready() { docker info >/dev/null 2>&1; }
+
+wait_for_docker() {
+  for _ in $(seq 1 30); do
+    docker_ready && return 0
+    sleep 2
+  done
+  return 1
+}
+
+if docker_ready; then
+  ok "Docker daemon is reachable"
+elif command -v colima >/dev/null 2>&1; then
+  warn "Docker daemon is not reachable — starting Colima..."
+  colima start || fail "'colima start' failed — check 'colima status'"
+  wait_for_docker || fail "Colima started, but the Docker daemon is still unreachable — check 'colima status' and 'docker context ls'"
+  ok "Colima started — Docker daemon is reachable"
+else
+  fail "Docker daemon is not running. Start Docker Desktop, or install and start Colima ('brew install colima && colima start'), then try again"
+fi
+
 # ── 1. Check gcloud auth ──────────────────────────────────────────────────────
 # Innlogging trengs bare for å hente base-imaget. Ligger det allerede lokalt,
 # hopper vi over, slik at skriptet virker offline og i CI.
 BASE_IMAGE=$(awk '/^FROM/ {print $2; exit}' Dockerfile)
 
+# Referansen i Dockerfile er på formen repo:tag@sha256:… Docker lagrer tag
+# (RepoTags) og digest (RepoDigests) hver for seg, så den kombinerte
+# referansen matcher ikke alltid et image som faktisk ligger lokalt.
+base_image_present() {
+  local no_digest="${BASE_IMAGE%@*}" ref
+  local refs=("$BASE_IMAGE" "$no_digest")
+  if [ "$BASE_IMAGE" != "$no_digest" ]; then
+    refs+=("${no_digest%:*}@${BASE_IMAGE#*@}")
+  fi
+  for ref in "${refs[@]}"; do
+    docker image inspect "$ref" >/dev/null 2>&1 && return 0
+  done
+  return 1
+}
+
+docker_cred_helper_configured() {
+  jq -e --arg h "$GAR_HOST" \
+    '(.credHelpers // {}) | has($h)' "${DOCKER_CONFIG:-$HOME/.docker}/config.json" >/dev/null 2>&1
+}
+
 if [ "${SKIP_GCLOUD_AUTH:-0}" = "1" ]; then
   warn "SKIP_GCLOUD_AUTH=1 — skipping gcloud check"
-elif docker image inspect "$BASE_IMAGE" >/dev/null 2>&1; then
+elif base_image_present; then
   ok "Base image already present locally — skipping gcloud check"
 else
   info "Checking gcloud Docker credentials for $GAR_HOST..."
-  if docker-credential-gcloud list 2>/dev/null | grep -q "$GAR_HOST"; then
+  if docker_cred_helper_configured || docker-credential-gcloud list 2>/dev/null | grep -q "$GAR_HOST"; then
     ok "Already authenticated with gcloud for $GAR_HOST"
   else
     warn "Not authenticated — running 'gcloud auth configure-docker $GAR_HOST'..."
@@ -65,6 +112,7 @@ ok "Build complete"
 
 # ── 3. Start Docker Compose ───────────────────────────────────────────────────
 info "Starting Docker Compose..."
+COMPOSE_STARTED=1
 docker compose up -d --build --quiet-pull 2>&1 \
   | grep -v "^#\|pulling\|Pulling\|waiting\|Waiting\|verifying\|Verifying\|Downloaded\|Pull complete\|digest:\|Status:" \
   || true

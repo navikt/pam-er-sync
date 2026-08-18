@@ -1,7 +1,7 @@
 package no.nav.pam.ad.enhetsregister.batch;
 
 
-import no.nav.pam.ad.es.IndexService;
+import no.nav.pam.ad.persistence.IndexService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.BatchStatus;

@@ -1,8 +1,7 @@
-package no.nav.pam.ad.es;
+package no.nav.pam.ad.persistence;
 
 import com.google.common.io.CharStreams;
 import no.nav.pam.ad.enhetsregister.model.Enhet;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
 import org.opensearch.client.opensearch.core.BulkResponse;
 import org.opensearch.client.opensearch.core.bulk.BulkResponseItem;

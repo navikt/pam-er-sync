@@ -1,17 +1,15 @@
-package no.nav.pam.ad.es;
+package no.nav.pam.ad.persistence;
 
 import no.nav.pam.ad.enhetsregister.model.Enhet;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.hc.core5.http.ContentType;
-import org.apache.hc.core5.http.ParseException;
-import org.apache.hc.core5.http.io.entity.EntityUtils;
-import org.apache.hc.core5.http.io.entity.StringEntity;
 import org.opensearch.client.opensearch.OpenSearchClient;
+import org.opensearch.client.opensearch.cat.IndicesResponse;
+import org.opensearch.client.opensearch.cat.indices.IndicesRecord;
 import org.opensearch.client.opensearch.core.BulkRequest;
 import org.opensearch.client.opensearch.core.BulkResponse;
-import org.opensearch.client.Request;
-import org.opensearch.client.Response;
-import org.opensearch.client.RestClient;
+import org.opensearch.client.opensearch.generic.OpenSearchGenericClient;
+import org.opensearch.client.opensearch.generic.Requests;
+import org.opensearch.client.opensearch.generic.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -28,17 +26,17 @@ import java.util.List;
  * Note that in cases where parameters are used as part of an index name, the value(s) are converted to lower case before being used.
  */
 @Service
-public class OpenSearchIndexClient implements IndexClient {
+class OpenSearchIndexClient implements IndexClient {
 
-    private final static Logger LOG = LoggerFactory.getLogger(OpenSearchIndexClient.class);
+    private static final Logger LOG = LoggerFactory.getLogger(OpenSearchIndexClient.class);
 
     private final OpenSearchClient openSearchClient;
-    private final RestClient lowLevelClient;
+    private final OpenSearchGenericClient genericClient;
 
-    public OpenSearchIndexClient(OpenSearchClient openSearchClient,
-                                 RestClient lowLevelClient) {
+    public OpenSearchIndexClient(OpenSearchClient openSearchClient) {
         this.openSearchClient = openSearchClient;
-        this.lowLevelClient = lowLevelClient;
+        this.genericClient = openSearchClient.generic()
+                .withClientOptions(OpenSearchGenericClient.ClientOptions.throwOnHttpErrors());
     }
 
     @Override
@@ -46,9 +44,16 @@ public class OpenSearchIndexClient implements IndexClient {
             throws IOException {
 
         String lowerCaseIndex = lower(index);
-        Request request = new Request("PUT", "/" + lowerCaseIndex);
-        request.setEntity(new StringEntity(settings, ContentType.APPLICATION_JSON));
-        lowLevelClient.performRequest(request);
+
+        // Innstillingene leses som rå JSON fra classpath, og sendes derfor via generic-klienten
+        // framfor det typede API-et.
+        try (var _ = genericClient.execute(Requests.builder()
+                .endpoint("/" + lowerCaseIndex)
+                .method("PUT")
+                .json(settings)
+                .build())) {
+            LOG.debug("createIndex({})", lowerCaseIndex);
+        }
 
     }
 
@@ -108,9 +113,14 @@ public class OpenSearchIndexClient implements IndexClient {
             throws IOException {
 
         String lowerCaseIndex = lower(index);
-        Response response = lowLevelClient.performRequest(new Request("GET", "/_cat/indices/" + lowerCaseIndex));
-        String line = responseBody(response);
-        return Integer.parseInt(line.split(" ")[6]);
+        IndicesResponse response = openSearchClient.cat().indices(request -> request.index(lowerCaseIndex));
+
+        return response.valueBody().stream()
+                .map(IndicesRecord::docsCount)
+                .filter(StringUtils::isNotBlank)
+                .mapToInt(Integer::parseInt)
+                .findFirst()
+                .orElse(0);
 
     }
 
@@ -119,17 +129,12 @@ public class OpenSearchIndexClient implements IndexClient {
             throws IOException {
 
         String lowerCaseName = lower(name);
+        IndicesResponse response = openSearchClient.cat().indices(request -> request.index(lowerCaseName + "*"));
+
         List<String> indices = new ArrayList<>();
-        Response response = lowLevelClient.performRequest(new Request("GET", "/_cat/indices/" + lowerCaseName + "*"));
-
-        String full = responseBody(response);
-
-        if (!StringUtils.isBlank(full)) {
-            String[] lines = full.split("\\r?\\n");
-
-            for (String line : lines) {
-                String[] tokenized = line.split("\\s");
-                indices.add(tokenized[2]);
+        for (IndicesRecord record : response.valueBody()) {
+            if (StringUtils.isNotBlank(record.index())) {
+                indices.add(record.index());
             }
         }
 
@@ -140,14 +145,6 @@ public class OpenSearchIndexClient implements IndexClient {
     public boolean isHealthy()
             throws IOException {
         return openSearchClient.ping().value();
-    }
-
-    private String responseBody(Response response) throws IOException {
-        try {
-            return EntityUtils.toString(response.getEntity());
-        } catch (ParseException e) {
-            throw new IOException("Failed to parse OpenSearch response", e);
-        }
     }
 
     private static String[] lower(String... values) {

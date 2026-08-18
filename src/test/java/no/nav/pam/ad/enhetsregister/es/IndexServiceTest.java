@@ -1,9 +1,9 @@
 package no.nav.pam.ad.enhetsregister.es;
 
 import no.nav.pam.ad.enhetsregister.batch.DataSet;
-import no.nav.pam.ad.es.Datestamp;
-import no.nav.pam.ad.es.IndexClient;
-import no.nav.pam.ad.es.IndexService;
+import no.nav.pam.ad.persistence.Datestamp;
+import no.nav.pam.ad.persistence.IndexClient;
+import no.nav.pam.ad.persistence.IndexService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;

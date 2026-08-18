@@ -3,7 +3,7 @@ package no.nav.pam.ad;
 import tools.jackson.databind.node.JsonNodeFactory;
 import tools.jackson.databind.node.ObjectNode;
 import no.nav.pam.ad.enhetsregister.BrregHealthIndicator;
-import no.nav.pam.ad.es.IndexClientHealthIndicator;
+import no.nav.pam.ad.persistence.IndexClientHealthIndicator;
 import org.springframework.boot.health.contributor.Status;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;

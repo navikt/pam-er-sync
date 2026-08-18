@@ -1,7 +1,7 @@
-package no.nav.pam.ad.es.rest;
+package no.nav.pam.ad.persistence.rest;
 
 import no.nav.pam.ad.enhetsregister.model.Enhet;
-import no.nav.pam.ad.es.IndexClient;
+import no.nav.pam.ad.persistence.IndexClient;
 import org.opensearch.client.opensearch.core.BulkResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

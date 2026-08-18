@@ -5,7 +5,7 @@ import tools.jackson.databind.json.JsonMapper;
 import tools.jackson.databind.DeserializationFeature;
 import no.nav.pam.ad.enhetsregister.model.Enhet;
 import no.nav.pam.ad.enhetsregister.model.reader.ReaderEnhet;
-import no.nav.pam.ad.es.IndexService;
+import no.nav.pam.ad.persistence.IndexService;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.job.Job;
 import org.springframework.batch.core.job.builder.JobBuilder;

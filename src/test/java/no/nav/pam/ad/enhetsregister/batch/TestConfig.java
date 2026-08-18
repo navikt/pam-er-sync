@@ -60,7 +60,7 @@ public class TestConfig extends BatchConfig {
         return new IndexClient();
     }
 
-    public static class IndexClient implements no.nav.pam.ad.es.IndexClient {
+    public static class IndexClient implements no.nav.pam.ad.persistence.IndexClient {
 
         private static final Logger LOG = LoggerFactory.getLogger(IndexClient.class);
 

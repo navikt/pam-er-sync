@@ -15,7 +15,7 @@
 
     <properties>
         <java.version>25</java.version>
-        <opensearch.version>3.1.0</opensearch.version>
+        <opensearch.version>3.9.0</opensearch.version>
         <guava.version>33.4.8-jre</guava.version>
         <logstash.version>8.1</logstash.version>
         <rest-assured.version>5.5.7</rest-assured.version>
@@ -62,12 +62,6 @@
         <dependency>
             <groupId>org.opensearch.client</groupId>
             <artifactId>opensearch-java</artifactId>
-            <version>${opensearch.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.opensearch.client</groupId>
-            <artifactId>opensearch-rest-client</artifactId>
             <version>${opensearch.version}</version>
         </dependency>
 

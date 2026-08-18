@@ -1,6 +1,6 @@
-package no.nav.pam.ad.es.rest;
+package no.nav.pam.ad.persistence.rest;
 
-import no.nav.pam.ad.es.IndexClient;
+import no.nav.pam.ad.persistence.IndexClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;

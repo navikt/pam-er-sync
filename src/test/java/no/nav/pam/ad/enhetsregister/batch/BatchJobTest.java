@@ -2,7 +2,7 @@ package no.nav.pam.ad.enhetsregister.batch;
 
 
 import no.nav.pam.ad.enhetsregister.model.Enhet;
-import no.nav.pam.ad.es.Datestamp;
+import no.nav.pam.ad.persistence.Datestamp;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

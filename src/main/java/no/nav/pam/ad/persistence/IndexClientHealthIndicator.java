@@ -1,4 +1,4 @@
-package no.nav.pam.ad.es;
+package no.nav.pam.ad.persistence;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,7 +13,7 @@ public class IndexClientHealthIndicator implements HealthIndicator {
 
     private static final Logger LOG = LoggerFactory.getLogger(IndexClientHealthIndicator.class);
 
-    private IndexClient client;
+    private final IndexClient client;
 
     private IndexClientHealthIndicator(IndexClient client) {
         this.client = client;

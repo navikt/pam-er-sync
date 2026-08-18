@@ -2,7 +2,7 @@ package no.nav.pam.ad.enhetsregister.batch;
 
 
 import no.nav.pam.ad.enhetsregister.model.Enhet;
-import no.nav.pam.ad.es.IndexService;
+import no.nav.pam.ad.persistence.IndexService;
 import org.springframework.batch.infrastructure.item.Chunk;
 import org.springframework.batch.infrastructure.item.ItemWriter;
 import org.springframework.beans.factory.annotation.Autowired;

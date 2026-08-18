@@ -16,8 +16,8 @@
     <properties>
         <java.version>25</java.version>
         <opensearch.version>3.9.0</opensearch.version>
-        <guava.version>33.4.8-jre</guava.version>
-        <logstash.version>8.1</logstash.version>
+        <guava.version>33.6.0-jre</guava.version>
+        <logstash.version>9.0</logstash.version>
         <argLine/>
     </properties>
 

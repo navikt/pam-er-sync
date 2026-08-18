@@ -1,6 +1,6 @@
 package no.nav.pam.ad.enhetsregister.batch;
 
-import no.nav.pam.ad.es.Datestamp;
+import no.nav.pam.ad.persistence.Datestamp;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.BatchStatus;

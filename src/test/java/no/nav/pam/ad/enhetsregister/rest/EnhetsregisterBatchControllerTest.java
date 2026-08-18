@@ -2,87 +2,83 @@ package no.nav.pam.ad.enhetsregister.rest;
 
 import no.nav.pam.ad.enhetsregister.batch.TestConfig;
 import no.nav.pam.ad.enhetsregister.model.Enhet;
-import no.nav.pam.ad.es.IndexClient;
+import no.nav.pam.ad.persistence.IndexClient;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
 import java.util.Map;
 
-import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest
+@AutoConfigureMockMvc
 @ContextConfiguration(classes = TestConfig.class)
-public class EnhetsregisterBatchControllerTest {
+class EnhetsregisterBatchControllerTest {
 
-    @LocalServerPort
-    private int port;
+    @Autowired
+    private MockMvc mockMvc;
 
     @Autowired
     private IndexClient client;
 
     @BeforeEach
-    public void before() {
-        assertEquals(client.getClass(), TestConfig.IndexClient.class);
+    void before() {
+        assertEquals(TestConfig.IndexClient.class, client.getClass());
     }
 
     @AfterEach
-    public void after() {
+    void after() {
         ((TestConfig.IndexClient) client).getStorage().clear();
     }
 
     @Test
-    public void triggerDownloadOfHovedenheterAndGetNotFound() {
+    void triggerDownloadOfHovedenheterAndGetNotFound() throws Exception {
 
-        given().port(port)
-                .post("/internal/enhetsregister/sync/hovedenheter")
-                .then()
-                .assertThat()
-                .statusCode(404); // Should be disabled in test configuration, so this is what we want.
+        // Should be disabled in test configuration, so 404 is what we want.
+        mockMvc.perform(post("/internal/enhetsregister/sync/hovedenheter"))
+                .andExpect(status().isNotFound());
 
     }
 
     @Test
-    public void triggerDownloadOfUnderenheterAndProcessBatchJob() {
+    void triggerDownloadOfUnderenheterAndProcessBatchJob() throws Exception {
 
-        given().port(port)
-                .post("/internal/enhetsregister/sync/underenheter")
-                .then()
-                .assertThat()
-                .statusCode(200);
+        mockMvc.perform(post("/internal/enhetsregister/sync/underenheter"))
+                .andExpect(status().isOk());
 
         Map<String, List<Enhet>> index = ((TestConfig.IndexClient) client).getStorage();
-        assertEquals(index.keySet().size(), 1);
+        assertEquals(1, index.keySet().size());
 
         List<Enhet> entry = index.entrySet().iterator().next().getValue();
         assertTrue(index.keySet().iterator().next().startsWith("UNDER"));
-        assertEquals(entry.size(), 6);
+        assertEquals(6, entry.size());
 
         SoftAssertions softAssert = new SoftAssertions();
-        softAssert.assertThat(entry.get(0).organisasjonsnummer()).isEqualTo("914541662");
-        softAssert.assertThat(entry.get(0).navn()).isEqualTo("STANETA LOGISTICS AND SERVICE STANELY OKOROAFOR");
-        softAssert.assertThat(entry.get(0).organisasjonsform()).isEqualTo("BEDR");
-        softAssert.assertThat(entry.get(0).antallAnsatte()).isEqualTo(0);
-        softAssert.assertThat(entry.get(0).overordnetEnhet()).isEqualTo("914514444");
-        softAssert.assertThat(entry.get(0).adresse()).isNotNull();
-        softAssert.assertThat(entry.get(0).adresse().adresse()).isEqualTo("Ognagata 1");
-        softAssert.assertThat(entry.get(0).adresse().postnummer()).isEqualTo("4014");
-        softAssert.assertThat(entry.get(0).adresse().poststed()).isEqualTo("STAVANGER");
-        softAssert.assertThat(entry.get(0).adresse().kommune()).isEqualTo("STAVANGER");
-        softAssert.assertThat(entry.get(0).adresse().landkode()).isEqualTo("NO");
-        softAssert.assertThat(entry.get(0).adresse().land()).isEqualTo("Norge");
-        softAssert.assertThat(entry.get(0).naringskoder().size()).isEqualTo(1);
-        softAssert.assertThat(entry.get(0).naringskoder().get(0).kode()).isEqualTo("53.200");
-        softAssert.assertThat(entry.get(0).naringskoder().get(0).beskrivelse()).isEqualTo("Andre post- og budtjenester");
+        softAssert.assertThat(entry.getFirst().organisasjonsnummer()).isEqualTo("914541662");
+        softAssert.assertThat(entry.getFirst().navn()).isEqualTo("STANETA LOGISTICS AND SERVICE STANELY OKOROAFOR");
+        softAssert.assertThat(entry.getFirst().organisasjonsform()).isEqualTo("BEDR");
+        softAssert.assertThat(entry.getFirst().antallAnsatte()).isEqualTo(0);
+        softAssert.assertThat(entry.getFirst().overordnetEnhet()).isEqualTo("914514444");
+        softAssert.assertThat(entry.getFirst().adresse()).isNotNull();
+        softAssert.assertThat(entry.getFirst().adresse().adresse()).isEqualTo("Ognagata 1");
+        softAssert.assertThat(entry.getFirst().adresse().postnummer()).isEqualTo("4014");
+        softAssert.assertThat(entry.getFirst().adresse().poststed()).isEqualTo("STAVANGER");
+        softAssert.assertThat(entry.getFirst().adresse().kommune()).isEqualTo("STAVANGER");
+        softAssert.assertThat(entry.getFirst().adresse().landkode()).isEqualTo("NO");
+        softAssert.assertThat(entry.getFirst().adresse().land()).isEqualTo("Norge");
+        softAssert.assertThat(entry.getFirst().naringskoder().size()).isEqualTo(1);
+        softAssert.assertThat(entry.getFirst().naringskoder().getFirst().kode()).isEqualTo("53.200");
+        softAssert.assertThat(entry.getFirst().naringskoder().getFirst().beskrivelse()).isEqualTo("Andre post- og budtjenester");
         softAssert.assertAll();
     }
-
-
 
 }

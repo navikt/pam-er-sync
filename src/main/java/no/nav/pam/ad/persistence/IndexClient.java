@@ -1,7 +1,7 @@
-package no.nav.pam.ad.es;
+package no.nav.pam.ad.persistence;
 
 import no.nav.pam.ad.enhetsregister.model.Enhet;
-import org.opensearch.action.bulk.BulkResponse;
+import org.opensearch.client.opensearch.core.BulkResponse;
 
 import java.io.IOException;
 import java.util.List;

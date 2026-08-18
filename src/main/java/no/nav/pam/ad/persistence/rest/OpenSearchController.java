@@ -1,6 +1,6 @@
-package no.nav.pam.ad.es.rest;
+package no.nav.pam.ad.persistence.rest;
 
-import no.nav.pam.ad.es.IndexClient;
+import no.nav.pam.ad.persistence.IndexClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
@@ -14,18 +14,18 @@ import org.springframework.web.server.ResponseStatusException;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @Controller
-@RequestMapping("/internal/enhetsregister/es")
-public class ElasticsearchController {
+@RequestMapping({"/internal/enhetsregister/es", "/internal/enhetsregister/opensearch"})
+public class OpenSearchController {
 
-    private final Logger LOG = LoggerFactory.getLogger(ElasticsearchController.class);
+    private final Logger LOG = LoggerFactory.getLogger(OpenSearchController.class);
     private final IndexClient service;
 
-    private ElasticsearchController(IndexClient service) {
+    private OpenSearchController(IndexClient service) {
         this.service = service;
     }
 
     @PutMapping("/alias/{prefix}/{datestamp}")
-    public ResponseEntity changeAlias(
+    public ResponseEntity<Void> changeAlias(
             @PathVariable("prefix") String prefix,
             @PathVariable("datestamp") String datestamp
     ) {
@@ -41,7 +41,7 @@ public class ElasticsearchController {
     }
 
     @DeleteMapping("/index/{index}")
-    public ResponseEntity deleteIndex(@PathVariable("index") String index) {
+    public ResponseEntity<Void> deleteIndex(@PathVariable("index") String index) {
         try {
             service.deleteIndex(index);
             return ResponseEntity.ok().build();

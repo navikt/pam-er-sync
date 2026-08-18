@@ -1,7 +1,7 @@
 package no.nav.pam.ad.enhetsregister.batch;
 
 
-import no.nav.pam.ad.es.IndexService;
+import no.nav.pam.ad.persistence.IndexService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.job.JobExecution;
@@ -27,7 +27,7 @@ public class JobExecutionListenerImpl implements JobExecutionListener {
 
     @Override
     public void beforeJob(JobExecution jobExecution) {
-        LOG.info("Preconfiguring ES before job execution");
+        LOG.info("Preconfiguring OpenSearch before job execution");
 
         String prefix = jobExecution.getJobParameters().getString(PARAM_PREFIX);
         String datestamp = jobExecution.getJobParameters().getString(PARAM_DATESTAMP);
@@ -39,7 +39,7 @@ public class JobExecutionListenerImpl implements JobExecutionListener {
             }
 
         } else {
-            LOG.error("No param with name {} could be found. Elastic Search index can't be configured.", PARAM_DATESTAMP);
+            LOG.error("No param with name {} could be found. OpenSearch index can't be configured.", PARAM_DATESTAMP);
         }
     }
 

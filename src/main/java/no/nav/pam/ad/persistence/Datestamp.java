@@ -1,4 +1,4 @@
-package no.nav.pam.ad.es;
+package no.nav.pam.ad.persistence;
 
 
 import java.time.LocalDate;

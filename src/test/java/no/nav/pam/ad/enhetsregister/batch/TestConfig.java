@@ -3,17 +3,12 @@ package no.nav.pam.ad.enhetsregister.batch;
 import tools.jackson.databind.json.JsonMapper;
 import no.nav.pam.ad.config.AppConfig;
 import no.nav.pam.ad.enhetsregister.model.Enhet;
-import no.nav.pam.ad.enhetsregister.rest.EnhetsregisterBatchControllerTest;
-import org.opensearch.action.DocWriteRequest;
-import org.opensearch.action.bulk.BulkItemResponse;
-import org.opensearch.action.bulk.BulkResponse;
+import org.opensearch.client.opensearch.core.BulkResponse;
+import org.opensearch.client.opensearch.core.bulk.BulkResponseItem;
+import org.opensearch.client.opensearch.core.bulk.OperationType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.batch.core.job.Job;
-import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.batch.core.repository.JobRepository;
-import org.springframework.batch.test.JobLauncherTestUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
@@ -21,6 +16,7 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,30 +30,21 @@ import java.util.Map;
 public class TestConfig extends BatchConfig {
 
 
-    @Autowired
     public TestConfig(JobRepository jobRepository,
                       PlatformTransactionManager batchTransactionManager) {
         super(new JsonMapper(), jobRepository, batchTransactionManager);
     }
 
-    @Bean
-    JobLauncherTestUtils jobLauncherTestUtils(JobLauncher jobLauncher, Job importUserJob) {
-        JobLauncherTestUtils jobLauncherTestUtils1 = new JobLauncherTestUtils();
-        jobLauncherTestUtils1.setJob(importUserJob);
-        jobLauncherTestUtils1.setJobLauncher(jobLauncher);
-        return jobLauncherTestUtils1;
-    }
-
     @Override
     @Bean
     public Hovedenhet hovedenhet() {
-        return new Hovedenhet(false, EnhetsregisterBatchControllerTest.class.getResource("/enhetsregisteret.samples/enheter_alle.json.gz"));
+        return new Hovedenhet(false, TestConfig.class.getResource("/enhetsregisteret.samples/enheter_alle.json.gz"));
     }
 
     @Override
     @Bean
     public Underenhet underenhet() {
-        return new Underenhet(true, EnhetsregisterBatchControllerTest.class.getResource("/enhetsregisteret.samples/underenheter_alle.json.gz"));
+        return new Underenhet(true, TestConfig.class.getResource("/enhetsregisteret.samples/underenheter_alle.json.gz"));
     }
 
     @Override
@@ -72,7 +59,7 @@ public class TestConfig extends BatchConfig {
         return new IndexClient();
     }
 
-    public static class IndexClient implements no.nav.pam.ad.es.IndexClient {
+    public static class IndexClient implements no.nav.pam.ad.persistence.IndexClient {
 
         private static final Logger LOG = LoggerFactory.getLogger(IndexClient.class);
 
@@ -112,12 +99,20 @@ public class TestConfig extends BatchConfig {
         @Override
         public BulkResponse indexBulk(List<Enhet> contents, String index) {
 
-            LOG.debug("indexBulk({}, {}) = {}", contents.size(), index, DocWriteRequest.OpType.CREATE);
+            LOG.debug("indexBulk({}, {})", contents.size(), index);
             storage.put(index, contents);
-            BulkItemResponse[] responses = new BulkItemResponse[]{
-                    new BulkItemResponse(1337, DocWriteRequest.OpType.CREATE, (BulkItemResponse.Failure) null)
-            };
-            return new BulkResponse(responses, 0);
+            return new BulkResponse.Builder()
+                    .errors(false)
+                    .took(0L)
+                    .items(contents.stream()
+                            .map(enhet -> new BulkResponseItem.Builder()
+                                    .operationType(OperationType.Index)
+                                    .index(index)
+                                    .id(enhet.organisasjonsnummer())
+                                    .status(200)
+                                    .build())
+                            .toList())
+                    .build();
         }
 
         @Override
@@ -126,14 +121,14 @@ public class TestConfig extends BatchConfig {
             List<Enhet> content = storage.get(index);
             int count = content == null ? 0 : content.size();
             LOG.info("fetchIndexDocCount({}) = {}", index, count);
-            return 0;
+            return count;
         }
 
         @Override
         public List<String> fetchAllIndicesStartingWith(String name) {
 
-            LOG.info("fetchAllIndicesStartingWith({}) = null", name);
-            return null;
+            LOG.info("fetchAllIndicesStartingWith({}) = []", name);
+            return Collections.emptyList();
 
         }
 

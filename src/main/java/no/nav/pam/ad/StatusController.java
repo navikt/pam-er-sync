@@ -3,7 +3,7 @@ package no.nav.pam.ad;
 import tools.jackson.databind.node.JsonNodeFactory;
 import tools.jackson.databind.node.ObjectNode;
 import no.nav.pam.ad.enhetsregister.BrregHealthIndicator;
-import no.nav.pam.ad.es.IndexClientHealthIndicator;
+import no.nav.pam.ad.persistence.IndexClientHealthIndicator;
 import org.springframework.boot.health.contributor.Status;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -33,12 +33,12 @@ public class StatusController {
     @GetMapping(path = "/internal/status")
     public ResponseEntity<ObjectNode> statusHealth() {
 
-        boolean isElastisSearchOK = indexClientHealthIndicator.health().getStatus().equals(Status.UP);
+        boolean isOpenSearchOK = indexClientHealthIndicator.health().getStatus().equals(Status.UP);
         boolean isBrregOk = brregHealthIndicator.health().getStatus().equals(Status.UP);
 
 
         ObjectNode node = JsonNodeFactory.instance.objectNode();
-        node.put("Elastic Search connection status", (isElastisSearchOK) ? "OK" : "NOT OK");
+        node.put("OpenSearch connection status", (isOpenSearchOK) ? "OK" : "NOT OK");
         node.put("BRREG connection status", (isBrregOk) ? "OK" : "NOT OK");
 
         return ResponseEntity.ok(node);

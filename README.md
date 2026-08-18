@@ -1,20 +1,13 @@
 PAM Enhetsregister Sync
 
-Spring batch app som laster ned datasettet fra BRREG og indekserer til en lokal Elastic Search instance.
+Spring batch app som laster ned datasettet fra BRREG og indekserer til en lokal OpenSearch instance.
 
 
-# Elasticsearch on localhost Docker
-If you're able to run Docker, you could run the application against your own Elasticsearch instance.
-1. Create the container, as described [here](https://www.elastic.co/guide/en/elasticsearch/reference/current/docker.html) (check version yourself, :latest didn't work):
-    ```
-    > docker run -d --name elastic -p 9200:9200 -p 9300:9300 -e "discovery.type=single-node" docker.elastic.co/elasticsearch/elasticsearch:6.2.4
-    ```
-2. Change your configuration to use this instance:
-    ```
-    pam:
-      elasticsearch:
-        url: http://localhost:9200
-    ```
+# Local testing
+Run `./local-sync-test.sh` to build the app, start OpenSearch and the app via `compose.yml`,
+trigger a sync and verify the result, then clean up.
+
+OpenSearch is available on http://localhost:9200 and Dashboards on http://localhost:5601.
 
 # Configuration for NAIS
 * ``Dockerfile``  
@@ -35,8 +28,8 @@ We import some environment variables through an ApplicationProperties resource i
 Assigned port to this service.
 * ``pam.http.proxy.url`` (http://155.55.60.117:8088)  
 This will need to be changed in configuration before deployment, as it is only suitable for use during development.
-* ``pam.elasticsearch.url`` (https://pamsok-elasticsearch.nais.oera-q.local)  
-Defaults to a test instance of Elasticsearch. Modify as needed by deployment, or set to your local Elasticsearch (see above).
+* ``opensearch.url`` (http://localhost:9200, from ``OPEN_SEARCH_URI``)  
+The OpenSearch instance to index into. Credentials are set with ``opensearch.user`` and ``opensearch.password`` (``OPEN_SEARCH_USERNAME`` / ``OPEN_SEARCH_PASSWORD``).
 * ``pam.enhetsregister.scheduler.enabled`` (false)  
 If *true*, the scheduled synchronization of all configured sources (see below) will trigger according to the cron value.
 * ``pam.enhetsregister.scheduler.cron`` (0 0 0 * * *)  

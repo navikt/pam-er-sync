@@ -31,7 +31,7 @@ pam:
         enabled: true
         url: https://data.brreg.no/enhetsregisteret/api/underenheter/lastned
 
-elasticsearch:
+opensearch:
   url: ${OPEN_SEARCH_URI:http://localhost:9200}
   user: ${OPEN_SEARCH_USERNAME:foo}
   password: ${OPEN_SEARCH_PASSWORD:bar}

@@ -1,86 +1,61 @@
 package no.nav.pam.ad.config;
 
+import org.opensearch.client.transport.httpclient5.ApacheHttpClient5TransportBuilder;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import tools.jackson.databind.json.JsonMapper;
 import no.nav.pam.ad.Application;
-import org.apache.http.HttpHost;
-import org.apache.http.auth.AuthScope;
-import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.conn.ssl.DefaultHostnameVerifier;
-import org.apache.http.impl.client.BasicCredentialsProvider;
-import org.opensearch.client.RestClientBuilder;
-import org.opensearch.client.RestClient;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.opensearch.client.json.jackson.JacksonJsonpMapper;
+import org.opensearch.client.opensearch.OpenSearchClient;
+import org.opensearch.client.transport.OpenSearchTransport;
+import org.apache.hc.client5.http.auth.AuthScope;
+import org.apache.hc.client5.http.auth.UsernamePasswordCredentials;
+import org.apache.hc.client5.http.impl.auth.BasicCredentialsProvider;
+import org.apache.hc.core5.http.HttpHost;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
 
-import javax.net.ssl.SSLContext;
 import java.net.InetSocketAddress;
-import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.Proxy;
-import java.net.URL;
-import java.security.KeyManagementException;
-import java.security.NoSuchAlgorithmException;
 
 @Configuration
-@ComponentScan(basePackageClasses = {Application.class})
 public class AppConfig {
 
-    @Value("${elasticsearch.url}")
-    private String elasticsearchUrl;
-
-    @Value("${pam.http.proxy.url:#{null}}")
-    private String httpProxyUrl;
-
-    @Value("${pam.http.proxy.enabled:true}")
-    private boolean proxyEnabled;
-
-    private static final Logger LOG = LoggerFactory.getLogger(AppConfig.class);
     @Bean
-    @Profile("prod")
-    public RestClientBuilder elasticClientBuilder(@Value("${elasticsearch.user:foo}") String user,
-                                                  @Value("${elasticsearch.password:bar}") String password) {
+    public OpenSearchClient openSearchClient(OpenSearchTransport transport) {
+        return new OpenSearchClient(transport);
+    }
 
-        LOG.info("elasticsearch url {} and user {}", elasticsearchUrl, user);
-        return RestClient.builder(HttpHost.create(elasticsearchUrl)).setHttpClientConfigCallback(httpClientBuilder -> {
-            BasicCredentialsProvider credentialsProvider = new BasicCredentialsProvider();
-            credentialsProvider.setCredentials(AuthScope.ANY, new UsernamePasswordCredentials(user, password));
-            httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider);
-            // Fix SSL hostname verification for *.local domains:
-            httpClientBuilder.setSSLHostnameVerifier(new DefaultHostnameVerifier());
-            return httpClientBuilder;
-        });
+    @Bean(destroyMethod = "close")
+    public OpenSearchTransport openSearchTransport(@Value("${opensearch.user:foo}") String user,
+                                                   @Value("${opensearch.password:bar}") String password,
+                                                   @Value("${opensearch.url}") String openSearchUrl) {
+
+        var credentialsProvider = new BasicCredentialsProvider();
+        credentialsProvider.setCredentials(new AuthScope(null, -1),
+                new UsernamePasswordCredentials(user, password.toCharArray()));
+
+        return ApacheHttpClient5TransportBuilder.builder(HttpHost.create(URI.create(openSearchUrl)))
+                .setMapper(new JacksonJsonpMapper())
+                .setCompressionEnabled(true)
+                .setHttpClientConfigCallback(httpClientBuilder ->
+                        httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider))
+                .build();
     }
 
     @Bean
-    @Profile({"test", "dev"})
-    public RestClientBuilder unsafeElasticClientBuilder()
-            throws KeyManagementException, NoSuchAlgorithmException {
-
-        SSLContext unsafeContext = UnsafeSSLContextUtil.newSSLContext(UnsafeSSLContextUtil.newUnsafeTrustManager());
-        return RestClient
-                .builder(HttpHost.create(elasticsearchUrl))
-                .setHttpClientConfigCallback(httpClientBuilder -> httpClientBuilder.setSSLContext(unsafeContext));
-    }
-
-    @Bean
-    public JsonMapper jacksonMapper() {
-        return new JsonMapper();
-    }
-
-    @Bean
-    public Proxy proxy()
-            throws MalformedURLException {
-
-        if (httpProxyUrl == null || !proxyEnabled) {
-            return Proxy.NO_PROXY;
-        }
-        URL url = new URL(httpProxyUrl);
+    @ConditionalOnProperty("pam.http.proxy.enabled")
+    public Proxy proxy(@Value("${pam.http.proxy.url:#{null}}") String httpProxyUrl) {
+        var url = URI.create(httpProxyUrl);
         return new Proxy(Proxy.Type.HTTP, new InetSocketAddress(url.getHost(), url.getPort()));
 
+    }
+
+    @Bean
+    @ConditionalOnProperty(value = "pam.http.proxy.enabled", havingValue = "false")
+    public Proxy noProxy() {
+        return Proxy.NO_PROXY;
     }
 
 }

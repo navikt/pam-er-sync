@@ -1,10 +1,10 @@
-package no.nav.pam.ad.es;
+package no.nav.pam.ad.persistence;
 
 import com.google.common.io.CharStreams;
 import no.nav.pam.ad.enhetsregister.model.Enhet;
-import org.apache.commons.lang3.StringUtils;
-import org.opensearch.action.bulk.BulkItemResponse;
-import org.opensearch.action.bulk.BulkResponse;
+import org.apache.commons.lang3.Strings;
+import org.opensearch.client.opensearch.core.BulkResponse;
+import org.opensearch.client.opensearch.core.bulk.BulkResponseItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -14,6 +14,7 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -84,10 +85,10 @@ public class IndexService {
 
         int failed = 0;
         int success = 0;
-        for (BulkItemResponse item : bulkResponse.getItems()) {
-            if (item.isFailed()) {
+        for (BulkResponseItem item : bulkResponse.items()) {
+            if (item.error() != null) {
                 // TODO implement failed handling later
-                LOG.error("Failed item: {}, index: {}", item.getFailureMessage(), index);
+                LOG.error("Failed item: {}, index: {}", item.error().reason(), index);
                 failed++;
             } else {
                 success++;
@@ -105,14 +106,14 @@ public class IndexService {
         String[] deleteIndices = client.fetchAllIndicesStartingWith(prefixLowercased).stream()
                 .filter(index -> indexIsBefore(index, prefixLowercased, maxAge))
                 .toArray(String[]::new);
-        LOG.info("Delete old indices {}", deleteIndices);
+        LOG.info("Delete old indices {}", Arrays.toString(deleteIndices));
         client.deleteIndex(deleteIndices);
     }
 
     private boolean indexIsBefore(String index, String prefix, LocalDate date){
 
         try{
-            return Datestamp.parseFrom(StringUtils.remove(index, prefix)).isBefore(date);
+            return Datestamp.parseFrom(Strings.CS.remove(index, prefix)).isBefore(date);
         }catch (DateTimeParseException e){
             LOG.error("Couldn't parse date from index name {}", index);
             return false;

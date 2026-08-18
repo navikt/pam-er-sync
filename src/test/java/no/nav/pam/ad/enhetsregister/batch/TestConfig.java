@@ -3,7 +3,6 @@ package no.nav.pam.ad.enhetsregister.batch;
 import tools.jackson.databind.json.JsonMapper;
 import no.nav.pam.ad.config.AppConfig;
 import no.nav.pam.ad.enhetsregister.model.Enhet;
-import no.nav.pam.ad.enhetsregister.rest.EnhetsregisterBatchControllerTest;
 import org.opensearch.client.opensearch.core.BulkResponse;
 import org.opensearch.client.opensearch.core.bulk.BulkResponseItem;
 import org.opensearch.client.opensearch.core.bulk.OperationType;
@@ -39,13 +38,13 @@ public class TestConfig extends BatchConfig {
     @Override
     @Bean
     public Hovedenhet hovedenhet() {
-        return new Hovedenhet(false, EnhetsregisterBatchControllerTest.class.getResource("/enhetsregisteret.samples/enheter_alle.json.gz"));
+        return new Hovedenhet(false, TestConfig.class.getResource("/enhetsregisteret.samples/enheter_alle.json.gz"));
     }
 
     @Override
     @Bean
     public Underenhet underenhet() {
-        return new Underenhet(true, EnhetsregisterBatchControllerTest.class.getResource("/enhetsregisteret.samples/underenheter_alle.json.gz"));
+        return new Underenhet(true, TestConfig.class.getResource("/enhetsregisteret.samples/underenheter_alle.json.gz"));
     }
 
     @Override

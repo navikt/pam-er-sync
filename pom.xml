@@ -18,6 +18,7 @@
         <opensearch.version>3.9.0</opensearch.version>
         <guava.version>33.4.8-jre</guava.version>
         <logstash.version>8.1</logstash.version>
+        <argLine/>
     </properties>
 
     <dependencies>

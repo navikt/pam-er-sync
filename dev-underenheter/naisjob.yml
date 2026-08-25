@@ -12,14 +12,14 @@ spec:
 
   env:
     - name: ES_STILLING_BACKEND
-      value: https://opensearch-teampam-stilling-nav-dev.aivencloud.com:26482
+      value: https://opensearch-teampam-enhetsregisteret-nav-dev.aivencloud.com:26482
 
   accessPolicy:
     outbound:
       external:
-        - host: opensearch-teampam-stilling-nav-dev.aivencloud.com
+        - host: opensearch-teampam-enhetsregisteret-nav-dev.aivencloud.com
 
   openSearch:
     access: write
-    instance: stilling
+    instance: enhetsregisteret
 

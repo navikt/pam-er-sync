@@ -21,8 +21,8 @@ import java.util.List;
 public class IndexService {
 
     private static final Logger LOG = LoggerFactory.getLogger(IndexService.class);
-    private static final String CLASSPATH_SETTINGS = "/ESUnderenheterSetting.json";
-    private static final int INDEX_EXPIRATION_IN_DAYS = 7;
+    private static final String CLASSPATH_SETTINGS = "/OSUnderenheterSetting.json";
+    private static final int INDEX_EXPIRATION_IN_DAYS = 2;
 
     private final IndexClient client;
 

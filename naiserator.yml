@@ -36,7 +36,7 @@ spec:
   {{/each}}
   openSearch:
     access: admin
-    instance: stilling
+    instance: enhetsregisteret
   accessPolicy:
     outbound:
       external:

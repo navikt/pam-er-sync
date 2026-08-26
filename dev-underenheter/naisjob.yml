@@ -10,16 +10,6 @@ spec:
   schedule: "0 5 * * *" # GMT
   activeDeadlineSeconds: 60
 
-  env:
-    - name: ES_STILLING_BACKEND
-      value: https://opensearch-teampam-enhetsregisteret-nav-dev.d.aivencloud.com:26482
-
-  accessPolicy:
-    outbound:
-      external:
-        - host: opensearch-teampam-enhetsregisteret-nav-dev.d.aivencloud.com
-
   openSearch:
     access: write
     instance: enhetsregisteret
-

@@ -35,7 +35,9 @@ updates:
           - "*"
 
   - package-ecosystem: docker
-    directory: /
+    directories:
+      - /
+      - dev-underenheter
     schedule:
       interval: daily
       time: "06:00"

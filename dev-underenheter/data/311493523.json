@@ -5,5 +5,22 @@
   "antallAnsatte" : 8,
   "overordnetEnhet" : "310836907",
   "adresse" : null,
-  "naringskoder" : null
+  "naringskoder": [
+    {
+      "kode": "49",
+      "beskrivelse": "Landtransport og rørtransport"
+    },
+    {
+      "kode": "49.4",
+      "beskrivelse": "Godstransport på vei og flyttetransport"
+    },
+    {
+      "kode": "49.41",
+      "beskrivelse": "Godstransport på vei"
+    },
+    {
+      "kode": "49.410",
+      "beskrivelse": "Godstransport på vei"
+    }
+  ]
 }

@@ -1,4 +1,4 @@
-FROM europe-north1-docker.pkg.dev/cgr-nav/pull-through/nav.no/jre:openjdk-27@sha256:c5fad51e4a288ea864fd640c8852ca99b35b779e0cfd5cfd14c27227914e8f26
+FROM europe-north1-docker.pkg.dev/cgr-nav/pull-through/nav.no/jre:openjdk-27@sha256:68464060263e63d2f00d73b06b0a53195bb8093723b4738cc9283d39fc721035
 
 COPY target/pam-er-sync-*.jar /app.jar
 

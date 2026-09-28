@@ -1,8 +1,8 @@
-FROM cgr.dev/chainguard/wolfi-base:latest@sha256:fac38d12efdb4bf43ac9e599a31db10a27ad5dd71e5f1618790962eda8d66180 AS jq
+FROM cgr.dev/chainguard/wolfi-base:latest@sha256:08df5982c3d27e70a4ce1607e3bb9af09d746f8722cf135a7694afef879fc5a2 AS jq
 
 RUN apk add --no-cache jq
 
-FROM cgr.dev/chainguard/bash:latest@sha256:a826b16330952bcff9efc67415dfb18ce75bd077bbe14767023c912769bd21dd
+FROM cgr.dev/chainguard/bash:latest@sha256:75ed843c2cd76e0cb09e76d4af883cb5dc381a32603c1c313b0d797a2f1a7841
 
 COPY --from=jq /usr/bin/jq /usr/bin/jq
 COPY --from=jq /usr/lib/libjq.so.1 /usr/lib/libjq.so.1

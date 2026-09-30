@@ -1,0 +1,22 @@
+name: main
+on:
+  push:
+    branches:
+      - master
+      - feature/**
+  pull_request:
+
+jobs:
+  build-deploy:
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+      id-token: write
+    strategy:
+      fail-fast: false
+      matrix:
+        app: [".", "dev-underenheter"]
+    uses: navikt/pam-deploy/.github/workflows/build-deploy.yml@v9
+    with:
+      working_directory: ${{ matrix.app }}

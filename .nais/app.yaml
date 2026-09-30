@@ -1,12 +1,11 @@
-apiVersion: "nais.io/v1alpha1"
-kind: "Application"
+apiVersion: nais.io/v1alpha1
+kind: Application
 metadata:
   name: pam-er-sync
   namespace: teampam
   labels:
     team: teampam
 spec:
-  image: {{ image }}
   port: 9012
   liveness:
     path: /isAlive
@@ -30,10 +29,6 @@ spec:
       destinations:
         - id: loki
         - id: elastic
-  ingresses:
-  {{#each ingress as |url|}}
-     - {{url}}
-  {{/each}}
   openSearch:
     access: admin
     instance: enhetsregisteret

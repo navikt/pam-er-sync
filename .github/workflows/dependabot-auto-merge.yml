@@ -1,28 +1,36 @@
 name: dependabot-auto-merge
-# Auto-merges Dependabot PRs that only bump Docker base image digests.
-# Requires "Allow auto-merge" to be enabled in the repository settings.
 on:
-  pull_request:
+  workflow_run:
+    workflows: [main]
+    types: [completed]
 
 permissions: {}
 
 jobs:
   auto-merge:
-    if: github.event.pull_request.user.login == 'dependabot[bot]'
+    if: >-
+      github.event.workflow_run.event == 'pull_request' &&
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.actor.login == 'dependabot[bot]' &&
+      github.event.workflow_run.head_repository.full_name == github.repository &&
+      (startsWith(github.event.workflow_run.head_branch, 'dependabot/github_actions/') ||
+       startsWith(github.event.workflow_run.head_branch, 'dependabot/docker/'))
     runs-on: ubuntu-latest
     timeout-minutes: 5
     permissions:
       contents: write
       pull-requests: write
     steps:
-      - name: Fetch Dependabot metadata
-        id: metadata
-        uses: dependabot/fetch-metadata@25dd0e34f4fe68f24cc83900b1fe3fe149efef98 # v3.1.0
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-      - name: Enable auto-merge for Docker digest updates
-        if: steps.metadata.outputs.package-ecosystem == 'docker'
+      - name: Merge PR
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          PR_URL: ${{ github.event.pull_request.html_url }}
-        run: gh pr merge --auto --squash "$PR_URL"
+          GH_REPO: ${{ github.repository }}
+          HEAD_BRANCH: ${{ github.event.workflow_run.head_branch }}
+          HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
+        run: |
+          pr=$(gh pr list --head "$HEAD_BRANCH" --author 'app/dependabot' --state open --json number --jq '.[0].number')
+          if [ -z "$pr" ]; then
+            echo "No open Dependabot PR for $HEAD_BRANCH"
+            exit 0
+          fi
+          gh pr merge "$pr" --squash --match-head-commit "$HEAD_SHA"

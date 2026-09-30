@@ -6,7 +6,6 @@ metadata:
   name: pam-er-sync-dev-underenheter
   namespace: teampam
 spec:
-  image: {{ image }}
   schedule: "0 5 * * *" # GMT
   activeDeadlineSeconds: 60
 

@@ -2,6 +2,11 @@
 
 set -eu
 
+if [ "${NAIS_CLUSTER_NAME:-}" != "dev-gcp" ]; then
+    echo "Kjører kun i dev-gcp"
+    exit 0
+fi
+
 # Setup logging as JSON
 exec 100>&1 200>&2
 coproc JSON_LOGGER { jq --unbuffered -Rc '{"@timestamp": now|strftime("%Y-%m-%dT%H:%M:%S%z"),

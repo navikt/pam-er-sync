@@ -10,6 +10,9 @@ one JSON file per orgnr, under `data/*.json`.
 
 ## Deploying naisjob
 
-It is built and automatically deployed to dev-gcp whenever changes are pushed to
-content under this directory or any subdirectory. This job shall never run in
-the production environment.
+It is built and deployed by the `main` workflow (matrix entry `dev-underenheter`),
+to dev-gcp on every push and to prod-gcp after dev on the default branch.
+The Naisjob is defined in `.nais/app.yaml`, with overrides for prod-gcp in `.nais/app.prod-gcp.yaml`.
+This job shall never do anything in the production environment: in prod-gcp the schedule
+never fires, OpenSearch access is read-only, and `job.sh` exits immediately unless
+`NAIS_CLUSTER_NAME` is `dev-gcp`.

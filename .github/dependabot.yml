@@ -12,7 +12,7 @@ updates:
     labels:
       - "dependencies"
     groups:
-      maven-dependencies:
+      maven:
         applies-to: version-updates
         patterns:
           - "*"
@@ -34,16 +34,20 @@ updates:
         patterns:
           - "*"
 
-  - package-ecosystem: docker
+  - package-ecosystem: "docker"
     directories:
-      - /
-      - dev-underenheter
+      - "/"
+      - "/dev-underenheter"
     schedule:
-      interval: daily
+      interval: "weekly"
+      day: "monday"
       time: "06:00"
-      timezone: Europe/Oslo
+      timezone: "Europe/Oslo"
+    cooldown:
+      default-days: 7
     labels:
       - "dependencies"
+      - "docker"
     groups:
       docker:
         patterns:

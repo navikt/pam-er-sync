@@ -19,7 +19,9 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -61,6 +63,20 @@ public class IndexServiceTest {
         assertEquals(2, args.length);
         assertTrue(Arrays.stream(args).anyMatch(s -> s.equals(expired1)));
         assertTrue(Arrays.stream(args).anyMatch(s -> s.equals(expired2)));
+    }
+
+    @Test
+    public void shouldNotDeleteIndexWithAlias() throws IOException {
+        String aliased = "underenhet" + LocalDate.now().minusDays(5).format(DateTimeFormatter.ofPattern(Datestamp.DATESTAMP_FORMAT));
+        String expired = "underenhet" + LocalDate.now().minusDays(4).format(DateTimeFormatter.ofPattern(Datestamp.DATESTAMP_FORMAT));
+
+        when(client.fetchIndicesWithAlias("underenhet")).thenReturn(Set.of(aliased));
+        when(client.fetchAllIndicesStartingWith("underenhet")).thenReturn(List.of(aliased, expired));
+
+        service.deleteOlderIndices(DataSet.UNDERENHET.toString());
+
+        verify(client).deleteIndex(captor.capture());
+        assertArrayEquals(new String[]{expired}, captor.getValue());
     }
 
 

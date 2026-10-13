@@ -16,6 +16,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class IndexService {
@@ -103,7 +104,9 @@ public class IndexService {
 
         String prefixLowercased = prefix.toLowerCase();
         LocalDate maxAge = LocalDate.now().minusDays(INDEX_EXPIRATION_IN_DAYS);
+        Set<String> aliasedIndices = client.fetchIndicesWithAlias(prefixLowercased);
         String[] deleteIndices = client.fetchAllIndicesStartingWith(prefixLowercased).stream()
+                .filter(index -> !aliasedIndices.contains(index))
                 .filter(index -> indexIsBefore(index, prefixLowercased, maxAge))
                 .toArray(String[]::new);
         LOG.info("Delete old indices {}", Arrays.toString(deleteIndices));

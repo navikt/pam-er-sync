@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Locale;
 import java.util.List;
+import java.util.Set;
 
 @Service
 class OpenSearchIndexClient implements IndexClient {
@@ -131,6 +132,17 @@ class OpenSearchIndexClient implements IndexClient {
         }
 
         return indices;
+    }
+
+    @Override
+    public Set<String> fetchIndicesWithAlias(String alias)
+            throws IOException {
+
+        String lowerCaseAlias = lower(alias);
+        if (!openSearchClient.indices().existsAlias(request -> request.name(lowerCaseAlias)).value()) {
+            return Set.of();
+        }
+        return Set.copyOf(openSearchClient.indices().getAlias(request -> request.name(lowerCaseAlias)).result().keySet());
     }
 
     @Override

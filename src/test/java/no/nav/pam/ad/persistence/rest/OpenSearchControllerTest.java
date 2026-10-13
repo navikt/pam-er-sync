@@ -16,6 +16,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.List;
+import java.util.Set;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class OpenSearchControllerTest {
@@ -58,6 +59,11 @@ class OpenSearchControllerTest {
                 @Override
                 public List<String> fetchAllIndicesStartingWith(String name) {
                     return List.of();
+                }
+
+                @Override
+                public Set<String> fetchIndicesWithAlias(String alias) {
+                    return Set.of();
                 }
 
                 @Override

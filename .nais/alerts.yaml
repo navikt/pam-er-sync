@@ -16,7 +16,7 @@ spec:
               Applikasjoner som leser indeksen via pam-search-api får utdaterte underenheter, eller finner ingen underenheter hvis aliaset mangler (`index_not_found_exception`).
               Eksempel: NKS finner ikke underenheter i StillingsAdmin (pam-nss-admin) og blir hindret i arbeidet sitt.
             sla: "Løses innen 2 timer i arbeidstid. Kritisk hvis aliaset mangler, da er oppslaget nede."
-            documentation: "https://github.com/navikt/pam-er-sync#operations-and-alerts"
+            documentation: "https://github.com/navikt/pam-er-sync/blob/master/.nais/alerts.yaml"
             action: |-
               1. Finn årsaken i <https://grafana.nav.cloud.nais.io/a/grafana-lokiexplore-app/explore/service_name/pam-er-sync/logs?var-ds=PEA2100DC89AE9FE2&from=now-2d&to=now&var-filters=service_name%7C%3D%7Cpam-er-sync&var-filters=k8s_cluster_name%7C%3D%7Cprod|loggene>.
               2. Start synk: `curl -X POST https://pam-er-sync.intern.nav.no/internal/enhetsregister/sync/underenheter`. Den returnerer 504 etter 60 s, men jobben fortsetter (ca. 3 min).
@@ -39,7 +39,7 @@ spec:
               En synkjobb i `{{ $labels.pod }}` endte med status FAILED.
             consequence: "Aliaset peker fortsatt på forrige indeks, så virksomhetsdataene blir én dag eldre. Ingen umiddelbar brukerpåvirkning, men neste feil kan gjøre at NKS ikke får slått opp underenheter i StillingsAdmin."
             sla: "Følg opp samme arbeidsdag, før neste planlagte synk 05:30."
-            documentation: "https://github.com/navikt/pam-er-sync#operations-and-alerts"
+            documentation: "https://github.com/navikt/pam-er-sync/blob/master/.nais/alerts.yaml"
             action: |-
               1. Se stack trace i <https://grafana.nav.cloud.nais.io/a/grafana-lokiexplore-app/explore/service_name/pam-er-sync/logs?var-ds=PEA2100DC89AE9FE2&from=now-6h&to=now&var-filters=service_name%7C%3D%7Cpam-er-sync&var-filters=k8s_cluster_name%7C%3D%7Cprod&var-levels=detected_level%7C%3D%7Cerror|feilloggene>. Kjente årsaker: avbrutt nedlasting fra Brreg (`EOFException: Unexpected end of ZLIB input stream`), eller OpenSearch `Forbidden`/utilgjengelig.
               2. Er feilen forbigående, start synk på nytt: `curl -X POST https://pam-er-sync.intern.nav.no/internal/enhetsregister/sync/underenheter` (svarer 504, jobben fortsetter).
@@ -60,7 +60,7 @@ spec:
               `{{ $labels.pod }}` ble OOMKilled. Kubernetes dreper containeren uten at appen logger noe.
             consequence: "En pågående synk ble avbrutt, og dagens indeks blir ikke tatt i bruk. Gjentas det, blir dataene stadig eldre."
             sla: "Følg opp samme arbeidsdag, før neste planlagte synk 05:30."
-            documentation: "https://github.com/navikt/pam-er-sync#operations-and-alerts"
+            documentation: "https://github.com/navikt/pam-er-sync/blob/master/.nais/alerts.yaml"
             action: |-
               1. Bekreft: `kubectl describe pod {{ $labels.pod }} -n teampam --context prod-gcp` (Last State: OOMKilled).
               2. Sammenlign minnebruken med `resources.limits.memory` i `.nais/app.yaml`, og øk grensen ved behov.

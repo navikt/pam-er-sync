@@ -20,6 +20,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Contains configuration suitable for running tests "offline" by adding {@code @ContextConfiguration} to your test class.
@@ -130,6 +131,11 @@ public class TestConfig extends BatchConfig {
             LOG.info("fetchAllIndicesStartingWith({}) = []", name);
             return Collections.emptyList();
 
+        }
+
+        @Override
+        public Set<String> fetchIndicesWithAlias(String alias) {
+            return Set.of();
         }
 
         @Override

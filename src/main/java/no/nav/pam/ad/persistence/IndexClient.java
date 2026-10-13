@@ -5,6 +5,7 @@ import org.opensearch.client.opensearch.core.BulkResponse;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Interface to be implemented by index clients.
@@ -24,6 +25,8 @@ public interface IndexClient {
     int fetchIndexDocCount(String index) throws IOException;
 
     List<String> fetchAllIndicesStartingWith(String name) throws IOException;
+
+    Set<String> fetchIndicesWithAlias(String alias) throws IOException;
 
     boolean isHealthy() throws IOException;
 

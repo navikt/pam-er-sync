@@ -20,7 +20,9 @@ spec:
   resources:
     requests:
       cpu: 200m
-      memory: 256Mi
+      memory: 512Mi
+    limits:
+      memory: 1536Mi
   prometheus:
     enabled: true
     path: /actuator/prometheus

@@ -3,8 +3,10 @@ package no.nav.pam.ad.enhetsregister.batch;
 
 import tools.jackson.databind.json.JsonMapper;
 import tools.jackson.databind.DeserializationFeature;
+import io.micrometer.core.instrument.MeterRegistry;
 import no.nav.pam.ad.enhetsregister.model.Enhet;
 import no.nav.pam.ad.enhetsregister.model.reader.ReaderEnhet;
+import no.nav.pam.ad.persistence.IndexClient;
 import no.nav.pam.ad.persistence.IndexService;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.job.Job;
@@ -30,7 +32,9 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
+import java.util.EnumSet;
 import java.util.Optional;
+import java.util.Set;
 import java.util.zip.GZIPInputStream;
 
 import static no.nav.pam.ad.enhetsregister.batch.JobLauncherService.*;
@@ -153,6 +157,16 @@ public class BatchConfig {
     @Profile("!test")
     public BatchScheduler batchScheduler(JobLauncherService jobService, IndexService indexService, Hovedenhet hovedenhet, Underenhet underenhet) {
         return new BatchScheduler(jobService, indexService, hovedenhet, underenhet);
+    }
+
+    @Bean
+    @ConditionalOnProperty({PROPERTY_ENHETSREGISTER_SCHEDULER_ENABLED, PROPERTY_ENHETSREGISTER_SCHEDULER_CRON})
+    @Profile("!test")
+    public IndexAgeMetrics indexAgeMetrics(IndexClient indexClient, MeterRegistry registry, Hovedenhet hovedenhet, Underenhet underenhet) {
+        Set<DataSet> dataSets = EnumSet.noneOf(DataSet.class);
+        hovedenhet.getUrl().ifPresent(_ -> dataSets.add(DataSet.HOVEDENHET));
+        underenhet.getUrl().ifPresent(_ -> dataSets.add(DataSet.UNDERENHET));
+        return new IndexAgeMetrics(indexClient, registry, dataSets);
     }
 
     @Bean

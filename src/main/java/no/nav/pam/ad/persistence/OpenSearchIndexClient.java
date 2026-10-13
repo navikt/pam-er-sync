@@ -14,10 +14,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Locale;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -143,6 +145,22 @@ class OpenSearchIndexClient implements IndexClient {
             return Set.of();
         }
         return Set.copyOf(openSearchClient.indices().getAlias(request -> request.name(lowerCaseAlias)).result().keySet());
+    }
+
+    @Override
+    public Optional<Instant> fetchCreationTime(String alias)
+            throws IOException {
+
+        String lowerCaseAlias = lower(alias);
+        IndicesResponse response = openSearchClient.cat().indices(request -> request
+                .index(lowerCaseAlias)
+                .headers("creation.date"));
+
+        return response.valueBody().stream()
+                .map(IndicesRecord::creationDate)
+                .filter(StringUtils::isNotBlank)
+                .map(creationDate -> Instant.ofEpochMilli(Long.parseLong(creationDate)))
+                .findFirst();
     }
 
     @Override

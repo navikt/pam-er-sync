@@ -1,0 +1,23 @@
+name: alerts
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - '.nais/alerts.yaml'
+      - '.github/workflows/alerts.yml'
+
+jobs:
+  deploy-prod:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: nais/setup@fb8692f65df9c904e2cdac5d395630ac876abdcf # v1.0.3
+        with:
+          team: teampam
+      - run: nais apply .nais/alerts.yaml --environment prod-gcp

@@ -1,0 +1,48 @@
+apiVersion: "monitoring.coreos.com/v1"
+kind: "PrometheusRule"
+metadata:
+  name: "pam-er-sync-alerts"
+spec:
+  groups:
+    - name: "pam-er-sync"
+      rules:
+        - alert: "[pam-er-sync] Enhetsregisteret er ikke synkronisert siste døgn"
+          expr: time() - enhetsregister_index_created_timestamp_seconds{app="pam-er-sync"} > 26 * 3600
+          for: 15m
+          annotations:
+            summary: "Indeksen {{ $labels.dataset }} er eldre enn 26 timer eller mangler. pam-search-api og konsumentene får utdaterte eller ingen virksomheter."
+            action: "Sjekk loggene til pam-er-sync. Kjør synk manuelt med POST https://pam-er-sync.intern.nav.no/internal/enhetsregister/sync/underenheter og verifiser med pam-search-api /amIOK."
+          labels:
+            namespace: "teampam"
+            severity: "critical"
+            alert_type: "custom"
+            teampam_alert_type: "team_stilling_alert"
+
+        - alert: "[pam-er-sync] Synkronisering av enhetsregisteret feilet"
+          expr: |
+            increase(spring_batch_job_seconds_count{app="pam-er-sync", spring_batch_job_status="FAILED"}[1h]) > 0
+            or
+            spring_batch_job_seconds_count{app="pam-er-sync", spring_batch_job_status="FAILED"}
+              unless spring_batch_job_seconds_count{app="pam-er-sync", spring_batch_job_status="FAILED"} offset 1h
+          annotations:
+            summary: "En synkroniseringsjobb i {{ $labels.pod }} endte med status FAILED. Aliaset peker fortsatt på forrige indeks."
+            action: "Sjekk loggene til pam-er-sync for stack trace (f.eks. avbrutt nedlasting fra Brreg) og kjør synk manuelt ved behov."
+          labels:
+            namespace: "teampam"
+            severity: "warning"
+            alert_type: "custom"
+            teampam_alert_type: "team_stilling_alert"
+
+        - alert: "[pam-er-sync] Podden ble drept pga. minnebruk (OOMKilled)"
+          expr: |
+            increase(kube_pod_container_status_restarts_total{namespace="teampam", container="pam-er-sync"}[1h]) > 0
+            and on (pod)
+            kube_pod_container_status_last_terminated_reason{namespace="teampam", container="pam-er-sync", reason="OOMKilled"} == 1
+          annotations:
+            summary: "{{ $labels.pod }} ble OOMKilled. Pågående synk avbrytes uten feillogg."
+            action: "Sjekk minnebruk mot limits i .nais/app.yaml og om synken fullførte."
+          labels:
+            namespace: "teampam"
+            severity: "warning"
+            alert_type: "custom"
+            teampam_alert_type: "team_stilling_alert"

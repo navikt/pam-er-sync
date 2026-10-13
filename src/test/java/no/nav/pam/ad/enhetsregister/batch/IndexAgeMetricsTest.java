@@ -12,8 +12,7 @@ import java.time.Instant;
 import java.util.Optional;
 import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -33,7 +32,7 @@ class IndexAgeMetricsTest {
 
         refresh();
 
-        assertEquals(CREATED.getEpochSecond(), gauge("underenhet"));
+        assertThat(gauge("underenhet")).isEqualTo(CREATED.getEpochSecond());
     }
 
     @Test
@@ -42,14 +41,14 @@ class IndexAgeMetricsTest {
 
         refresh();
 
-        assertEquals(0, gauge("underenhet"));
+        assertThat(gauge("underenhet")).isZero();
     }
 
     @Test
     void shouldOnlyRegisterConfiguredDataSets() {
         refresh();
 
-        assertNull(registry.find(METRIC_NAME).tag("dataset", "hovedenhet").gauge());
+        assertThat(registry.find(METRIC_NAME).tag("dataset", "hovedenhet").gauge()).isNull();
     }
 
     private void refresh() {

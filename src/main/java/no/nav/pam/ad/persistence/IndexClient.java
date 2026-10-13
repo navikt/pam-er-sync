@@ -4,7 +4,9 @@ import no.nav.pam.ad.enhetsregister.model.Enhet;
 import org.opensearch.client.opensearch.core.BulkResponse;
 
 import java.io.IOException;
+import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -27,6 +29,8 @@ public interface IndexClient {
     List<String> fetchAllIndicesStartingWith(String name) throws IOException;
 
     Set<String> fetchIndicesWithAlias(String alias) throws IOException;
+
+    Optional<Instant> fetchCreationTime(String alias) throws IOException;
 
     boolean isHealthy() throws IOException;
 

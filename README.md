@@ -3,6 +3,23 @@ PAM Enhetsregister Sync
 Spring batch app som laster ned datasettet fra BRREG og indekserer til en lokal OpenSearch instance.
 
 
+# Operations and alerts
+Underenheter are synced daily at 05:30 into a new index `underenhet<yyyyMMdd>`. The alias `underenhet` is moved to it
+when the job completes, and indices older than two days without the alias are deleted at 01:00.
+Applications read the alias through pam-search-api and find no underenheter if it is missing, e.g. NKS cannot find underenheter in StillingsAdmin (pam-nss-admin).
+
+Alerts are defined in `.nais/alerts.yaml`, deployed by `.github/workflows/alerts.yml` and posted to `#team-stilling-vakt`:
+* *Ikke synkronisert siste døgn*: the aliased index is older than 26 hours, or missing.
+* *Synkronisering feilet*: a job ended with status FAILED.
+* *OOMKilled*: the pod ran out of memory, which aborts a sync without logging an error.
+
+Trigger a sync manually. The request always returns 504 after 60 s, but the job keeps running (about 3 minutes):
+```shell
+# Trigger manual sync of underenheter in prod
+curl -X POST https://pam-er-sync.intern.nav.no/internal/enhetsregister/sync/underenheter
+```
+Verify that https://pam-search-api.intern.nav.no/amIOK returns 200 with `_index: underenhet<today>`.
+
 # Local testing
 Run `./local-sync-test.sh` to build the app, start OpenSearch and the app via `compose.yml`,
 trigger a sync and verify the result, then clean up.

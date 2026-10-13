@@ -15,11 +15,13 @@ import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Primary;
 import org.springframework.transaction.PlatformTransactionManager;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -136,6 +138,11 @@ public class TestConfig extends BatchConfig {
         @Override
         public Set<String> fetchIndicesWithAlias(String alias) {
             return Set.of();
+        }
+
+        @Override
+        public Optional<Instant> fetchCreationTime(String alias) {
+            return Optional.empty();
         }
 
         @Override

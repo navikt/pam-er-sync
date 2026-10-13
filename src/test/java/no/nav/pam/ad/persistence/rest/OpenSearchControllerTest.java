@@ -15,7 +15,9 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -64,6 +66,11 @@ class OpenSearchControllerTest {
                 @Override
                 public Set<String> fetchIndicesWithAlias(String alias) {
                     return Set.of();
+                }
+
+                @Override
+                public Optional<Instant> fetchCreationTime(String alias) {
+                    return Optional.empty();
                 }
 
                 @Override

@@ -7,12 +7,17 @@ metadata:
     team: teampam
 spec:
   port: 9012
+  startup:
+    path: /isAlive
+    initialDelay: 0
+    periodSeconds: 1
+    failureThreshold: 60
   liveness:
     path: /isAlive
-    initialDelay: 40
+    initialDelay: 0
   readiness:
     path: /isReady
-    initialDelay: 40
+    initialDelay: 0
   replicas:
     min: 1
     max: 1
